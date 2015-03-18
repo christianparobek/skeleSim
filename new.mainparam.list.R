@@ -1,6 +1,7 @@
-new.mainparam.list<-function(title){
+new.mainparam.list<-function(title="test default"){
 	list_of_params<-list(
 		proj_title=as.character(title),
+    proj_date=date(),
 		goal_chosen=factor(x=NULL, levels=c("power","performance","nulldistribution")),
 		sim_chosen=NULL,
 		common_params=NULL,
