@@ -26,7 +26,7 @@ set.fastsimcoal.params <- function(params) {
   )
 
   # -- locus params --
-  num.markers <- params$common_params$num_markers
+  num.markers <- params$common_params$num_loci
   marker.type <- switch(as.character(params$common_params$marker_type),
     microsat = "MICROSAT", snp = "SNP", sequence = "DNA"
   )
