@@ -39,9 +39,15 @@ fastsimcoal.skeleSim.read <- function(params) {
       locus.data <- as.vector(ind[, -(1:2)])
       c(ind[1, 1], paste(ind[, 2], collapse = "/"), locus.data)
     }))
-    genotypes <- data.frame(pop.data[, 2], pop.data[, 1], pop.data[, -(1:2)])
-    colnames(genotypes)[1:2] <- c("id", "pop")
-    genotypes
+    locus.data <- pop.data[, -c(1:2)]
+    collapsed.loci <- do.call(cbind, lapply(seq(2, ncol(locus.data), by = 2), function(i) {
+      a1 <- locus.data[, i - 1]
+      a2 <- locus.data[, i]
+      paste(a1, a2, sep = "/")
+    }))
+    colnames(collapsed.loci) <- paste("Locus", 1:ncol(collapsed.loci), sep = ".")
+    rownames(collapsed.loci) <- pop.data[, 2]
+    df2genind(collapsed.loci, sep = "/", pop = pop.data[, 1], type = "codom")
   }
   result
 }
