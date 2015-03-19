@@ -53,12 +53,22 @@ skeleSim.run <- function() {
   params$common_params$locus_type <- locus.type
   num.loci <- as.integer(if(locus.type != "sequence") readline("Number of loci: ") else 1)
   params$common_params$num_loci <- num.loci
-  mut.rate <- readline("Mutation rate (press Enter to enter parameters of a Gamma distribution: ")
+  mut.rate <- readline("Mutation rate (press Enter to enter parameters of a Gamma distribution): ")
   mut.rate <- if(mut.rate == "") {
-    mu.mean <- as.numeric(readline("  Gamma mean: "))
-    mu.sd <- as.numeric(readline("  Gamma standard deviation: "))
-    scale <- (mu.sd ^ 2) / mu.mean
-    shape <- (mu.mean / mu.sd) ^ 2
+    mut.dist.good <- FALSE
+    scale <- shape <- NA
+    while(!mut.dist.good) {
+      mu.mean <- as.numeric(readline("  Gamma mean: "))
+      mu.sd <- as.numeric(readline("  Gamma standard deviation: "))
+      scale <- (mu.sd ^ 2) / mu.mean
+      shape <- (mu.mean / mu.sd) ^ 2
+      curve(dgamma(x, scale = scale, shape = shape),
+            xlab = "mutation rate", ylab = "density",
+            xlim = c(0, 0.1)
+      )
+      ans <- tolower(readline("  Accept gamma parameters? (y/n)"))
+      mut.dist.good <- ans == "y"
+    }
     rgamma(num.loci, scale = scale, shape = shape)
   } else mut.rate
   params$common_params$mut_rate <- as.numeric(mut.rate)
