@@ -25,10 +25,11 @@ set.fastsimcoal.params <- function(params) {
   )
 
   # -- locus params --
-  num.loci <- params$common_params$num_loci
   locus.type <- switch(as.character(params$common_params$locus_type),
     microsat = "MICROSAT", snp = "SNP", sequence = "DNA"
   )
+  if(locus.type == "DNA") params$common_params$num_loci <- 1
+  num.loci <- params$common_params$num_loci
 
   # locus.length
   #  DNA: sequence length

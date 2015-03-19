@@ -1,13 +1,13 @@
-//  << fastsimcoal.test >>  (input from 'fastsimcoal.skeleSim.run')
+//  << fastsimcoal.test.1.1 >>  (input from 'fastsimcoal.skeleSim.run')
 3 populations to sample
 //Population effective sizes
-1000
-1000
-1000
+2000
+2000
+2000
 //Sample sizes
-20 0
-20 0
-20 0
+40 0
+40 0
+40 0
 //Growth rates
 0
 0

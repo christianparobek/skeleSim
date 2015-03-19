@@ -1,5 +1,6 @@
-fastsimcoal.skeleSim.sequence.read <- function(file) {
-  f <- readLines(file)
+fastsimcoal.skeleSim.read <- function(params) {
+  stopifnot(require(ape))
+  f <- readLines(params$fastsimcoal.params$arp.file)
 
   # get start and end points of data blocks
   start <- grep("SampleData=", f) + 1
@@ -16,8 +17,8 @@ fastsimcoal.skeleSim.sequence.read <- function(file) {
   # get data type
   data.type <- f[grep("DataType=", f)]
   data.type <- gsub("\tDataType=", "", data.type)
-  is.haploid <- switch(data.type, DNA = T, MICROSAT = F, STANDARD = F)
-  if(is.haploid) {
+  is.seq <- switch(data.type, DNA = T, MICROSAT = F, STANDARD = F)
+  result <- if(is.seq) {
     # replace sequence with all A's if there are no variable sites
     n.loc <- locus.params[1, 1]
     if(pop.data[1, 3] == "?") {
@@ -29,8 +30,7 @@ fastsimcoal.skeleSim.sequence.read <- function(file) {
     }
     dna.seq <- strsplit(pop.data[, 3], "")
     names(dna.seq) <- pop.data[, 2]
-    g <- gtypes(dna.seq, strata = pop.data[, 1], description = file)
-    label.haplotypes(g, "Hap.")
+    list(strata = data.frame(strata = pop.data[, 1]), dna.seq = as.DNAbin(dna.seq))
   } else {
     # compile diploid data
     n.loc <- ncol(pop.data) - 2
@@ -39,13 +39,11 @@ fastsimcoal.skeleSim.sequence.read <- function(file) {
       locus.data <- as.vector(ind[, -(1:2)])
       c(ind[1, 1], paste(ind[, 2], collapse = "/"), locus.data)
     }))
-    pop.data <- data.frame(pop.data[, 2], pop.data[, 1], pop.data[, -(1:2)])
-    gtypes(pop.data, description = file)
+    genotypes <- data.frame(pop.data[, 2], pop.data[, 1], pop.data[, -(1:2)])
+    colnames(genotypes)[1:2] <- c("id", "pop")
+    genotypes
   }
+  result
 }
-
-fastsimcoal.skeleSim.read <- function(params) {
-
-
 
 

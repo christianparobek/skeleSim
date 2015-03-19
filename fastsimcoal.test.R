@@ -4,6 +4,7 @@ source("set.fastsimcoal.params.r")
 source("fastsimcoal.skeleSim.run.r")
 source("sim.wrap.fastsimcoal.r")
 source("genind.metadata.getter.r")
+source("fastsimcoal.skeleSim.read.r")
 library(rmetasim)
 
 params <- list(label = "fastsimcoal.test", quiet = FALSE, user_has_data = FALSE)
