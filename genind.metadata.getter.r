@@ -54,7 +54,7 @@ freq_by_locus <- aggregate(freqs ~ names, freq_df, c)$freqs
 
 ## Make a single list to return
 genind_metadata <- c(num_pops, num_loci, ploidy)
-genind_metadata <- append(genind_metadata, list(as.list(samps_per_pop)))
+genind_metadata <- append(genind_metadata, list(as.vector(samps_per_pop)))
 genind_metadata <- append(genind_metadata, list(freq_by_locus))
 
 names(genind_metadata) <- c("NumberOfPops", "NumberOfLoci", "Ploidy", "SampsPerPop", "FreqByLocus")
