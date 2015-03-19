@@ -1,0 +1,11 @@
+rm(list = ls())
+source("set.commonparams.r")
+source("set.fastsimcoal.params.r")
+source("fastsimcoal.skeleSim.run.r")
+source("sim.wrap.fastsimcoal.r")
+library(rmetasim)
+
+params <- list(label = "fastsimcoal.test", quiet = FALSE)
+params <- set.commonparams(params, NULL)
+params <- set.fastsimcoal.params(params)
+params <- sim.wrap.fastsimcoal(params)
