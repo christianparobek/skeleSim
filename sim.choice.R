@@ -3,7 +3,7 @@ sim.choice <- function() {
   questions <- c(
     snps = "Do you have SNP data?",
     non.diploid = "Is your data other than diploid?",
-    marker.num = "Do you want to simulate many markers?"
+    marker.num = "Do you want to simulate many markers?",
     pop.size = "Do you have large population sizes?",
     complex.hist = "Do you have a complex history to simulate?",
     deep.time = "Are you looking at deep time frames?",
@@ -17,7 +17,7 @@ sim.choice <- function() {
   # response weights
   forward.wts <- c(0, 0, 0.3, 0.2, 0, 0.2, 1, 1, 0.2, 0.3)
   names(responses) <- names(forward.wts) <- names(questions)
-  
+
   # loop through each question
   for(this.quest in names(questions)) {
     # create prompt with default
@@ -32,25 +32,29 @@ sim.choice <- function() {
     if(ans != "") responses[this.quest] <- ans == "y"
   }
   cat("\n")
-  
+
   # find reasons that forward-time models are excluded
   fwd.excl <- forward.wts == 0 & responses
   if(any(fwd.excl)) {
     reasons <- paste(names(questions)[fwd.excl], collapse = ", ")
     cat("Forward-time simulations are excluded because: ", reasons, "\n")
   }
-  
+
   # find reasons that forward-time models are required
   fwd.req <- forward.wts == 1 & responses
   if(any(fwd.req)) {
     reasons <- paste(names(questions)[fwd.req], collapse = ", ")
     cat("Forward-time simulations are required because: ", reasons, "\n")
   }
-  
+
   # get relative 'score' for each model
   fwd.score <- sum(forward.wts * responses) / length(responses)
   cat("Coalescent score: ", 1 - fwd.score, "\n")
   cat("Forward-time score: ", fwd.score, "\n")
-}
 
-sim.choice()
+  ans <- "empty"
+  prompt <- "Choose a simulator: (c)oalescent or (f)orward-time: "
+  while(!ans %in% c("c", "f")) {
+    ans <- tolower(readline(prompt))
+  }
+}

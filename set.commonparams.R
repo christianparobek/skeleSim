@@ -41,7 +41,8 @@ set.commonparams<-function(main_list, gen_ind_obj=NULL){
         }
         main_list$common_params$mig_rates <- R.int * main_list$common_params$overall_mig_rate
 
-        main_list$common_params$locus_type<-factor("microsat",levels=c("microsat","snp","sequence"))
+        main_list$common_params$locus_type <- "microsat"
+        if(!main_list$common_params$locus_type %in% c("microsat","snp","sequence")) stop("locus_type not recognized")
         main_list$common_params$mut_rate<-0.0005
         main_list$common_params$sequence_length <- 400
                                         # number of simulation replicates to run
