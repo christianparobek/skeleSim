@@ -14,16 +14,34 @@
 
 ## Load required packages
 library(adegenet)
+library(rmetasim)
 
 ## Load required functions (that we wrote)
 source("new.mainparam.list.R")
 source("set.commonparams.R")
+source("set.scenarios.R")
+source("set.specparams.rmetasim.R")
+source("rmetasim.sim.wrap.R")
+source("rmetasim2adegenet.R")
 
 ## Make a toy megalist
-mainparams_test <- new.mainparam.list()
-set.commonparams(mainparams_test)
+megalist <- new.mainparam.list()
+megalist <- set.commonparams(megalist)
+megalist <- set.specparams.rmetasim(megalist)
+megalist <- set.scenarios(megalist)
+megalist$simwrap <- rmetasim.sim.wrap
 
-## Make a toy analysis function
+## Make a toy popgen analysis function
+generic.popgen.function <- function(){
+  a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))), 
+                "stat2"=runif(1), 
+                "stat3"=7.1, 
+                "stat4"=0.3)
+  return(a_vector)
+}
+megalist$analyses_to_run <- generic.popgen.function
+
+
 
 
 #############################
@@ -31,7 +49,20 @@ set.commonparams(mainparams_test)
 #############################
 
 sim.iterator <- function(megalist){
-  
-  simfun <- 
-  analysisfun <- 
+  ## Number of Scenarios
+  num_scenarios <- length(megalist$scenarios_list[,1])
+  ## Number of Reps
+  num_reps <- megalist$common_params$num_reps
+  ## Define a "results_from_analysis" list
+  results_from_analysis <- 
+    as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario){
+      do.call(rbind, lapply(1:num_reps, function(rep){
+#         genind_rep <- megalist$simwrap(megalist)
+        c("scenario"=scenario, megalist$analyses_to_run())
+      }))
+    })))
+  megalist$results_from_analyses <- results_from_analysis
+  return(megalist)
 }
+
+sim.iterator(megalist)
