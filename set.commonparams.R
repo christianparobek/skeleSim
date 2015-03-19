@@ -1,6 +1,7 @@
 set.commonparams<-function(main_list, gen_ind_obj=NULL){
 
-    if (is.null(gen_ind_obj)) {main_list$user_has_data <- FALSE} else {main_list$user_has_data <- TRUE}
+    main_list$user_has_data <- is.null(gen_ind_obj)
+
     hardcode <- TRUE
     if(hardcode){
         num_pops<-3
@@ -50,5 +51,4 @@ set.commonparams<-function(main_list, gen_ind_obj=NULL){
         main_list$common_params$current_replicate<-1
         
         return(main_list)
-    }
 }
