@@ -4,7 +4,7 @@ new.mainparam.list<-function(title="test default"){
     proj_date=date(),
 		goal_chosen=factor(x=NULL, levels=c("power","performance","nulldistribution")),
 		sim_chosen=NULL,
-    user_has_data=TRUE,
+    user_has_data=FALSE,
 		common_params=NULL,
 		spec_params_fastsimcoal=NULL,
 		spec_params_rmetasim=NULL	
