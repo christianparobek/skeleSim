@@ -1,4 +1,4 @@
-set.specparams.rmetasim<-function(main_list, gen_ind_list){
+set.specparams.rmetasim<-function(main_list, gen_ind_obj){
   
   #hardcode means these values are set- later we will allow them to be set by the user via interface
   hardcode=TRUE
