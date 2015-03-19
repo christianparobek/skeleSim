@@ -57,7 +57,10 @@ genind_metadata <- c(num_pops, num_loci, ploidy)
 genind_metadata <- append(genind_metadata, list(as.vector(samps_per_pop)))
 genind_metadata <- append(genind_metadata, list(freq_by_locus))
 
+# Name all the elements in our genind_metadata list
 names(genind_metadata) <- c("NumberOfPops", "NumberOfLoci", "Ploidy", "SampsPerPop", "FreqByLocus")
+# Rename the loci
+names(genind_metadata$FreqByLocus) <- 1:num_loci
 
 return(as.list(genind_metadata))
 }
