@@ -6,8 +6,9 @@ new.mainparam.list<-function(title="test default"){
 		sim_chosen=NULL,
     user_has_data=FALSE,
 		common_params=NULL,
-		spec_params_fastsimcoal=NULL,
-		spec_params_rmetasim=NULL	
+    spec_params_fastsimcoal=NULL,
+		spec_params_rmetasim=NULL,
+		scenarios_list=NULL
 		)
 	return(list_of_params)
 
