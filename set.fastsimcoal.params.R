@@ -26,16 +26,16 @@ set.fastsimcoal.params <- function(params) {
   )
 
   # -- locus params --
-  num.markers <- params$common_params$num_loci
-  marker.type <- switch(as.character(params$common_params$marker_type),
+  num.loci <- params$common_params$num_loci
+  locus.type <- switch(as.character(params$common_params$locus_type),
     microsat = "MICROSAT", snp = "SNP", sequence = "DNA"
   )
 
-  # marker.length
+  # locus.length
   #  DNA: sequence length
   #  SNP or MICROSAT: number of loci
-  marker.length <- 400
-  if(marker.type != "DNA") marker.length <- 1
+  locus.length <- params$common_params$sequence_length
+  if(locus.type != "DNA") locus.length <- 1
 
   # mut.rate
   #   DNA: mutation rate per bp
@@ -47,17 +47,17 @@ set.fastsimcoal.params <- function(params) {
   #   DNA: transition rate (1 / 3 = no bias)
   #   MICROSAT: geometric parameter for GSM (0 = SMM)
   locus.param.5 <- 1/3
-  if(marker.type == "MICROSAT") locus.param.5 <- 0
-  if(marker.type == "SNP") locus.param.5 <- NULL
+  if(locus.type == "MICROSAT") locus.param.5 <- 0
+  if(locus.type == "SNP") locus.param.5 <- NULL
 
   # locus.param.6: Number of different alleles for MICROSAT
   #   (0 = no range constraint)
   locus.param.6 <- 0
-  if(marker.type %in% c("SNP", "DNA")) locus.param.6 <- NULL
+  if(locus.type %in% c("SNP", "DNA")) locus.param.6 <- NULL
 
-  marker.type <- rep(marker.type, num.markers)
+  locus.type <- rep(locus.type, num.loci)
   params$fastsimcoal.params$locus.params <- cbind(
-    marker.type, marker.length, 0, mut.rate,
+    locus.type, locus.length, 0, mut.rate,
     locus.param.5, locus.param.6
   )
 
