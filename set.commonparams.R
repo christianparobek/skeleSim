@@ -1,7 +1,7 @@
 set.commonparams<-function(main_list, gen_ind_obj){
   hardcode <- TRUE
   if(hardcode){
-    num_pops<-16
+    num_pops<-3
     #If the user has data (in genind format)...
     #these are parameters we can pull from their genind object metadata
     #right now it calls the metadata.getter function multiple times

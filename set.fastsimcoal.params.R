@@ -3,7 +3,6 @@ set.fastsimcoal.params <- function(params) {
   params$fastsimcoal.params$sample.times <- NULL
   params$fastsimcoal.params$growth.rate <- NULL
   params$fastsimcoal.params$inf.site.model <- TRUE
-  params$fastsimcoal.params$mig.rates <- list(params$common_params$mig_rates)
 
   # -- historical events --
   # 1) Number of generations, t, before prestent at which the historical even happened
