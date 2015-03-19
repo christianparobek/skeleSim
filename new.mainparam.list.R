@@ -7,7 +7,9 @@ new.mainparam.list<-function(title="test default"){
     user_has_data=FALSE,
 		common_params=NULL,
 		spec_params_fastsimcoal=NULL,
-		spec_params_rmetasim=NULL	
+		spec_params_rmetasim=NULL,
+    analyses_to_run=NULL,
+    results_from_analyses=NULL
 		)
 	return(list_of_params)
 
