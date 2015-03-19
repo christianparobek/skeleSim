@@ -1,4 +1,4 @@
-set.specparams.rmetasim<-function(main_list, gen_ind_obj){
+set.specparams.rmetasim<-function(main_list, gen_ind_obj=NULL){
   
   #hardcode means these values are set- later we will allow them to be set by the user via interface
   hardcode=TRUE
@@ -38,7 +38,20 @@ set.specparams.rmetasim<-function(main_list, gen_ind_obj){
     #rmetasim selfing rate
     main_list$spec_params_rmetasim$selfing_rate<-0.0
     #initial allele frequencies for starting population
-    main_list$spec_params_rmetasim$init_allele_freqs<-genind.metadata.getter(gen_ind_obj)$FreqByLocus
+    if (is.null(gen_ind_obj))
+        {
+                main_list$spec_params_rmetasim$init_allele_freqs<-lapply(1:main_list$common_params$num_loci,
+                                                                         function(loc)
+                                                                         {
+                                                                             nall <- rpois(1,lambda=3)+1
+                                                                             frq <- runif(nall)
+                                                                             frq <- frq/sum(frq)
+                                                                             frq
+                                                                         })
+        } else {
+                main_list$spec_params_rmetasim$init_allele_freqs<-genind.metadata.getter(gen_ind_obj)$FreqByLocus
+        }
+
     
     return(main_list)
   }
