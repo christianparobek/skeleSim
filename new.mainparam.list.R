@@ -8,7 +8,7 @@ new.mainparam.list<-function(title="test default"){
 		common_params=NULL,
     spec_params_fastsimcoal=NULL,
 		spec_params_rmetasim=NULL,
-		scenarios_list=NULL
+		scenarios_list=NULL,
     analyses_to_run=NULL,
     results_from_analyses=NULL
 		)
