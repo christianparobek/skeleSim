@@ -57,7 +57,7 @@ sim.iterator <- function(megalist){
   results_from_analysis <- 
     as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario){
       do.call(rbind, lapply(1:num_reps, function(rep){
-#         genind_rep <- megalist$simwrap(megalist)
+         megalist$genind_rep <- megalist$simwrap(megalist)
         c("scenario"=scenario, megalist$analyses_to_run())
       }))
     })))
