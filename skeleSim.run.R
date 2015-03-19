@@ -7,10 +7,14 @@ source("set.fastsimcoal.params.r")
 source("sim.choice.r")
 source("sim.wrap.fastsimcoal.r")
 source("fastsimcoal.skeleSim.read.r")
-library(rmetasim)
+
+vec.prompt <- function(prompt, n) {
+  sapply(1:n, function(i) readline(paste(prompt, " #", i, ": ", sep = "")))
+}
 
 skeleSim.run <- function() {
   sim.type <- sim.choice()
+  cat("\n")
   label <- readline("Enter a label for the simulation: ")
 
   params <- list(
@@ -21,30 +25,50 @@ skeleSim.run <- function() {
   )
   params <- set.commonparams(params)
 
-  cat("\n\n")
+  cat("\n")
   cat("--- Population Information ---\n")
-  num.pops <- readline("Number of populations: ")
+  num.pops <- as.integer(readline("Number of populations: "))
   params$common_params$num_pops <- num.pops
-  params$common_params$pop_sizes <- rep(readline("Size of each population: "), num.pops)
-  params$common_params$sample_sizes <- rep(readline("Number of samples from each population: "), num.pops)
-  params$common_params$overall_mig_rate <- readline("Overall migration rate: ")
-  cat("\n\n")
+  pop.size.good <- FALSE
+  while(!pop.size.good) {
+    pop.sizes <- readline("Size of each population (press Enter to enter sizes individually): ")
+    params$common_params$pop_sizes <- if(pop.sizes == "") {
+      as.integer(vec.prompt("  Enter size of population", num.pops))
+    } else rep(as.integer(pop.sizes), num.pops)
+    sample.sizes <- readline("Number of samples from each population (press Enter to enter samples individually): ")
+    params$common_params$sample_sizes <- if(sample.sizes == "") {
+      as.integer(vec.prompt("  Enter number of samples from population", num.pops))
+    } else rep(as.integer(sample.sizes), num.pops)
+    pop.size.good <- all(as.integer(pop.sizes) >= as.integer(sample.sizes))
+    if(!pop.size.good) cat("<< Error: Some sample sizes are larger than population sizes. Please re-enter. >>\n")
+  }
+  params$common_params$overall_mig_rate <- as.numeric(readline("Overall migration rate: "))
+
+  cat("\n")
   cat("--- Locus Information ---\n")
   locus.type <- ""
   prompt <- "Locus type (m)icrosatellite, (d)na sequence, (s)np: "
-  while(!locus.type %in% c("m", "d", "s")) {
-    locus.type <- tolower(readline(prompt))
-  }
+  while(!locus.type %in% c("m", "d", "s")) locus.type <- tolower(readline(prompt))
   locus.type <- switch(locus.type, m = "microsat", d = "sequence", s = "snp")
-  main_list$common_params$locus_type <- locus.type
-  params$common_params$num_loci <- readline("Number of loci: ")
-  params$common_params$mut_rate <- readline("Mutation rate: ")
+  params$common_params$locus_type <- locus.type
+  num.loci <- as.integer(if(locus.type != "sequence") readline("Number of loci: ") else 1)
+  params$common_params$num_loci <- num.loci
+  mut.rate <- readline("Mutation rate (press Enter to enter parameters of a Gamma distribution: ")
+  mut.rate <- if(mut.rate == "") {
+    mu.mean <- as.numeric(readline("  Gamma mean: "))
+    mu.sd <- as.numeric(readline("  Gamma standard deviation: "))
+    scale <- (mu.sd ^ 2) / mu.mean
+    shape <- (mu.mean / mu.sd) ^ 2
+    rgamma(num.loci, scale = scale, shape = shape)
+  } else mut.rate
+  params$common_params$mut_rate <- as.numeric(mut.rate)
   if(locus.type == "sequence") {
-    params$common_params$sequence_length <- readline("Sequence length: ")
+    params$common_params$sequence_length <- as.integer(readline("Sequence length: "))
   }
-  cat("\n\n")
+
+  cat("\n")
   cat("--- Simulation Information ---\n")
-  params$common_params$num_reps <- readline("Number of replicates to run: ")
+  params$common_params$num_reps <- as.integer(readline("Number of replicates to run: "))
 
   if(sim.type == "c") {
     params <- set.fastsimcoal.params(params)
@@ -54,5 +78,6 @@ skeleSim.run <- function() {
     params$common_params$sim.func <- sim.wrap.rmetasim
   }
 
-  save(params, file = paste(param$label, ".params.rdata", sep = ""))
+  save(params, file = paste(params$label, ".params.rdata", sep = ""))
+  return(params)
 }

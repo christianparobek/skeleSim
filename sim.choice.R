@@ -57,4 +57,6 @@ sim.choice <- function() {
   while(!ans %in% c("c", "f")) {
     ans <- tolower(readline(prompt))
   }
+
+  return(ans)
 }
