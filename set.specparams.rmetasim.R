@@ -32,6 +32,6 @@ set.specparams.rmetasim<-function(main_list, gen_ind_list){
     main_list$spec_params_rmetasim$max_pop_size<-20000
     main_list$spec_params_rmetasim$selfing_rate<-0.0
     
-    
+    return(main_list)
   }
 }

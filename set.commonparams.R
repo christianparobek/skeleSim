@@ -2,8 +2,8 @@ set.commonparams<-function(main_list, gen_ind_obj){
   hardcode=TRUE
   if(hardcode==TRUE){ 
     num_pops<-16
-    if (main_list$user_has_data==FALSE) main_list$common_params$num_pops<-num_pops
-    if (main_list$user_has_data==TRUE)
+    if (main_list$user_has_data==TRUE) main_list$common_params$num_pops<-num_pops
+    if (main_list$user_has_data==FALSE)
     main_list$common_params$pop_sizes<-rep(1000,num_pops)
     main_list$common_params$mig_model<-"distance" #choices are...
     main_list$common_params$overall_mig_rate<-0.01
