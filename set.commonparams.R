@@ -26,7 +26,7 @@ set.commonparams<-function(main_list, gen_ind_obj){
     R.int <- if(spatially.explicit) {
       main_list$common_params$mean_mig_dist <- 2
       main_list$common_params$h.dim <- c(4, 5)
-      if(prod(h.dim) != num_pops) stop("h.dim does is not compatible with num_pops")
+      if(prod(h.dim) != num_pops) stop("h.dim is not compatible with num_pops")
       landscape.mig.matrix(h = num_pops,
                            h.dim = h.dim,
                            mig.model = mig.model,
