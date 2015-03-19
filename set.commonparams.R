@@ -1,8 +1,6 @@
 set.commonparams<-function(main_list, gen_ind_obj){
-  hardcode=TRUE
-<<<<<<< HEAD
-=======
-  if(hardcode==TRUE){
+  hardcode <- TRUE
+  if(hardcode){
     num_pops<-16
     #If the user has data (in genind format)...
     #these are parameters we can pull from their genind object metadata
@@ -18,11 +16,12 @@ set.commonparams<-function(main_list, gen_ind_obj){
       main_list$common_params$sample_sizes<-rep(20,num_pops)
       main_list$common_params$num_loci<-10
     }
-    #total number of replicate simulations to run
+    #size of each population
     main_list$common_params$pop_sizes<-rep(1000,num_pops)
 
     # migration model for rmetasim
     spatially.explicit <- FALSE
+    main_list$common_params$overall_mig_rate <- 0.01
     mig.model <- if(spatially.explicit) "distance" else "island"
     R.int <- if(spatially.explicit) {
       main_list$common_params$mean_mig_dist <- 2
@@ -42,11 +41,11 @@ set.commonparams<-function(main_list, gen_ind_obj){
 
     main_list$common_params$locus_type<-factor("microsat",levels=c("microsat","snp","sequence"))
     main_list$common_params$mut_rate<-0.0005
+    main_list$common_params$sequence_length <- 400
+    # number of simulation replicates to run
     main_list$common_params$num_reps<-100
     main_list$common_params$current_scenario<-1
 
->>>>>>> origin/master
     return(main_list)
   }
-
 }
