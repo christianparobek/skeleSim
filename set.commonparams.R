@@ -49,6 +49,6 @@ set.commonparams<-function(main_list, gen_ind_obj=NULL){
         main_list$common_params$num_reps<-100
         main_list$common_params$current_scenario<-1
         main_list$common_params$current_replicate<-1
-
-        return(main_list)
+    }
+    return(main_list)
 }
