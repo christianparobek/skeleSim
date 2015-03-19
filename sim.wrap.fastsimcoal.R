@@ -10,7 +10,11 @@ sim.wrap.fastsimcoal <- function(params) {
     growth.rate = params$fastsimcoal.params$growth.rate,
     locus.params = params$fastsimcoal.params$locus.params,
     inf.site.model = params$fastsimcoal.params$inf.site.model,
-    label = params$label, quiet = params$quiet
+    label = paste(params$label,
+                  params$common_params$current_scenario,
+                  params$common_params$current_replicate,
+                  sep = "."),
+    quiet = params$quiet
   )
 
   #invisible(fastsimcoal.skeleSim.read(params))
