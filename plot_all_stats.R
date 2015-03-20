@@ -22,18 +22,6 @@ plot_all_stats<-function(main_list){
 #   results_df[,4]<-rnorm(main_list$common_params$num_reps*num_scen)
   colnames(results_df)<-c("scenario",stats_names)
   
-  #table of means and SD
-  table_means<-data.frame(matrix(NA,nrow=num_scen,ncol=length(stats_names)))
-  table_sd<-data.frame(matrix(NA,nrow=num_scen,ncol=length(stats_names)))
-  colnames(table_means)<-stats_names; colnames(table_sd)<-stats_names
-  for (i in 1:length(stats_names))
-       table_means[,i]<-tapply(results_df[,1+i],results_df$scenario,mean)
-  for (i in 1:length(stats_names))
-       table_sd[,i]<-tapply(results_df[,1+i],results_df$scenario,sd)
-  results_list<-list()
-  results_list$means<-table_means
-  results_list$sd<-table_sd
-  
   #plotting option 1
   results_melted<-melt(results_df,measure.vars=c(stats_names))
   ggplot(results_melted, aes(value)) + 
@@ -48,6 +36,5 @@ plot_all_stats<-function(main_list){
     ggplot(df, aes(value)) + geom_density() + geom_vline(xintercept=table_means[sc, vr])
   })
   do.call(grid.arrange, plots)
-  
-  return(results_list)
+
 }
