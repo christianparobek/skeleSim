@@ -5,11 +5,12 @@ source("genind.metadata.getter.R")
 source("new.mainparam.list.R")
 source("set.commonparams.R")
 source("sim.choice.R")
+source("plot_all_stats.R")
+source("summary_table_stats.R")
 
 vec.prompt <- function(prompt, n) {
   sapply(1:n, function(i) readline(paste(prompt, " #", i, ": ", sep = "")))
 }
-
 
 sim.iterator <- function(megalist){
   ## Number of Scenarios
@@ -17,7 +18,7 @@ sim.iterator <- function(megalist){
   ## Number of Reps
   num_reps <- megalist$common_params$num_reps
   ## Define a "results_from_analysis" list
-  megalist$results_from_analysis <-
+  megalist$results_from_analyses <-
     as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario) {
       megalist$current_scenario <- scenario
       do.call(rbind, lapply(1:num_reps, function(rep) {
@@ -117,8 +118,12 @@ skeleSim.run <- function(quiet = FALSE) {
 
   save(params, file = paste(params$proj_title, ".params.rdata", sep = ""))
 
-  params$scenario.list <- data.frame(Ne = 1)
+  params$scenarios_list <- data.frame(Ne = 1)
   params <- sim.iterator(params)
+  plot_all_stats(params)
+  params <- summary_table_stats(params)
+  cat("/n")
+  print(params$summary_results_table)
   save(params, file = paste(params$proj_title, ".results.rdata", sep = ""))
   invisible(params)
 }
