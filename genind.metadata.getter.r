@@ -10,18 +10,18 @@
 
 ############################
 ############################
-
-if (TRUE){
-  ## Load required packages
-  library(adegenet)
-  
-  ## Make a toy genind object, for haploid SNP data
-  dat <- matrix(sample(c("a","t","g","c"), 25, replace=TRUE), nrow=5)
-  rownames(dat) <- paste("sample.", 1:5)
-  colnames(dat) <- 1:5
-  x <- df2genind(dat, ploidy=1)
-  pop(x) <- c("a","a","b","b","a")
-}
+# 
+# if (TRUE){
+#   ## Load required packages
+#   library(adegenet)
+#   
+#   ## Make a toy genind object, for haploid SNP data
+#   dat <- matrix(sample(c("a","t","g","c"), 25, replace=TRUE), nrow=5)
+#   rownames(dat) <- paste("sample.", 1:5)
+#   colnames(dat) <- 1:5
+#   x <- df2genind(dat, ploidy=1)
+#   pop(x) <- c("a","a","b","b","a")
+# }
 
 #############################
 ## Given a genind object...##
@@ -30,7 +30,7 @@ if (TRUE){
 genind.metadata.getter <- function(genind){
 
 ## Load required packages ##
-library(adegenet)
+stopifnot(require(adegenet))
 
 ## Get number of populations
 num_pops <- length(genind@pop.names)

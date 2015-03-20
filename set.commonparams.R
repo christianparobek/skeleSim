@@ -1,5 +1,7 @@
 set.commonparams<-function(main_list, gen_ind_obj=NULL){
 
+    stopifnot(require(rmetasim))
+    
     main_list$user_has_data <- !is.null(gen_ind_obj)
 
     hardcode <- TRUE
@@ -43,7 +45,7 @@ set.commonparams<-function(main_list, gen_ind_obj=NULL){
 
         main_list$common_params$locus_type <- "microsat"
         if(!main_list$common_params$locus_type %in% c("microsat","snp","sequence")) stop("locus_type not recognized")
-        main_list$common_params$mut_rate<-0.0005
+        main_list$common_params$mut_rate<-rep(0.0005, main_list$common_params$num_loci)
         main_list$common_params$sequence_length <- 400
                                         # number of simulation replicates to run
         main_list$common_params$num_reps<-100
