@@ -1,0 +1,41 @@
+//  << .1.5 >>  (input from 'fastsimcoal.skeleSim.run')
+3 populations to sample
+//Population effective sizes
+2000
+2000
+2000
+//Sample sizes
+40 0
+40 0
+40 0
+//Growth rates
+0
+0
+0
+//Number of migration matrices
+1
+//migration matrix
+0 0.01 0.01
+0.01 0 0.01
+0.01 0.01 0
+//Historical events: time, source, sink, migrants, new size, growth rate, migr. matrix
+1
+10 1 0 1 1 0 0
+//Number of independent loci [chromosome]
+4 0
+//Per chromosome: Number of linkage blocks
+1
+//Per block: data type, num loci, rec. rate and mut rate + optional parameters
+MICROSAT 1 0 5e-04 0 0
+//Per chromosome: Number of linkage blocks
+1
+//Per block: data type, num loci, rec. rate and mut rate + optional parameters
+MICROSAT 1 0 5e-04 0 0
+//Per chromosome: Number of linkage blocks
+1
+//Per block: data type, num loci, rec. rate and mut rate + optional parameters
+MICROSAT 1 0 5e-04 0 0
+//Per chromosome: Number of linkage blocks
+1
+//Per block: data type, num loci, rec. rate and mut rate + optional parameters
+MICROSAT 1 0 5e-04 0 0
