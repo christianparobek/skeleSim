@@ -20,14 +20,21 @@ plot_all_stats<-function(main_list){
 #   results_df[,2]<-abs(floor(rnorm(main_list$common_params$num_reps*num_scen,1,10)))
 #   results_df[,3]<-runif(main_list$common_params$num_reps*num_scen)
 #   results_df[,4]<-rnorm(main_list$common_params$num_reps*num_scen)
-  colnames(results_df)<-c("scenario",stats_names)
+  colnames(results_df)<-c(stats_names)
+  num_stats<-length(stats_names)-1
   
   #plotting option 1
-  results_melted<-melt(results_df,measure.vars=c(stats_names))
+  results_melted<-melt(results_df,measure.vars=c(stats_names[-1]))
   ggplot(results_melted, aes(value)) + 
       geom_density() + facet_wrap(scenario ~ variable, 
-      ncol = length(stats_names), scales = "free")
+      ncol = num_stats, scales = "free")
   
+#table of means, needed below
+table_means<-data.frame(matrix(NA,nrow=num_scen,ncol=num_stats))
+colnames(table_means)<-stats_names[-1]
+for (i in 1:num_stats)
+  table_means[,i]<-tapply(results_df[,1+i],results_df$scenario,mean)
+
   #plotting option 2
   plots <- tapply(1:nrow(results_melted), list(results_melted$scenario, results_melted$variable), function(i) {
     df <- results_melted[i, ]

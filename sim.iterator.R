@@ -35,8 +35,8 @@ megalist$simwrap <- rmetasim.sim.wrap
 generic.popgen.function <- function(){
   a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))),
                 "stat2"=runif(1),
-                "stat3"=7.1,
-                "stat4"=0.3)
+                "stat3"=rnorm(1), 
+                "stat4"=rbinom(1,1,.5))
   return(a_vector)
 }
 megalist$analyses_to_run <- generic.popgen.function

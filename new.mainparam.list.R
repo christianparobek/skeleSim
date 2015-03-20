@@ -10,7 +10,8 @@ new.mainparam.list<-function(title="test default"){
 		spec_params_rmetasim=NULL,
 		scenarios_list=NULL,
     analyses_to_run=NULL,
-    results_from_analyses=NULL
+    results_from_analyses=NULL,
+    summary_results_table=NULL
 		)
 	return(list_of_params)
 
