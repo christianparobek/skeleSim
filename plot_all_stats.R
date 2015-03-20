@@ -28,6 +28,11 @@ plot_all_stats<-function(main_list){
   ggplot(results_melted, aes(value)) + 
       geom_density() + facet_wrap(scenario ~ variable, 
       ncol = num_stats, scales = "free")
+
+#histogram plot
+ggplot(results_melted, aes(value)) + geom_histogram() +
+  facet_grid(variable~scenario, scales="free")
+  
   
 #table of means, needed below
 table_means<-data.frame(matrix(NA,nrow=num_scen,ncol=num_stats))
