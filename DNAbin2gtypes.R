@@ -1,5 +1,5 @@
 ############### Take test data FASTA file and trial ########################
-
+## takes a FASTA file
 
 
 DNAbin2gtypes <- function(go, strata, id.pop = NULL){

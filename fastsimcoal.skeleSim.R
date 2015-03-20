@@ -1,7 +1,7 @@
 # read a .arp file written by fastsimcoal
 # filename (and path) is in params$fastsimcoal.params$arp.file
 fastsimcoal.skeleSim.read <- function(params) {
-  stopifnot(require(ape))
+  stopifnot(require(adegenet))
   f <- readLines(params$fastsimcoal.params$arp.file)
 
   # get start and end points of data blocks
@@ -135,7 +135,7 @@ fastsimcoal.skeleSim.run <- function(num.pops, Ne, sample.size = NULL, sample.ti
 sim.wrap.fastsimcoal <- function(params) {
   # create label for this run with scenario and replicate numbers
   current.label <- paste(
-    params$label,
+    params$proj_title,
     params$current_scenario,
     params$current_replicate,
     sep = "."
@@ -168,6 +168,12 @@ sim.wrap.fastsimcoal <- function(params) {
   params
 }
 
+
+# check that parameters are ready to be run
+fastsimcoal.params.check <- function(params) {
+
+  return(params)
+}
 
 # set parameters for fastsimcoal
 set.fastsimcoal.params <- function(params) {
@@ -233,5 +239,9 @@ set.fastsimcoal.params <- function(params) {
     locus.param.5, locus.param.6
   )
 
+  # check compatability of parameters
+  params <- fastsimcoal.params.check(params)
+
+  params$sim.func <- sim.wrap.fastsimcoal
   return(params)
 }

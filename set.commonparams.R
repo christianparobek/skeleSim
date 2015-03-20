@@ -1,7 +1,7 @@
 set.commonparams<-function(main_list, gen_ind_obj=NULL){
 
     stopifnot(require(rmetasim))
-    
+
     main_list$user_has_data <- !is.null(gen_ind_obj)
 
     hardcode <- TRUE
