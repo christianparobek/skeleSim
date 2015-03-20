@@ -5,7 +5,38 @@
 #'
 rmetasim.sim.wrap <- function(parlist)
     {
-        #function to convert rmetasim to genind object (takes care of sequences)xs
+        testsnp <- F
+        testseq <- F
+        
+        ## this function assumes that loci are sequences of length 1.  A and C are lumped together and G and T
+        ## are lumped together.  The allele calls are altered and the landscape$individual object is modified
+        landscape.snp.convert <- function(land)
+            {
+                lvec <- landscape.locusvec(land)
+                for (loc in 1:length(land$loci))
+                    {
+                        lcols <- which(lvec==loc)+6
+                        states <-  landscape.locus.states(loc,land)
+                        acind <- states$aindex[states$state %in% c("A","C")]
+                        if (length(acind)>0)
+                            {
+                                alleles <- c(land$individuals[,lcols])
+                                alleles[alleles %in% acind] <- acind[1]
+                                land$individuals[,lcols] <- alleles
+                            }
+                        gtind <- states$aindex[states$state %in% c("G","T")]
+                        if (length(gtind)>0)
+                            {
+                                alleles <- c(land$individuals[,lcols])
+                                alleles[alleles %in% gtind] <- gtind[1]
+                                land$individuals[,lcols] <- alleles
+                            }
+#                        if(!is.landscape(land)) stop("failed landscape test")
+                    }
+                land
+            }
+
+        ##do some error checking
         if (! is.list(parlist)) {stop("parlist must be a list object")}
         if (! ("common_params" %in% names(parlist))) {stop ("need a common_params list")}
         if (! ("spec_params_rmetasim" %in% names(parlist))) {stop ("need a spec_params_rmetasim list")}
@@ -32,41 +63,85 @@ rmetasim.sim.wrap <- function(parlist)
         l <- landscape.new.epoch(l, S=S,R=R,M=M,carry=carry,extinct=extinct)
 
         loctype <- as.character(parlist$common_params$locus_type)
+if (testsnp)
+    {
         loctype="snp"
+        parlist$common_params$allele_size <- 1
+        parlist$common_params$mut_rate <- rep(parlist$common_params$mut_rate,parlist$common_params$num_loci)
+    }
+if (testseq)
+    {
+        loctype="sequence"
+        parlist$common_params$num_loci <- 1
+        parlist$common_params$allele_size <- parlist$common_params$sequence_length
+        parlist$common_params$mut_rate <- rep(parlist$common_params$mut_rate,parlist$common_params$num_loci)
+    }
+     
+
+        
         ltype <- which(c("microsat","sequence","snp")==loctype)
         for (loc in 1:parlist$common_params$num_loci)
             {
-                if (ltype==1)
+                if (ltype==1) #ssr
                     {
-                        l <- landscape.new.locus(l, type = 1, ploidy = 2, 
+                        l <- landscape.new.locus(l, type = 1, ploidy = 2, transmission=0,
                                                  mutationrate = parlist$common_params$mut_rate[loc],
                                                  numalleles = length(parlist$spec_params_rmetasim$init_allele_freqs[[loc]]),
                                                  frequencies = parlist$spec_params_rmetasim$init_allele_freqs[[loc]])
-                    } else {
+                    }
+                else if (ltype==2) #seq
+                    {
                         l <- landscape.new.locus(l,
-                                                 type = 2,
-                                                 ploidy = 2, 
+                                                 type = 2, transmission = 1,
+                                                 ploidy = 1, 
                                                  mutationrate = parlist$common_params$mut_rate[loc],
                                                  numalleles = length(parlist$spec_params_rmetasim$init_allele_freqs[[loc]]),
                                                  frequencies = parlist$spec_params_rmetasim$init_allele_freqs[[loc]],
                                                  allelesize = parlist$common_params$allele_size
                                                  )
                     }
+                else if (ltype==3) #snp 
+                    {
+                        l <- landscape.new.locus(l,
+                                                 type = 2, transmission=0,
+                                                 ploidy = 2, 
+                                                 mutationrate = parlist$common_params$mut_rate[loc],
+                                                 numalleles = 4,
+####                                                 frequencies = parlist$spec_params_rmetasim$init_allele_freqs[[loc]], 
+                                                 allelesize = 1
+                                                 )
+                    }
             }
+        
         l <- landscape.new.individuals(l,do.call(c,lapply(carry,function(x){x*rep(1/stgs,stgs)})))
-        l <- landscape.simulate(l,parlist$spec_params_rmetasim$num_gens_to_run)
+
+        if (testsnp|testseq)
+            {
+                l <- landscape.simulate(l,20)
+            } else {
+                l <- landscape.simulate(l,parlist$spec_params_rmetasim$num_gens_to_run)
+            }
+
+        l <- landscape.sample(l,ns=parlist$common_params$sample_sizes)
+
         if (ltype==1)
             {
-                landscape.make.genind(l)
+                parlist$rep.result <- landscape.make.genind(l)
             }
         else if (ltype==2)
             {
-                NULL  #make a DNAbin object
+                states <- as.data.frame(landscape.locus.states(1,l))
+                genos <- data.frame(pop=landscape.populations(l),aindex=l$individuals[,7])
+                seq <- merge(genos,states,all.x=T)
+                seq <- seq[order(seq$pop),]
+                dna.seq <- strsplit(as.character(tolower(seq$state)),"")
+                parlist$rep.result <- list(strata=data.frame(seq$pop),
+                                           dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
             }
         else if (ltype==3)
             {
-                NULL #make a SNP genind
+                parlist$rep.result <- landscape.make.genind(landscape.snp.convert(l))
             }
-        
+        parlist
     }
 
