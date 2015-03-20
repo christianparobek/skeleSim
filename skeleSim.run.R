@@ -10,6 +10,27 @@ vec.prompt <- function(prompt, n) {
   sapply(1:n, function(i) readline(paste(prompt, " #", i, ": ", sep = "")))
 }
 
+
+sim.iterator <- function(megalist){
+  ## Number of Scenarios
+  num_scenarios <- nrow(megalist$scenarios_list)
+  ## Number of Reps
+  num_reps <- megalist$common_params$num_reps
+  ## Define a "results_from_analysis" list
+  megalist$results_from_analysis <-
+    as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario) {
+      megalist$current_scenario <- scenario
+      do.call(rbind, lapply(1:num_reps, function(rep) {
+        megalist$current_replicate <- rep
+        megalist <- megalist$sim.func(megalist)
+        megalist <- megalist$analysis.func(megalist)
+        c(scenario = scenario, megalist$rep.analysis)
+      }))
+    })))
+  return(megalist)
+}
+
+
 skeleSim.run <- function(quiet = FALSE) {
   params <- new.mainparam.list()
   params$quiet <- quiet
@@ -77,15 +98,27 @@ skeleSim.run <- function(quiet = FALSE) {
 
   if(params$sim_chosen == "c") {
     params <- set.fastsimcoal.params(params)
-    params$common_params$sim.func <- sim.wrap.fastsimcoal
+    params$sim.func <- sim.wrap.fastsimcoal
+    #params$analysis.func <- test.func
   } else {
     params <- set.specparams.rmetasim.R(params)
-    params$common_params$sim.func <- sim.wrap.rmetasim
+    params$sim.func <- sim.wrap.rmetasim
+    #params$analysis.func <- test.func
+  }
+
+  # test analysis.func
+  params$analysis.func <- function(params){
+    a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))),
+                  "stat2"=runif(1),
+                  "stat3"=7.1,
+                  "stat4"=0.3)
+    return(a_vector)
   }
 
   save(params, file = paste(params$proj_title, ".params.rdata", sep = ""))
 
-  #params <- sim.iterator(params)
-  #save(params, file = paste(params$proj_title, ".results.rdata", sep = ""))
+  params$scenario.list <- data.frame(Ne = 1)
+  params <- sim.iterator(params)
+  save(params, file = paste(params$proj_title, ".results.rdata", sep = ""))
   invisible(params)
 }

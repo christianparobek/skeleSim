@@ -50,18 +50,20 @@ megalist$analyses_to_run <- generic.popgen.function
 
 sim.iterator <- function(megalist){
   ## Number of Scenarios
-  num_scenarios <- length(megalist$scenarios_list[,1])
+  num_scenarios <- nrow(megalist$scenarios_list)
   ## Number of Reps
   num_reps <- megalist$common_params$num_reps
   ## Define a "results_from_analysis" list
-  results_from_analysis <-
-    as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario){
-      do.call(rbind, lapply(1:num_reps, function(rep){
-         megalist$genind_rep <- megalist$simwrap(megalist)
-        c("scenario"=scenario, megalist$analyses_to_run())
+  megalist$results_from_analysis <-
+    as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario) {
+      megalist$current_scenario <- scenario
+      do.call(rbind, lapply(1:num_reps, function(rep) {
+         megalist$current_replicate <- rep
+         megalist <- megalist$sim.func(megalist)
+         megalist <- megalist$analysis.func(megalist)
+         c(scenario = scenario, megalist$rep.analysis)
       }))
     })))
-  megalist$results_from_analyses <- results_from_analysis
   return(megalist)
 }
 

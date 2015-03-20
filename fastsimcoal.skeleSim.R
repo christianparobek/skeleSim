@@ -136,11 +136,11 @@ sim.wrap.fastsimcoal <- function(params) {
   # create label for this run with scenario and replicate numbers
   current.label <- paste(
     params$label,
-    params$common_params$current_scenario,
-    params$common_params$current_replicate,
+    params$current_scenario,
+    params$current_replicate,
     sep = "."
   )
-  params$common_params$current.label <- current.label
+  params$current.label <- current.label
 
   # modify Ne and sample size if not sequence data to account for
   #   haploid -> diploid conversion of output
