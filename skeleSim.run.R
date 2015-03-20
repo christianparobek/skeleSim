@@ -1,10 +1,10 @@
 rm(list = ls())
 gc()
 source("fastsimcoal.skeleSim.R")
-source("genind.metadata.getter.r")
+source("genind.metadata.getter.R")
 source("new.mainparam.list.R")
-source("set.commonparams.r")
-source("sim.choice.r")
+source("set.commonparams.R")
+source("sim.choice.R")
 
 vec.prompt <- function(prompt, n) {
   sapply(1:n, function(i) readline(paste(prompt, " #", i, ": ", sep = "")))
