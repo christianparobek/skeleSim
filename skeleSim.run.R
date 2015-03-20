@@ -1,13 +1,10 @@
 rm(list = ls())
 gc()
-source("fastsimcoal.skeleSim.run.r")
+source("fastsimcoal.skeleSim.R")
 source("genind.metadata.getter.r")
 source("new.mainparam.list.R")
 source("set.commonparams.r")
-source("set.fastsimcoal.params.r")
 source("sim.choice.r")
-source("sim.wrap.fastsimcoal.r")
-source("fastsimcoal.skeleSim.read.r")
 
 vec.prompt <- function(prompt, n) {
   sapply(1:n, function(i) readline(paste(prompt, " #", i, ": ", sep = "")))
@@ -19,7 +16,7 @@ skeleSim.run <- function(quiet = FALSE) {
   params$sim_chosen <- sim.choice()
 
   cat("\n")
-  params$proj_title <- readline("Enter a label for the simulation: ")
+  params$proj_title <- readline("Enter a title for the simulation: ")
 
   params <- set.commonparams(params)
 
@@ -86,9 +83,9 @@ skeleSim.run <- function(quiet = FALSE) {
     params$common_params$sim.func <- sim.wrap.rmetasim
   }
 
-  save(params, file = paste(params$label, ".params.rdata", sep = ""))
+  save(params, file = paste(params$proj_title, ".params.rdata", sep = ""))
 
-  params <- sim.iterator(params)
-  save(params, file = paste(params$label, ".results.rdata", sep = ""))
+  #params <- sim.iterator(params)
+  #save(params, file = paste(params$proj_title, ".results.rdata", sep = ""))
   invisible(params)
 }
