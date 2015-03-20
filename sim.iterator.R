@@ -33,9 +33,9 @@ megalist$simwrap <- rmetasim.sim.wrap
 
 ## Make a toy popgen analysis function
 generic.popgen.function <- function(){
-  a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))), 
-                "stat2"=runif(1), 
-                "stat3"=7.1, 
+  a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))),
+                "stat2"=runif(1),
+                "stat3"=7.1,
                 "stat4"=0.3)
   return(a_vector)
 }
@@ -54,7 +54,7 @@ sim.iterator <- function(megalist){
   ## Number of Reps
   num_reps <- megalist$common_params$num_reps
   ## Define a "results_from_analysis" list
-  results_from_analysis <- 
+  results_from_analysis <-
     as.data.frame(do.call(rbind, lapply(1:num_scenarios, function(scenario){
       do.call(rbind, lapply(1:num_reps, function(rep){
          megalist$genind_rep <- megalist$simwrap(megalist)
@@ -64,5 +64,6 @@ sim.iterator <- function(megalist){
   megalist$results_from_analyses <- results_from_analysis
   return(megalist)
 }
+
 
 sim.iterator(megalist)
