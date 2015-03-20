@@ -108,11 +108,11 @@ skeleSim.run <- function(quiet = FALSE) {
 
   # test analysis.func
   params$analysis.func <- function(params){
-    a_vector <- c("stat1"=abs(floor(rnorm(1,1,10))),
+    params$rep.analysis <- c("stat1"=abs(floor(rnorm(1,1,10))),
                   "stat2"=runif(1),
                   "stat3"=7.1,
                   "stat4"=0.3)
-    return(a_vector)
+    return(params)
   }
 
   save(params, file = paste(params$proj_title, ".params.rdata", sep = ""))
