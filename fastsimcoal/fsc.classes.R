@@ -2,10 +2,8 @@ setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("listOrNULL", c("list","NULL"))
 setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
-setClassUnion("intOrNULL", c("integer", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
-
 
 #' @title fastsimcoal Parameters Class
 #' @description An S4 class storing parameters specific to fastsimcoal
@@ -21,9 +19,10 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "fastsimcoal.params",
   slots = c(sample.times = "intOrNum", growth.rate = "intOrNum",
-            hist.ev = "intOrNum", locus.params = "listOrNULL"
+            hist.ev = "intOrNum", locus.params = "intOrNum",
+            inf.site.model = "logOrNULL"
   ),
   prototype = c(sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
-                locus.params = NULL
+                locus.params = NULL, inf.site.model = NULL
   )
 )

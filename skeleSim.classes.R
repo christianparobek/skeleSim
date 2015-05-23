@@ -2,10 +2,8 @@ setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("listOrNULL", c("list","NULL"))
 setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
-setClassUnion("intOrNULL", c("integer", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
-
 
 #' @title skeleSim Parameters Class
 #' @description An S4 class storing generic parameters used throughout
@@ -20,8 +18,6 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'   being addressed. Can be one of: (n)ull, p(o)wer, (p)erformance.
 #' @slot simulator a single character representing which type of simulator
 #'   to use. Can be one of: (c)oalescent or (f)orward-time.
-#' @slot user.has.data logical recording whether or not the user has supplied
-#'   data.
 #' @slot scenarios a list of \code{scenario.params} objects.
 #' @slot num.reps number of replicates to run.
 #' @slot sim.func a function that runs one replicate of the simulator.
@@ -38,17 +34,19 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "skeleSim.params",
   slots = c(title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
-            question = "charOrNULL", simulator = "charOrNULL",
-            user.has.data = "logOrNULL", scenarios = "listOrNULL",
-            num.reps = "intOrNULL", sim.func = "funcOrNULL",
-            last.sample = "intOrNum", rep.analysis.func = "funcOrNULL",
+            question = "charOrNULL", simulator = "charOrNULL", wd = "charOrNULL",
+            scenarios = "listOrNULL",
+            num.reps = "intOrNum", sim.func = "funcOrNULL",
+            current.scenario = "intOrNum", current.replicate = "intOrNum",
+            last.sample = "listOrNULL", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
-                simulator = NULL, user.has.data = NULL, scenarios = NULL,
-                num.reps = NULL, sim.func = NULL, last.sample = NULL,
-                rep.analysis.func = NULL, rep.result = NULL,
+                simulator = NULL, wd = NULL, scenarios = NULL,
+                num.reps = NULL, sim.func = NULL,
+                current.scenario = 1, current.replicate = NULL,
+                last.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
                 summary.results = NULL
   )
@@ -71,11 +69,15 @@ setClass(
 #'
 setClass(
   Class = "scenario.params",
-  slots = c(num.pops = "intOrNULL", pop.size = "intOrNULL",
-            sample.size = "intOrNULL", migration = "intOrNum",
+  slots = c(num.pops = "intOrNum", pop.size = "intOrNum",
+            sample.size = "intOrNum", migration = "intOrNum",
+            locus.type = "charOrNULL", num.loci = "intOrNum",
+            sequence.length = "intOrNum", mut.rate = "intOrNum",
             simulator.params = "ANY"
   ),
   prototype = c(num.pops = NULL, pop.size = NULL, sample.size = NULL,
-                migration = NULL, simulator.params = NULL
+                migration = NULL, locus.type = NULL, num.loci = NULL,
+                sequence.length = NULL, mut.rate = NULL,
+                simulator.params = NULL
   )
 )

@@ -1,0 +1,5 @@
+source("fastsimcoal/fsc.classes.R")
+source("fastsimcoal/fsc.set.params.R")
+source("fastsimcoal/fsc.write.R")
+source("fastsimcoal/fsc.run.R")
+source("fastsimcoal/fsc.read.R")
