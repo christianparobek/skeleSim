@@ -22,9 +22,9 @@ fastsimcoal.skeleSim.read <- function(params) {
   is.seq <- switch(data.type, DNA = T, MICROSAT = F, STANDARD = F)
   result <- if(is.seq) {
     # replace sequence with all A's if there are no variable sites
-    n.loc <- locus.params[1, 1]
+    seq.len <- currentScenario(params)@sequence.length
     if(pop.data[1, 3] == "?") {
-      full.seq <- paste(rep("A", n.loc), collapse = "")
+      full.seq <- paste(rep("A", seq.len), collapse = "")
       pop.data[, 3] <- rep(full.seq, nrow(pop.data))
     } else { # otherwise add A's to pad out to full sequence length
       partial.seq <- paste(rep("A", n.loc - nchar(pop.data[1, 3])), collapse = "")
