@@ -2,6 +2,7 @@
 # filename (and path) is in params$fastsimcoal.params$arp.file
 fsc.read <- function(file, params) {
   stopifnot(require(adegenet))
+  stopifnot(require(ape))
   f <- readLines(file)
 
   # get start and end points of data blocks

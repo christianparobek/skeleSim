@@ -38,7 +38,7 @@ setClass(
             scenarios = "listOrNULL",
             num.reps = "intOrNum", sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
-            last.sample = "listOrNULL", rep.analysis.func = "funcOrNULL",
+            rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL"
   ),
@@ -46,7 +46,7 @@ setClass(
                 simulator = NULL, wd = NULL, scenarios = NULL,
                 num.reps = NULL, sim.func = NULL,
                 current.scenario = 1, current.replicate = NULL,
-                last.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
+                rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
                 summary.results = NULL
   )

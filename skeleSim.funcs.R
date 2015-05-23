@@ -26,7 +26,9 @@ runSim <- function(params) {
       params@current.scenario <- sc
       do.call(rbind, lapply(1:params@num.reps, function(r) {
         params@current.replicate <- r
+        # runs one replicate of simulator and loads sample into params@rep.sample
         params <- params@sim.func(params)
+        # analyzes params@rep.sample and loads results into params@rep.result
         params <- params@rep.analysis.func(params)
         c(scenario = sc, params@rep.result)
       }))
