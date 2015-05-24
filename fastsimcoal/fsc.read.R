@@ -31,7 +31,7 @@ fsc.read <- function(file, params) {
       partial.seq <- paste(rep("A", seq.len - nchar(pop.data[1, 3])), collapse = "")
       pop.data[, 3] <- sapply(pop.data[, 3], function(x) paste(x, partial.seq, sep = "", collapse = ""))
     }
-    dna.seq <- strsplit(pop.data[, 3], "")
+    dna.seq <- lapply(strsplit(pop.data[, 3], ""), tolower)
     names(dna.seq) <- pop.data[, 2]
     list(strata = data.frame(strata = pop.data[, 1]), dna.seq = as.DNAbin(dna.seq))
   } else {
