@@ -30,6 +30,9 @@ runSim <- function(params) {
         params <- params@sim.func(params)
         # analyzes params@rep.sample and loads results into params@rep.result
         params <- params@rep.analysis.func(params)
+        label <- currentLabel(params)
+        file <- paste(label, ".params.rdata", sep = "")
+        save(params, file = file.path(label, file))
         c(scenario = sc, params@rep.result)
       }))
     }))
