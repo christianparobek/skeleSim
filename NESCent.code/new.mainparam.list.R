@@ -15,4 +15,4 @@ new.mainparam.list<-function(title="test default"){
 		)
 	return(list_of_params)
 
-}
+}  
