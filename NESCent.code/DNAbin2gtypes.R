@@ -2,13 +2,10 @@
 ## takes a FASTA file
 
 
-DNAbin2gtypes <- function(go, strata, id.pop = NULL){
+DNAbin2gtypes <- function(go, strata, id.pop = 1){
 
-  if(length(stratafoo > 1)){
-    sv <- which(names(strata) == id.pop)
-  } else {
-    sv <- 1
-  }
+  sv <- id.pop
+
 
   go <- as.matrix(go)
 
