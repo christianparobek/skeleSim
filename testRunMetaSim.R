@@ -12,7 +12,7 @@ test.params@title <- "testRun"
 test.params@date <- Sys.time()
 test.params@quiet <- FALSE
 test.params@question <- "n"
-test.params@simulator <- "c"
+test.params@simulator <- "f"
 test.params@num.reps <- 10
 test.params@sim.func <- rms.run
 test.params@wd <- "testRun.wd"
@@ -70,4 +70,4 @@ test.params@rep.analysis.func <- function(params) {
 
 
 # ---- Run replicates ----
-test.params <- runSim(test.params)
+test.params <- testRunMetaSim(test.params)
