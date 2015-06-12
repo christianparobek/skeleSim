@@ -70,4 +70,4 @@ test.params@rep.analysis.func <- function(params) {
 
 
 # ---- Run replicates ----
-test.params <- testRunMetaSim(test.params)
+test.params <- runSim(test.params)
