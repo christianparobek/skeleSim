@@ -18,7 +18,7 @@ skeletonland<-landscape.new.switchparam(skeletonland,re=0,rd=0,mp=1,dd=0)
 
 #local matrices, will give same demography to each local population
 for (i in 1:num.pops)
-	skeletonland<-landscape.new.local.demo(surv.matr, repr.matr, male.matr)
+	skeletonland<-landscape.new.local.demo(skeletonland,surv.matr, repr.matr, male.matr)
 
 #cross habitat matrices
 epoch_s_matr<-matrix(0,nrow=4, ncol=4)
