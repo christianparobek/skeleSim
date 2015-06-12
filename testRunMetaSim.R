@@ -53,7 +53,6 @@ base.scenario@simulator.params <- rms.params
 scenario.list <- lapply(1:3, function(i) base.scenario)
 #  decrease the mutation rate in scenario 2...
 scenario.list[[2]]@mut.rate <- 1e-5
-scenario.list[[2]]@simulator.params@locus.params <- fsc.locusParamsMat(scenario.list[[2]])
 #  decrease the migration rate in scenario 3...
 scenario.list[[3]]@migration <- scenario.list[[3]]@migration * 0.1
 
