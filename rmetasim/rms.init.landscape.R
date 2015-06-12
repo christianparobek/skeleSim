@@ -1,6 +1,6 @@
 # initiate an rmetasim landscape with parameters
 
-init.landscape <- function(num.pops = NULL, carrying = NULL, sample.size = NULL, mig.rates = NULL, 
+rms.init.landscape <- function(num.pops = NULL, carrying = NULL, sample.size = NULL, mig.rates = NULL, 
                             num.loc = NULL, loc.type = NULL, mut.rate = NULL, seq.length = NULL, 
                             num.stgs = NULL, selfing = NULL, 
                             surv.matr = NULL, repr.matr = NULL, male.matr = NULL,
