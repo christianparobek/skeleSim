@@ -14,9 +14,9 @@ rms.run<-function(params){
   skeleland<-landscape.simulate(skeleland, num.gen)
 
   #take samples
-  skeleland<-landscape.sample(skeleland, sample.size)
+  skeleland_samp<-landscape.sample(skeleland, sample.size)
   
   #now store the results
-  params@rep.sample<- FUNCTION TO BE WRITTEN
+  params@rep.sample<- rms.convert(skeleland_samp)
 
 }
