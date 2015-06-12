@@ -1,4 +1,5 @@
 # read a .arp file written by fastsimcoal
+# to be called after simulation has been run but before analysis is to be run
 fsc.read <- function(file, params) {
   stopifnot(require(adegenet))
   stopifnot(require(ape))
