@@ -2,7 +2,7 @@
 
 init.landscape <- function(num.pops = NULL, carrying = NULL, sample.size = NULL, mig.rates = NULL, 
                             num.loc = NULL, loc.type = NULL, mut.rate = NULL, seq.length = NULL, 
-                            num.stgs = NULL, selfing = NULL, s.matr = NULL, r.matr = NULL, m.matr = NULL
+                            num.stgs = NULL, selfing = NULL, s.matr = NULL, r.matr = NULL, m.matr = NULL,
                             init.pop.size = NULL, num.gen = NULL, num.alleles = NULL, allele.freqs = NULL) {
  
  
