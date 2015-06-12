@@ -1,7 +1,7 @@
 rm(list = ls())
 source("skeleSim.classes.R")
-source("fastsimcoal.skeleSim.R")
-#
+source("rmetasim.skeleSim.R")
+library("rmetasim")
 source("skeleSim.funcs.R")
 
 # ---- Load parameters ---
@@ -27,21 +27,27 @@ base.scenario@migration <- matrix(
   c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
   nrow = base.scenario@num.pops
 )
-base.scenario@locus.type <- "sequence"
-base.scenario@num.loci <- 1
-base.scenario@sequence.length <- 400
+base.scenario@locus.type <- "microsat"
+base.scenario@num.loci <- 10
 base.scenario@mut.rate <- 1e-4
 
 # create rmetasim params object to load into base scenario
-fsc.params <- new("fastsimcoal.params")
-fsc.params@sample.times <- c(0, 0, 0)
-fsc.params@growth.rate <- c(0, 0, 0)
-fsc.params@hist.ev <- fsc.histEvMat()
-fsc.params@hist.ev[, "num.gen"] <- 100
-fsc.params@locus.params <- fsc.locusParamsMat(base.scenario)
-fsc.params@inf.site.model <- FALSE
-# load fastsimcoal params
-base.scenario@simulator.params <- fsc.params
+rms.params <- new("rmetasim.params")
+rms.params@num.stgs <- 2
+rms.params@selfing = 0
+rms.params@s.matr = matrix(c(	0.2,0.0,
+ 			                        0.2,0.7),nrow=2,byrow=T)
+rms.params@r.matr = matrix(c(	0,10,
+		                        	0,0),nrow=2,byrow=T)
+rms.params@m.matr = matrix(c(	0,0,
+	                        		0,1),nrow=2,byrow=T)
+rms.params@init.pop.size = c(1000,1000)
+rms.params@num.gen = 20
+rms.params@num.alleles = 5
+rms.params@allele.freqs = c(rep,.2,5)
+
+# load rmetasim params
+base.scenario@simulator.params <- rms.params
 
 # create list of scenarios and modify
 scenario.list <- lapply(1:3, function(i) base.scenario)
