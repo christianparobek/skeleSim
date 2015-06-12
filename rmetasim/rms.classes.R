@@ -26,15 +26,15 @@ setClass(
   slots = c(num.stgs = "intOrNum", selfing = "intOrNum",
             surv.matr = "intOrNum", repr.matr = "intOrNum",
             male.matr = "intOrNum", carrying = "intOrNum",
-            init.pop.sizes = "intOrNum", num.alleles = "intOrNum",
-            
+            init.pop.sizes = "intOrNum", 
+            num.alleles = "intOrNum", allele.freqs = "intOrNum",
             num.gen = "intOrNum"
   ),
   prototype = c(num.stgs = NULL, selfing = NULL,
             surv.matr = NULL, repr.matr = NULL,
             male.matr = NULL, carrying = NULL,
-            init.pop.sizes = NULL, num.alleles = NULL,
-            
+            init.pop.sizes = NULL, 
+            num.alleles = NULL, allele.freqs = NULL,
             num.gen = NULL
   )
 )
