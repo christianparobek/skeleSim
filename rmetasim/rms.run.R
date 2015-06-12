@@ -6,7 +6,7 @@ rms.run<-function(params){
       num.pops = sc@num.pops, carrying = sc@pop.size, sample.size = sc@sample.size, mig.rates = sc@migration, 
       num.loc = sc@num.loci, loc.type = sc@lucus.type, mut.rate = sc@mut.rate, seq.length = sc@sequence.length, 
       num.stgs = sc@simulator.params@num.stgs, selfing = sc@simulator.params@selfing, 
-      s.matr = sc@simulator.params@s.matr, r.matr = sc@simulator.params@r.matr, m.matr = sc@simulator.params@r.matr
+      s.matr = sc@simulator.params@s.matr, r.matr = sc@simulator.params@r.matr, m.matr = sc@simulator.params@r.matr,
       init.pop.size = sc@simulator.params@init.pop.size, num.gen = sc@simulator.params@num.gen, 
       num.alleles = sc@simulator.params@num.alleles, allele.freqs = sc@simulator.params@allele.freqs)
   
