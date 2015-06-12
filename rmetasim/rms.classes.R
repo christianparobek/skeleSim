@@ -4,6 +4,7 @@ setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
+setClassUnion("matrOrVect", c("matrix", "vector", "NULL"))
 
 #' @title rmetasim Parameters Class
 #' @description An S4 class storing parameters specific to rmetasim
@@ -24,7 +25,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "fastsimcoal.params",
   slots = c(num.stg = "intOrNum", self.rate = "intOrNum",
-            surv.matr
+            surv.matr = "matrOrVect", repr.matr = "matrOrVect",
+            male.matr = "matrOrVect", carrying = 
   
   ),
   prototype = c(num.stg = NULL, self.rate = NULL,
