@@ -15,12 +15,16 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot surv.matr survival matrix
 #' @slot repr.matr reproductive matrix (females)
 #' @slot male.matr male contribution matrix (males)
+#' @slot carrying carrying capacity
+#' @slot init.pop.sizes initial starting population census
+#' @slot num.alleles number of alleles per locus
+#' @slot allele.freq initial allele frequencies
 #' @slot num.gen number of generations to run
 #'
 setClass(
   Class = "fastsimcoal.params",
   slots = c(num.stg = "intOrNum", self.rate = "intOrNum",
-  
+            surv.matr
   
   ),
   prototype = c(num.stg = NULL, self.rate = NULL,
