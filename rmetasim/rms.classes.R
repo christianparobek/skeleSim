@@ -22,7 +22,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot num.gen a single integer of number of generations to run
 #'
 setClass(
-  Class = "fastsimcoal.params",
+  Class = "rmetasim.params",
   slots = c(num.stg = "intOrNum", self.rate = "intOrNum",
             surv.matr = "intOrNum", repr.matr = "intOrNum",
             male.matr = "intOrNum", carrying = "intOrNum",
