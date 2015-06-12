@@ -35,11 +35,11 @@ base.scenario@mut.rate <- 1e-4
 rms.params <- new("rmetasim.params")
 rms.params@num.stgs <- 2
 rms.params@selfing = 0
-rms.params@s.matr = matrix(c(	0.2,0.0,
+rms.params@surv.matr = matrix(c(	0.2,0.0,
  			                        0.2,0.7),nrow=2,byrow=T)
-rms.params@r.matr = matrix(c(	0,10,
+rms.params@repr.matr = matrix(c(	0,10,
 		                        	0,0),nrow=2,byrow=T)
-rms.params@m.matr = matrix(c(	0,0,
+rms.params@male.matr = matrix(c(	0,0,
 	                        		0,1),nrow=2,byrow=T)
 rms.params@init.pop.size = c(1000,1000)
 rms.params@num.gen = 20
