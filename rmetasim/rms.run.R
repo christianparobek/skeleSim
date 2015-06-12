@@ -2,13 +2,21 @@ rms.run<-function(params){
   sc <- currentScenario(params)
   
   #create rmetasim landscape skeletonland
-  skeleland<-
+  skeleland<-rms.init.landscape(
+      num.pops = sc@num.pops, carrying = sc@pop.size, sample.size = sc@sample.size, mig.rates = sc@migration, 
+      num.loc = sc@num.loci, loc.type = sc@lucus.type, mut.rate = sc@mut.rate, seq.length = sc@sequence.length, 
+      num.stgs = sc@simulator.params@num.stgs, selfing = sc@simulator.params@selfing, 
+      s.matr = sc@simulator.params@s.matr, r.matr = sc@simulator.params@r.matr, m.matr = sc@simulator.params@r.matr
+      init.pop.size = sc@simulator.params@init.pop.size, num.gen = sc@simulator.params@num.gen, 
+      num.alleles = sc@simulator.params@num.alleles, allele.freqs = sc@simulator.params@allele.freqs)
+  
+  #run a number of generations
+  skeleland<-landscape.simulate(skeleland, num.gen)
 
-
-
-
-
-
-
+  #take samples
+  skeleland<-landscape.sample(skeleland, sample.size)
+  
+  #now store the results
+  params@rep.sample<- FUNCTION TO BE WRITTEN
 
 }
