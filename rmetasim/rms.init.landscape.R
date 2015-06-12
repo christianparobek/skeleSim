@@ -35,11 +35,11 @@ skeletonland<-landscape.new.individuals(skeletonland,init.pop.size)
 #Note that for SNPs, numalleles should be 2, allelesize only used for sequences
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
 #assumes biparental transmission (transmission = 0)
-if (locus.type == "SNP") {locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
-if (locus.type == "MICROSAT") locus.type = 1
-if (locus.type == "DNA") locus.type = 2
+if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
+if (loc.type == "MICROSAT") rms.locus.type = 1
+if (loc.type == "DNA") rms.locus.type = 2
 for (l in 1:num.loc)
-skeletonland<-landscape.new.locus(skeletonland, type=locus.type, ploidy=2, mutationrate=mut.rate[l], 
+skeletonland<-landscape.new.locus(skeletonland, type=rms.locus.type, ploidy=2, mutationrate=mut.rate[l], 
     transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
 
 }
