@@ -14,7 +14,7 @@ test.params@quiet <- FALSE
 test.params@question <- "n"
 test.params@simulator <- "c"
 test.params@num.reps <- 10
-test.params@sim.func <- fsc.run
+test.params@sim.func <- rms.run
 test.params@wd <- "testRun.wd"
 
 # create a base scenario parameters object. It will be copied and modified
