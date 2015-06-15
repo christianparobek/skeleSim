@@ -44,7 +44,7 @@ rms.params@male.matr = matrix(c(	0,0,
 rms.params@init.pop.sizes = c(100,100,100,100)	#NOTE: this is per stage, per habitat, so four integers needed
 rms.params@num.gen = 5
 rms.params@num.alleles = 5
-rms.params@allele.freqs = c(rep,.2,5)
+rms.params@allele.freqs = rep(.2,5)
 
 # load rmetasim params
 base.scenario@simulator.params <- rms.params
