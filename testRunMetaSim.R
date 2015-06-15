@@ -23,7 +23,7 @@ base.scenario <- new("scenario.params")
 base.scenario@num.pops <- 2
 base.scenario@pop.size <- c(400,400)
 base.scenario@sample.size <- 30
-base.scenario@migration <- matrix(c(c(0,.1,.1,.1),rep(0,12)),nrow=4) #Hard coded
+base.scenario@migration <- matrix(c(0,.1,.1,0),byrow=T,nrow=2) #Hard coded
 base.scenario@locus.type <- "microsat"
 base.scenario@num.loci <- 10
 base.scenario@mut.rate <- rep(1e-4,10) #NOTE: this is a mutation rate for each locus
