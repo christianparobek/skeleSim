@@ -37,7 +37,7 @@ if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,
 if (loc.type == "MICROSAT") rms.locus.type = 1
 if (loc.type == "DNA") rms.locus.type = 2
 for (l in 1:num.loc)
-skeletonland<-landscape.new.locus(skeletonland, type=rms.locus.type, ploidy=2, mutationrate=mut.rate[l], 
+skeletonland<-landscape.new.locus(skeletonland, type=loc.type, ploidy=2, mutationrate=mut.rate[l], 
     transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
 
 #assumes population initial sizes all defined nicely by user
