@@ -33,11 +33,12 @@ skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,
 #Note that for SNPs, numalleles should be 2, allelesize only used for sequences
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
 #assumes biparental transmission (transmission = 0)
+ms.locus.type = NULL
 if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
 if (loc.type == "microsat") rms.locus.type = 1
 if (loc.type == "sequence") rms.locus.type = 2
 for (l in 1:num.loc)
-skeletonland<-landscape.new.locus(skeletonland, type=loc.type, ploidy=2, mutationrate=mut.rate[l], 
+skeletonland<-landscape.new.locus(skeletonland, type=ms.locus.type, ploidy=2, mutationrate=mut.rate[l], 
     transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
 
 #assumes population initial sizes all defined nicely by user
