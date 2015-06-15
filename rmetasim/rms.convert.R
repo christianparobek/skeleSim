@@ -3,11 +3,11 @@
 
 rms.convert<- function(Rland, locus.type) {
         ltype <- locus.type
-        if (ltype=="MICROSAT")
+        if (ltype=="microsat")
             {
                 this.rep.result <- landscape.make.genind(Rland)
             }
-        else if (ltype=="DNA")
+        else if (ltype=="sequence")
             {
                 states <- as.data.frame(landscape.locus.states(1,Rland))
                 genos <- data.frame(pop=landscape.populations(Rland),aindex=Rland$individuals[,7])
