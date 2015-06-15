@@ -22,7 +22,7 @@ for (i in 1:num.pops)
 
 #cross habitat matrices
 epoch_s_matr<-matrix(0,nrow=4, ncol=4)
-epoch_r_matr<-mig.rates
+epoch_r_matr<-matrix(0,nrow=4, ncol=4)
 epoch_m_matr<-matrix(0,nrow=4, ncol=4)
 
 #no extinction allowed, hard coded
