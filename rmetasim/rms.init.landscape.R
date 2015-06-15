@@ -4,7 +4,7 @@ rms.init.landscape <- function(num.pops = NULL, carrying = NULL, sample.size = N
                             num.loc = NULL, loc.type = NULL, mut.rate = NULL, seq.length = NULL, 
                             num.stgs = NULL, selfing = NULL, 
                             surv.matr = NULL, repr.matr = NULL, male.matr = NULL,
-                            init.pop.size = NULL, num.gen = NULL, num.alleles = NULL, allele.freqs = NULL) {
+                            init.pop.sizes = NULL, num.gen = NULL, num.alleles = NULL, allele.freqs = NULL) {
  
  
 rm(skeletonland)
@@ -30,7 +30,7 @@ skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,
     startgen=0,extinct=NULL,carry=carrying)
 
 #assumes population initial sizes all defined nicely by user
-skeletonland<-landscape.new.individuals(skeletonland,init.pop.size)
+skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
 
 #LOCI
 #Note that for SNPs, numalleles should be 2, allelesize only used for sequences
