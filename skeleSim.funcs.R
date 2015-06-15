@@ -31,12 +31,10 @@ runSim <- function(params) {
         # analyzes params@rep.sample and loads results into params@rep.result
         params <- params@rep.analysis.func(params)
         label <- currentLabel(params)
-        tryCatch({
-		file <- paste(label, ".params.rdata", sep = "")
-		dir.create(label)
-	        save(params, file = file.path(label, file))
-        	c(scenario = sc, params@rep.result)
-		})
+	file <- paste(label, ".params.rdata", sep = "")
+	if(!dir.exists(label)) dir.create(label)
+	save(params, file = file.path(label, file))
+        c(scenario = sc, params@rep.result)
       }))
     }))
   }, finally = setwd(wd))
