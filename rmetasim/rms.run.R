@@ -8,7 +8,7 @@ rms.run<-function(params){
       num.stgs = sc@simulator.params@num.stgs, selfing = sc@simulator.params@selfing, 
       surv.matr = sc@simulator.params@surv.matr, repr.matr = sc@simulator.params@repr.matr, 
       male.matr = sc@simulator.params@male.matr,
-      init.pop.size = sc@simulator.params@init.pop.size, num.gen = sc@simulator.params@num.gen, 
+      init.pop.sizes = sc@simulator.params@init.pop.size, num.gen = sc@simulator.params@num.gen, 
       num.alleles = sc@simulator.params@num.alleles, allele.freqs = sc@simulator.params@allele.freqs)
   
   #run a number of generations
