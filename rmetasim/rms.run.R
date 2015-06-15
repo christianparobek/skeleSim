@@ -18,6 +18,6 @@ rms.run<-function(params){
   skeleland_samp<-landscape.sample(skeleland, sc@sample.size)
   
   #now store the results
-  params@rep.sample<- rms.convert(skeleland_samp)
+  params@rep.sample<- rms.convert(skeleland_samp, sc@locus.type)
 
 }
