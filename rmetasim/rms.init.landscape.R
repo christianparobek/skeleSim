@@ -21,9 +21,9 @@ for (i in 1:num.pops)
 	skeletonland<-landscape.new.local.demo(skeletonland,surv.matr, repr.matr, male.matr)
 
 #cross habitat matrices
-epoch_s_matr<-matrix(0,nrow=4, ncol=4)
-epoch_r_matr<-matrix(0,nrow=4, ncol=4)
-epoch_m_matr<-matrix(0,nrow=4, ncol=4)
+#epoch_s_matr<-matrix(0,nrow=4, ncol=4)
+#epoch_r_matr<-matrix(0,nrow=4, ncol=4)
+#epoch_m_matr<-matrix(0,nrow=4, ncol=4)
 
 #no extinction allowed, hard coded
 skeletonland<-landscape.new.epoch(skeletonland,S=epoch_s_matr,R=epoch_r_matr,M=epoch_m_matr,epochprob=1,
