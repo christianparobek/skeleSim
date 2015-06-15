@@ -4,7 +4,7 @@ rms.run<-function(params){
   #create rmetasim landscape skeletonland
   skeleland<-rms.init.landscape(
       num.pops = sc@num.pops, carrying = sc@pop.size, sample.size = sc@sample.size, mig.rates = sc@migration, 
-      num.loc = sc@num.loci, loc.type = sc@lucus.type, mut.rate = sc@mut.rate, seq.length = sc@sequence.length, 
+      num.loc = sc@num.loci, loc.type = sc@locus.type, mut.rate = sc@mut.rate, seq.length = sc@sequence.length, 
       num.stgs = sc@simulator.params@num.stgs, selfing = sc@simulator.params@selfing, 
       surv.matr = sc@simulator.params@surv.matr, repr.matr = sc@simulator.params@repr.matr, 
       male.matr = sc@simulator.params@male.matr,
