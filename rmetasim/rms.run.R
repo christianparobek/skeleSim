@@ -19,6 +19,6 @@ rms.run<-function(params){
   
   #now store the results
   params@rep.sample<- rms.convert(skeleland_samp, sc@locus.type)
-  
+  print("X")
   params
 }
