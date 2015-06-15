@@ -27,7 +27,7 @@ epoch_m_matr<-matrix(0,nrow=4, ncol=4)
 
 #no extinction allowed, hard coded
 skeletonland<-landscape.new.epoch(skeletonland,epoch_s_matr,epoch_r_matr,epoch_m_matr,epochprob=1,
-    startgen=0,extinct=c(0,0),carry=carrying)
+    startgen=0,extinct=NULL,carry=carrying)
 
 #assumes population initial sizes all defined nicely by user
 skeletonland<-landscape.new.individuals(skeletonland,init.pop.size)
