@@ -15,7 +15,7 @@ rms.run<-function(params){
   skeleland<-landscape.simulate(skeleland, sc@simulator.params@num.gen)
 
   #take samples
-  skeleland_samp<-landscape.sample(skeleland, sc@sample.size)
+  skeleland_samp<-landscape.sample(skeleland, sc@num.pops, sc@sample.size)
   print(skeleland_samp)
   
   #now store the results
