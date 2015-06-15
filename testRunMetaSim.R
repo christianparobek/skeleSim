@@ -43,7 +43,7 @@ rms.params@male.matr = matrix(c(	0,0,
 	                        		0,1),nrow=2,byrow=T)
 rms.params@init.pop.sizes = c(100,100,100,100)	#NOTE: this is per stage, per habitat, so four integers needed
 rms.params@num.gen = 5
-rms.params@num.alleles = 5
+rms.params@num.alleles = rep(5,10) #NOTE this is a number of alleles for each locus
 rms.params@allele.freqs = rep(.2,5)
 
 # load rmetasim params
