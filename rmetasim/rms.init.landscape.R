@@ -21,16 +21,16 @@ for (i in 1:num.pops)
 	skeletonland<-landscape.new.local.demo(skeletonland,surv.matr, repr.matr, male.matr)
 
 #cross habitat matrices
-#epoch_s_matr<-matrix(0,nrow=4, ncol=4)
-#epoch_r_matr<-matrix(0,nrow=4, ncol=4)
-#epoch_m_matr<-matrix(0,nrow=4, ncol=4)
+epoch_s_matr<-matrix(0,nrow=4, ncol=4)
+epoch_r_matr<-matrix(0,nrow=4, ncol=4)
+epoch_m_matr<-matrix(0,nrow=4, ncol=4)
 
 #no extinction allowed, hard coded
-skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,
+skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,epoch_s_matr,epoch_r_matr,epoch_m_matr,
     startgen=0,extinct=NULL,carry=carrying)
 
 #assumes population initial sizes all defined nicely by user
-skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
+#skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
 
 #LOCI
 #Note that for SNPs, numalleles should be 2, allelesize only used for sequences
