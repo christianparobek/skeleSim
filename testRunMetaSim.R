@@ -29,7 +29,7 @@ base.scenario@migration <- matrix(
 )
 base.scenario@locus.type <- "microsat"
 base.scenario@num.loci <- 10
-base.scenario@mut.rate <- 1e-4
+base.scenario@mut.rate <- rep(1e-4,10) #NOTE: this is a mutation rate for each locus
 
 # create rmetasim params object to load into base scenario
 rms.params <- new("rmetasim.params")
