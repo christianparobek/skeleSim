@@ -41,8 +41,8 @@ rms.params@repr.matr = matrix(c(	0,10,
 		                        	0,0),nrow=2,byrow=T)
 rms.params@male.matr = matrix(c(	0,0,
 	                        		0,1),nrow=2,byrow=T)
-rms.params@init.pop.sizes = c(1000,1000)
-rms.params@num.gen = 20
+rms.params@init.pop.sizes = c(100,100)
+rms.params@num.gen = 5
 rms.params@num.alleles = 5
 rms.params@allele.freqs = c(rep,.2,5)
 
