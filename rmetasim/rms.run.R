@@ -12,10 +12,10 @@ rms.run<-function(params){
       num.alleles = sc@simulator.params@num.alleles, allele.freqs = sc@simulator.params@allele.freqs)
   
   #run a number of generations
-  skeleland<-landscape.simulate(skeleland, num.gen = sc@simulator.params@num.gen)
+  skeleland<-landscape.simulate(skeleland, sc@simulator.params@num.gen)
 
   #take samples
-  skeleland_samp<-landscape.sample(skeleland, sample.size = sc@sample.size)
+  skeleland_samp<-landscape.sample(skeleland, sc@sample.size)
   
   #now store the results
   params@rep.sample<- rms.convert(skeleland_samp)
