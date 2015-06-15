@@ -34,8 +34,8 @@ skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
 #assumes biparental transmission (transmission = 0)
 if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
-if (loc.type == "MICROSAT") rms.locus.type = 1
-if (loc.type == "DNA") rms.locus.type = 2
+if (loc.type == "microsat") rms.locus.type = 1
+if (loc.type == "sequence") rms.locus.type = 2
 for (l in 1:num.loc)
 skeletonland<-landscape.new.locus(skeletonland, type=loc.type, ploidy=2, mutationrate=mut.rate[l], 
     transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
