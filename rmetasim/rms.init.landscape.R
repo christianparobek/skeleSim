@@ -29,9 +29,6 @@ for (i in 1:num.pops)
 skeletonland<-landscape.new.epoch(skeletonland,epochprob=1,
     startgen=0,extinct=NULL,carry=carrying)
 
-#assumes population initial sizes all defined nicely by user
-#skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
-
 #LOCI
 #Note that for SNPs, numalleles should be 2, allelesize only used for sequences
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
@@ -42,5 +39,8 @@ if (loc.type == "DNA") rms.locus.type = 2
 for (l in 1:num.loc)
 skeletonland<-landscape.new.locus(skeletonland, type=rms.locus.type, ploidy=2, mutationrate=mut.rate[l], 
     transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
+
+#assumes population initial sizes all defined nicely by user
+skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
 
 }
