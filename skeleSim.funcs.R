@@ -41,3 +41,27 @@ runSim <- function(params) {
 
   params
 }
+
+summ.stats.table<-function(params){
+  
+  results_df<-params@analysis.results
+  num_scen<-length(params@num.reps)
+  stats_names<-names(params@analysis.results)
+  colnames(results_df)<-c(stats_names)
+  num_stats<-length(stats_names)-1
+  
+  #table of means and SD
+  table_means<-data.frame(matrix(NA,nrow=num_scen,ncol=num_stats))
+  table_sd<-data.frame(matrix(NA,nrow=num_scen,ncol=num_stats))
+  colnames(table_means)<-stats_names[-1]; colnames(table_sd)<-stats_names[-1]
+  for (i in 1:num_stats)
+    table_means[,i]<-tapply(results_df[,1+i],results_df$scenario,mean)
+  for (i in 1:num_stats)
+    table_sd[,i]<-tapply(results_df[,1+i],results_df$scenario,sd)
+  results_list<-list()
+  results_list$means<-table_means
+  results_list$sd<-table_sd
+  params@summary.results<-results_list
+  
+  return(params)
+}
