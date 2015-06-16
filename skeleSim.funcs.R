@@ -66,7 +66,7 @@ stopRunning <- function(params, elapsed) {
       params@current.scenario, "/", num.sc, " scenarios.\n", sep = "")
   cat("At this rate it is estimated to complete in:",
       round(time.left, 2), units(time.left), "\n")
-  cont <- readline("Press 'n' to stop or any other key to continue")
+  cont <- readline("Press 'n' to stop or any other key to continue: ")
   tolower(cont == "n")
 }
 
@@ -128,4 +128,28 @@ runSim <- function(params) {
   elapsed <- round(params@end.time - params@start.time, 2)
   cat("Elapsed:", elapsed, units(elapsed), "\n")
   params
+}
+
+summ.stats.table<-function(params){
+
+  results.datafr<-params@analysis.results
+  num.sc <- length(params@scenarios)
+  names.stats<-colnames(params@analysis.results)
+  colnames(results.datafr)<-c(names.stats)
+  num.stats<-length(names.stats)-1
+
+  #table of means and SD
+  table.means<-data.frame(matrix(NA,nrow=num.sc,ncol=num.stats))
+  table.sd<-data.frame(matrix(NA,nrow=num.sc,ncol=num.stats))
+  colnames(table.means)<-names.stats[-1]; colnames(table.sd)<-names.stats[-1]
+  for (i in 1:num.stats)
+    table.means[,i]<-tapply(results.datafr[,1+i],results.datafr[,1],mean)
+  for (i in 1:num.stats)
+    table.sd[,i]<-tapply(results.datafr[,1+i],results.datafr[,1],sd)
+  results.list<-list()
+  results.list$means<-table.means
+  results.list$sd<-table.sd
+  params@summary.results<-results.list
+
+  return(params)
 }

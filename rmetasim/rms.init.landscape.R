@@ -12,7 +12,7 @@ skeletonland<-landscape.new.empty()
 #define selfing rate
 skeletonland<-landscape.new.floatparam(skeletonland,s=selfing)
 #Hard coded in current generation, current epoch, max number generations, max number individuals
-skeletonland<-landscape.new.intparam(skeletonland,h=num.pops,s=num.stgs,cg=0,ce=0,totgen=1000,maxland=20000)
+skeletonland<-landscape.new.intparam(skeletonland,h=num.pops,s=num.stgs,cg=0,ce=0,totgen=100000,maxland=100000)
 #Hard coded in multiple paternity (yes) and density dependence (no) parameters
 skeletonland<-landscape.new.switchparam(skeletonland,re=0,rd=0,mp=1,dd=0)
 
