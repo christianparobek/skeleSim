@@ -120,6 +120,7 @@ runSim <- function(params) {
 #       params@analysis.results <- do.call(rbind, analysis.list)
 
   }, finally = setwd(wd))
+  rownames(params$analysis.results) <- NULL
   params@end.time <- Sys.time()
 
   cat("\n--- skeleSim ---\n")
