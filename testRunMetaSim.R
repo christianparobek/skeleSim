@@ -1,7 +1,6 @@
 rm(list = ls())
 source("skeleSim.classes.R")
 source("rmetasim.skeleSim.R")
-library("rmetasim")
 source("skeleSim.funcs.R")
 
 # ---- Load parameters ---
