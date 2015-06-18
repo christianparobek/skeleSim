@@ -73,3 +73,6 @@ test.params <- runSim(test.params)
 
 # ---- Summarize analysis results ----
 test.params <- summ.stats.table(test.params)
+
+plot.all.stats(test.params)
+
