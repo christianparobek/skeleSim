@@ -154,3 +154,40 @@ summ.stats.table<-function(params){
 
   return(params)
 }
+
+
+plot_all_stats<-function(params){
+  
+  results.datafr<-params@analysis.results
+  num.sc <- length(params@scenarios)
+  names.stats<-colnames(params@analysis.results)
+  colnames(results.datafr)<-c(names.stats)
+  num.stats<-length(names.stats)-1
+  
+  #plotting option 1
+  results_melted<-melt(results_df,measure.vars=c(stats_names[-1]))
+  ggplot(results_melted, aes(value)) + 
+      geom_density() + facet_wrap(scenario ~ variable, 
+      ncol = num_stats, scales = "free")
+
+#histogram plot
+ggplot(results_melted, aes(value)) + geom_histogram() +
+  facet_grid(variable~scenario, scales="free")
+  
+  
+#table of means, needed below
+table_means<-data.frame(matrix(NA,nrow=num_scen,ncol=num_stats))
+colnames(table_means)<-stats_names[-1]
+for (i in 1:num_stats)
+  table_means[,i]<-tapply(results_df[,1+i],results_df$scenario,mean)
+
+  #plotting option 2
+  plots <- tapply(1:nrow(results_melted), list(results_melted$scenario, results_melted$variable), function(i) {
+    df <- results_melted[i, ]
+    sc <- unique(df$scenario)
+    vr <- unique(df$variable)
+    ggplot(df, aes(value)) + geom_density() + geom_vline(xintercept=table_means[sc, vr])
+  })
+  do.call(grid.arrange, plots)
+
+}
