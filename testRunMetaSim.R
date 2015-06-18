@@ -11,7 +11,8 @@ test.params@title <- "testRun"
 test.params@date <- Sys.time()
 test.params@quiet <- FALSE
 test.params@question <- "n"
-test.params@simulator <- "f"
+test.params@simulator.type <- "f"
+test.params@simulator <- "rms"
 test.params@num.reps <- 10
 test.params@timing <- 2
 test.params@sim.func <- rms.run
