@@ -34,6 +34,9 @@ base.scenario@mut.rate <- 1e-4
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
+# to change the executable, either explicitly set the @fastsimcoal.exec slot or
+# initialize with:
+#   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
 fsc.params@sample.times <- c(0, 0, 0)
 fsc.params@growth.rate <- c(0, 0, 0)
 fsc.params@hist.ev <- fsc.histEvMat()
