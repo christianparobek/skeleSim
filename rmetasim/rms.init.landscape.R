@@ -7,7 +7,7 @@ rms.init.landscape <- function(num.pops = NULL, carrying = NULL, sample.size = N
                             init.pop.sizes = NULL, num.gen = NULL, num.alleles = NULL, allele.freqs = NULL) {
  
  
-rm(skeletonland)
+if(exists("skeletonland")) rm(skeletonland)
 skeletonland<-landscape.new.empty()
 #define selfing rate
 skeletonland<-landscape.new.floatparam(skeletonland,s=selfing)

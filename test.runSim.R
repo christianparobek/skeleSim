@@ -11,7 +11,8 @@ test.params@title <- "testRun"
 test.params@date <- Sys.time()
 test.params@quiet <- FALSE
 test.params@question <- "n"
-test.params@simulator <- "c"
+test.params@simulator.type <- "c"
+test.params@simulator <- "fsc"
 test.params@num.reps <- 100
 test.params@timing <- 2
 test.params@sim.func <- fsc.run
@@ -34,6 +35,9 @@ base.scenario@mut.rate <- 1e-4
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
+# to change the executable, either explicitly set the @fastsimcoal.exec slot or
+# initialize with:
+#   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
 fsc.params@sample.times <- c(0, 0, 0)
 fsc.params@growth.rate <- c(0, 0, 0)
 fsc.params@hist.ev <- fsc.histEvMat()
@@ -67,3 +71,6 @@ test.params@rep.analysis.func <- function(params) {
 # ---- Run replicates ----
 test.params <- runSim(test.params)
 
+
+# ---- Summarize analysis results ----
+test.params <- summ.stats.table(test.params)
