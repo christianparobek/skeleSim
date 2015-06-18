@@ -159,7 +159,7 @@ summ.stats.table<-function(params){
 
 plot.all.stats<-function(params){
   
-  results.datafr<-params@analysis.results
+  results.datafr<-as.data.frame(params@analysis.results)
   num.sc <- length(params@scenarios)
   names.stats<-colnames(params@analysis.results)
   colnames(results.datafr)<-c(names.stats)
