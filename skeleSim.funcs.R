@@ -158,7 +158,10 @@ summ.stats.table<-function(params){
 
 
 plot.all.stats<-function(params){
-  
+  stopifnot(require("reshape2"))
+  stopifnot(require("ggplot2"))
+  stopifnot(require("gridExtra"))
+
   results.datafr<-as.data.frame(params@analysis.results) 
   num.sc <- length(params@scenarios)
   names.stats<-colnames(params@analysis.results)
