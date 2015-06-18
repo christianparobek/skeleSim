@@ -25,7 +25,7 @@ fsc.run <- function(params) {
 
   # Run fastsimcoal
   err <- system(paste(
-    "fastsimcoal -i", file, "-n 1",
+    sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
     ifelse(sc@simulator.params@inf.site.model, "-I", ""),
     ifelse(params@quiet, "-q", "")
   ), intern = F)

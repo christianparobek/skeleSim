@@ -10,6 +10,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'
 #' @rdname fastsimcoal.classes
 #'
+#' @slot fastsimcoal.exec character string for the fastsimcoal command line
+#'   executable
 #' @slot sample.times a vector giving the number of generations in the past
 #'   at which samples are taken
 #' @slot growth.rate a vector giving the growth rate of each population
@@ -18,11 +20,27 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'
 setClass(
   Class = "fastsimcoal.params",
-  slots = c(sample.times = "intOrNum", growth.rate = "intOrNum",
-            hist.ev = "intOrNum", locus.params = "intOrNum",
-            inf.site.model = "logOrNULL"
+  slots = c(fastsimcoal.exec = "character", sample.times = "intOrNum",
+            growth.rate = "intOrNum", hist.ev = "intOrNum",
+            locus.params = "intOrNum", inf.site.model = "logOrNULL"
   ),
-  prototype = c(sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
+  prototype = c(fastsimcoal.exec = "fsc252", sample.times = NULL,
+                growth.rate = NULL, hist.ev = NULL,
                 locus.params = NULL, inf.site.model = NULL
   )
+)
+
+setMethod("initialize", "fastsimcoal.params",
+  function(.Object, fastsimcoal.exec = "fsc252", sample.times = NULL,
+           growth.rate = NULL, hist.ev = NULL,
+           locus.params = NULL, inf.site.model = NULL
+  ) {
+    .Object@fastsimcoal.exec <- fastsimcoal.exec
+    .Object@sample.times <- sample.times
+    .Object@growth.rate <- growth.rate
+    .Object@hist.ev <- hist.ev
+    .Object@locus.params <- locus.params
+    .Object@inf.site.model <- inf.site.model
+    .Object
+  }
 )

@@ -16,10 +16,15 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot quiet logical determining whether to limit progress reports.
 #' @slot question a single character representing type of analytical question
 #'   being addressed. Can be one of: (n)ull, p(o)wer, (p)erformance.
-#' @slot simulator a single character representing which type of simulator
+#' @slot simulator.type a single character representing which type of simulator
 #'   to use. Can be one of: (c)oalescent or (f)orward-time.
+#' @slot simulator a three character code representing which simulator is being run.
+#'   Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.
 #' @slot scenarios a list of \code{scenario.params} objects.
+#' @slot start.time a POSIXct representation of the starting time of the simulation.
+#' @slot end.time a POSIXct representation of the end time of the simulation.
 #' @slot num.reps number of replicates to run.
+#' @slot timing number of seconds to run to estimate time to completion.
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
 #' @slot last.sample result of last call to \code{sim.func}.
@@ -34,17 +39,18 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "skeleSim.params",
   slots = c(title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
-            question = "charOrNULL", simulator = "charOrNULL", wd = "charOrNULL",
-            scenarios = "listOrNULL",
-            num.reps = "intOrNum", sim.func = "funcOrNULL",
+            question = "charOrNULL", simulator.type = "charOrNULL",
+            simulator = "charOrNULL", wd = "charOrNULL",
+            scenarios = "listOrNULL", start.time = "posixOrNULL", end.time = "posixOrNULL",
+            num.reps = "intOrNum", timing = "intOrNum", sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
-                simulator = NULL, wd = NULL, scenarios = NULL,
-                num.reps = NULL, sim.func = NULL,
+                simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
+                end.time = NULL, num.reps = NULL, timing = NULL, sim.func = NULL,
                 current.scenario = 1, current.replicate = NULL,
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,

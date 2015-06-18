@@ -7,7 +7,7 @@ analyze.onerep <- function(mega.list, FUN){
   if(class(mega.list$rep.result) == "genind"){
 
     ## split by strata needs to be
-    xhierfstat <- genind2hierfstat(mega.list$rep.result, pop=mega.list$rep.result$pop) # @ or $ pop?  mega.list$rep.result@pop
+    xhierfstat <- genind2hierfstat(mega.list$rep.result, pop=mega.list$rep.result$pop) # @ or $ pop? or rep.results[1]? I think this was ignored  mega.list$rep.result@pop
     Summary<-basic.stats(xhierfstat,diploid=TRUE,digits=4)#needs to be separated, so that it gets analysed per population
     Hs<-Summary$overall[c(2)]#this pulls out gene diversity, Hs
     Ho<-Summary$overall[c(1)]#this pulls out obeserved heterozygosities, Ho
@@ -15,21 +15,20 @@ analyze.onerep <- function(mega.list, FUN){
 
   } else {
 
-    gtype.rep.result <- DNAbin2gtypes(mega.list$rep.result, mega.list$rep.result$strata, ) # From function DNAbin2gtypes.R, read.FASTA(), and strata
+    gtype.rep.result <- DNAbin2gtypes(mega.list$rep.result$dna.seq, mega.list$rep.result$strata) # From function DNAbin2gtypes.R, read.FASTA(), and strata
 
-    if(gtype.rep.result strata > 1){ ## ONLY NEEDED FOR SLOW OF strata.split
+#    if(gtype.rep.result strata > 1){ ## ONLY NEEDED FOR SLOW OF strata.split
       ## haplotype diversity and % unique haps per population
       ## strata.split is a bit slow for more populations
       df.hap.div  <- summary(mega.list$rep.result)$by.strata[,3]
       df.pct.haps <- summary(mega.list$rep.result)$by.strata[,4]
 
       if(gtypeobj )
-    } else {
+#    } else {
       ## ARe there other non-split needing by population ones... maybe get rid of that if else
 
     }
 
-    } else if (type = adegenit-SNPs, msat) {
       if(ploidy(mega.list$rep.result) ==
            pop <- strata
     }
