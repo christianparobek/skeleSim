@@ -24,10 +24,10 @@ base.scenario <- new("scenario.params")
 base.scenario@num.pops <- 3
 base.scenario@pop.size <- c(50, 100, 500)
 base.scenario@sample.size <- c(25, 50, 25)
-base.scenario@migration <- matrix(
+base.scenario@migration <- list(matrix(
   c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
   nrow = base.scenario@num.pops
-)
+))
 base.scenario@locus.type <- "sequence"
 base.scenario@num.loci <- 1
 base.scenario@sequence.length <- 400
@@ -40,8 +40,9 @@ fsc.params <- new("fastsimcoal.params")
 #   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
 fsc.params@sample.times <- c(0, 0, 0)
 fsc.params@growth.rate <- c(0, 0, 0)
-fsc.params@hist.ev <- fsc.histEvMat()
-fsc.params@hist.ev[, "num.gen"] <- 100
+fsc.params@hist.ev <- fsc.histEvMat(0)
+#fsc.params@hist.ev[, "num.gen"] <- 100
+#fsc.params@hist.ev[, "sink.deme"] <- 1
 fsc.params@locus.params <- fsc.locusParamsMat(base.scenario)
 fsc.params@inf.site.model <- FALSE
 # load fastsimcoal params
@@ -53,7 +54,7 @@ scenario.list <- lapply(1:3, function(i) base.scenario)
 scenario.list[[2]]@mut.rate <- 1e-5
 scenario.list[[2]]@simulator.params@locus.params <- fsc.locusParamsMat(scenario.list[[2]])
 #  decrease the migration rate in scenario 3...
-scenario.list[[3]]@migration <- scenario.list[[3]]@migration * 0.1
+scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
 
 # load scenarios
 test.params@scenarios <- scenario.list
@@ -67,6 +68,11 @@ test.params@rep.analysis.func <- function(params) {
   params
 }
 
+# --- Set parameter check function ---
+test.params@param.check.func <- function(params) {
+  print(sapply(params@scenarios, fsc.scenarioCheck))
+  TRUE # <--- REMOVE BEFORE FLIGHT
+}
 
 # ---- Run replicates ----
 test.params <- runSim(test.params)
