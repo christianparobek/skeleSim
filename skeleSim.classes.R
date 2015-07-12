@@ -35,6 +35,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot sim.summary.func a function to summarize \code{rep.analysis}.
 #' @slot summary.results a list containign result from call to
 #'   \code{sim.summary.func}.
+#' @slot param.check.func a function to check the parameters object prior to
+#'   running the simualtions
 #'
 setClass(
   Class = "skeleSim.params",
@@ -46,7 +48,8 @@ setClass(
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
-            sim.summary.func = "funcOrNULL", summary.results = "listOrNULL"
+            sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
+            param.check.func = "funcOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
                 simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
@@ -54,7 +57,7 @@ setClass(
                 current.scenario = 1, current.replicate = NULL,
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
-                summary.results = NULL
+                summary.results = NULL, param.check.func = NULL
   )
 )
 
@@ -76,7 +79,7 @@ setClass(
 setClass(
   Class = "scenario.params",
   slots = c(num.pops = "intOrNum", pop.size = "intOrNum",
-            sample.size = "intOrNum", migration = "intOrNum",
+            sample.size = "intOrNum", migration = "listOrNULL",
             locus.type = "charOrNULL", num.loci = "intOrNum",
             sequence.length = "intOrNum", mut.rate = "intOrNum",
             simulator.params = "ANY"

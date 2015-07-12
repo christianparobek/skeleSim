@@ -12,6 +12,12 @@ currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
+migration.check <- function(sc) {
+  sapply(sc@migration, function(mig) {
+    nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
+  })
+}
+
 tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), off = FALSE) {
   if(off) {
     assign(".type", NULL, envir = baseenv())
@@ -77,6 +83,11 @@ runSim <- function(params) {
   }
   dir.create(test.params@wd)
   wd <- setwd(test.params@wd)
+
+  # check parameters
+  if(!is.null(params@param.check.func)) {
+    if(!params@param.check.func(params)) stop("parameters do not pass checks")
+  }
 
   params@start.time <- Sys.time()
   params@analysis.results <- NULL
@@ -162,20 +173,20 @@ plot.all.stats<-function(params){
   stopifnot(require("ggplot2"))
   stopifnot(require("gridExtra"))
 
-  results.datafr<-as.data.frame(params@analysis.results) 
+  results.datafr<-as.data.frame(params@analysis.results)
   num.sc <- length(params@scenarios)
   names.stats<-colnames(params@analysis.results)
   colnames(results.datafr)<-c(names.stats)
   num.stats<-length(names.stats)-1
-  
+
   #plotting option 1
   results.melted<-melt(results.datafr,id="scenario",measure.vars=c(names.stats[-1]))
-  ggplot(results.melted, aes(value)) + 
-      geom_density() + facet_wrap(scenario~variable, 
+  ggplot(results.melted, aes(value)) +
+      geom_density() + facet_wrap(scenario~variable,
       ncol = num.stats, scales = "free")
 
   #histogram plot
   ggplot(results.melted, aes(value)) + geom_histogram() +
   facet_grid(variable~scenario, scales="free")
-  
+
  }
