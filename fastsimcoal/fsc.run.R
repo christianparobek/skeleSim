@@ -40,20 +40,3 @@ fsc.run <- function(params) {
   params@rep.sample <- fsc.read(arp.file, params)
   params
 }
-
-fsc.scenarioCheck <- function(sc) {
-  # check that simulation parameters are of acceptable and conformable size and
-  #   that historical events matrix converges
-  sizes.good <- length(sc@pop.size) == sc@num.pops &
-    length(sc@sample.size) == sc@num.pops &
-    length(sc@simulator.params@sample.times) == sc@num.pops &
-    length(sc@simulator.params@growth.rate) == sc@num.pops
-  migration.good <- migration.check(sc)
-  hist.ev.good <- fsc.histEvConverges(
-    sc@simulator.params@hist.ev,
-    sc@pop.size,
-    sc@simulator.params@growth.rate,
-    length(sc@migration)
-  )
-  sizes.good & migration.good & hist.ev.good
-}

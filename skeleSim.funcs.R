@@ -12,10 +12,37 @@ currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
-migration.check <- function(sc) {
-  sapply(sc@migration, function(mig) {
-    nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
-  })
+gen.scenario.check <-function(params) {
+  #check that number of populations is same as length of pop sizes
+  #check that number of populations is same as length of sample sizes
+  #check that migration matrix is square with sises equal to number pops
+  #check that num.pops has to be 1 or greater
+  #check that num.loci has to be 1 or greater
+  #check that mut.rate between 0 (inclusive) and 1 (exclusive)
+  #check that at least one sample sizes has to be greater than 0
+  #check that migration matrix all between 0 and 1
+  #check that all migration matrix diagonals are 0
+  
+  results.check <- sapply(params@scenarios, function(sc) {
+    
+    c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
+      nsamps.eq.npops = length(sc@sample.size) == sc@num.pops, 
+      is.mig.square = sapply(sc@migration, function(mig) {
+        nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
+        }),
+      at.lst.1.pop = sc@num.pops >= 1,
+      at.lst.1.loc = sc@num.loci >= 1,
+      mut.rate.ok = all((sc@mut.rate>=0)&(sc@mut.rate<1)),
+      at.lst.1.samp = min(sc@sample.size)>0,
+      mig.bet.0.1 = sapply(sc@migration, function(mig) {
+        all((mig>=0)&(mig<=1))
+      }),
+      mig.diag.eq.0 = sapply(sc@migration, function(mig) {
+        all(diag(mig)==0)
+      })
+    )
+  })  
+  return(results.check)
 }
 
 tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), off = FALSE) {
@@ -95,41 +122,31 @@ runSim <- function(params) {
     num.sc <- length(params@scenarios)
     num.reps <- params@num.reps
     if(!is.null(params@timing)) tic()
-      quit <- FALSE
-      # must use nested for loops in order to be able to exit iterations
+    quit <- FALSE
+    # must use nested for loops in order to be able to exit iterations
+    for(r in 1:num.reps) {
+      if(quit) break # leave replicate for loop if user has decided to quit
+      params@current.replicate <- r
       for(sc in 1:num.sc) {
-        if(quit) break # leave scenario for loop if user has decided to quit
         params@current.scenario <- sc
-        for(r in 1:num.reps) {
-          # run one replicate of simulator
-          params@current.replicate <- r
-          rep.result <- oneRep(params)
-          # add analysis results to master matrix
-          params@analysis.results <- rbind(params@analysis.results, rep.result)
-          # check timing
-          if(!is.null(params@timing)) {
-            elapsed <- toc()
-            if(!is.null(elapsed) & elapsed > params@timing) {
-              params@timing <- NULL
-              tic(off = TRUE)
-              if(stopRunning(params, elapsed)) {
-                quit <- TRUE
-                break
-              }
+        # run one replicate of simulator
+        rep.result <- oneRep(params)
+        # add analysis results to master matrix
+        params@analysis.results <- rbind(params@analysis.results, rep.result)
+        # check timing
+        if(!is.null(params@timing)) {
+          elapsed <- toc()
+          if(!is.null(elapsed) & elapsed > params@timing) {
+            params@timing <- NULL
+            tic(off = TRUE)
+            if(stopRunning(params, elapsed)) {
+              quit <- TRUE
+              break
             }
           }
         }
       }
-
-#       analysis.list <- lapply(1:length(params@scenarios), function(sc) {
-#         params@current.scenario <- sc
-#         do.call(rbind, lapply(1:params@num.reps, function(r) {
-#           params@current.replicate <- r
-#           oneRep(params)
-#         }))
-#       })
-#       params@analysis.results <- do.call(rbind, analysis.list)
-
+    }
   }, finally = setwd(wd))
   rownames(params@analysis.results) <- NULL
   params@end.time <- Sys.time()
