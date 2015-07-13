@@ -16,23 +16,23 @@ fsc.histEvMat <- function(num.events = 0) {
   do.call(rbind, lapply(1:num.events, function(x) hist.ev))
 }
 
-fsc.locusParamsMat <- function(params) {
+fsc.locusParamsMat <- function(sc) {
   locus.type <- switch(
-    params@locus.type,
+    sc@locus.type,
     microsat = "MICROSAT", snp = "SNP", sequence = "DNA"
   )
-  num.loci <- params@num.loci
+  num.loci <- sc@num.loci
 
   # locus.length
   #  DNA: sequence length
   #  SNP or MICROSAT: number of loci
-  locus.length <- params@sequence.length
+  locus.length <- sc@sequence.length
 
   # mut.rate
   #   DNA: mutation rate per bp
   #   MICROSAT: mutation rate per locus
   #   SNP: minimum frequency for the derived allele
-  mut.rate <- params@mut.rate
+  mut.rate <- sc@mut.rate
 
   # locus.param.5
   #   DNA: transition rate (1 / 3 = no bias)
