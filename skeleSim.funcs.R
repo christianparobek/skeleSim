@@ -95,41 +95,31 @@ runSim <- function(params) {
     num.sc <- length(params@scenarios)
     num.reps <- params@num.reps
     if(!is.null(params@timing)) tic()
-      quit <- FALSE
-      # must use nested for loops in order to be able to exit iterations
-      for(r in 1:num.reps) {
-        if(quit) break # leave replicate for loop if user has decided to quit
-        params@current.replicate <- r
-        for(sc in 1:num.sc) {
-          params@current.scenario <- sc
-          # run one replicate of simulator
-          rep.result <- oneRep(params)
-          # add analysis results to master matrix
-          params@analysis.results <- rbind(params@analysis.results, rep.result)
-          # check timing
-          if(!is.null(params@timing)) {
-            elapsed <- toc()
-            if(!is.null(elapsed) & elapsed > params@timing) {
-              params@timing <- NULL
-              tic(off = TRUE)
-              if(stopRunning(params, elapsed)) {
-                quit <- TRUE
-                break
-              }
+    quit <- FALSE
+    # must use nested for loops in order to be able to exit iterations
+    for(r in 1:num.reps) {
+      if(quit) break # leave replicate for loop if user has decided to quit
+      params@current.replicate <- r
+      for(sc in 1:num.sc) {
+        params@current.scenario <- sc
+        # run one replicate of simulator
+        rep.result <- oneRep(params)
+        # add analysis results to master matrix
+        params@analysis.results <- rbind(params@analysis.results, rep.result)
+        # check timing
+        if(!is.null(params@timing)) {
+          elapsed <- toc()
+          if(!is.null(elapsed) & elapsed > params@timing) {
+            params@timing <- NULL
+            tic(off = TRUE)
+            if(stopRunning(params, elapsed)) {
+              quit <- TRUE
+              break
             }
           }
         }
       }
-
-#       analysis.list <- lapply(1:length(params@scenarios), function(sc) {
-#         params@current.scenario <- sc
-#         do.call(rbind, lapply(1:params@num.reps, function(r) {
-#           params@current.replicate <- r
-#           oneRep(params)
-#         }))
-#       })
-#       params@analysis.results <- do.call(rbind, analysis.list)
-
+    }
   }, finally = setwd(wd))
   rownames(params@analysis.results) <- NULL
   params@end.time <- Sys.time()
