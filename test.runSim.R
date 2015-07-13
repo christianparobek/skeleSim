@@ -70,7 +70,25 @@ test.params@rep.analysis.func <- function(params) {
 
 # --- Set parameter check function ---
 test.params@param.check.func <- function(params) {
-  print(sapply(params@scenarios, fsc.scenarioCheck))
+  simulator.scenario.check <- fsc.scenarioCheck
+  
+  prv_chk<-params@scen.checks
+  ths_chk<-(rbind(simulator.scenario.check(params),gen.scenario.check(params)))
+  print(prv_chk)
+  print(ths_chk)
+  if (is.null(prv_chk)) params@scen.checks <- ths_chk
+  
+  else {
+    for (i in rownames(ths_chk)) prv_chk[i,] <- ths_chk[i,]
+    params@scen.checks <- prv_chk
+  } 
+  
+  #TO DO write to a file error log
+  
+  #TO DO general checks
+  
+  #output result based on both sets of checks
+  
   TRUE # <--- REMOVE BEFORE FLIGHT
 }
 

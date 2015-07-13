@@ -41,19 +41,20 @@ fsc.run <- function(params) {
   params
 }
 
-fsc.scenarioCheck <- function(sc) {
-  # check that simulation parameters are of acceptable and conformable size and
-  #   that historical events matrix converges
-  sizes.good <- length(sc@pop.size) == sc@num.pops &
-    length(sc@sample.size) == sc@num.pops &
-    length(sc@simulator.params@sample.times) == sc@num.pops &
-    length(sc@simulator.params@growth.rate) == sc@num.pops
-  migration.good <- migration.check(sc)
-  hist.ev.good <- fsc.histEvConverges(
-    sc@simulator.params@hist.ev,
-    sc@pop.size,
-    sc@simulator.params@growth.rate,
-    length(sc@migration)
-  )
-  sizes.good & migration.good & hist.ev.good
+fsc.scenarioCheck <- function(params) {
+  # check that sample times and growth rates are of length number of populations, and
+  #   that historical events matrix converges 
+  results <- sapply(params@scenarios, function(sc) {
+    
+    c(
+      samptime.eq.npops = length(sc@simulator.params@sample.times) == sc@num.pops,
+      growth.eq.npops = length(sc@simulator.params@growth.rate) == sc@num.pops,
+      hist.ev.good = fsc.histEvConverges(
+                            sc@simulator.params@hist.ev,
+                            sc@pop.size,
+                            sc@simulator.params@growth.rate,
+                            length(sc@migration))
+    )
+  })
+  return(results)
 }
