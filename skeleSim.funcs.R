@@ -12,10 +12,20 @@ currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
-migration.check <- function(sc) {
-  sapply(sc@migration, function(mig) {
-    nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
-  })
+gen.scenario.check <-function(params) {
+  #check that number of populations is same as length of pop sizes
+  #check that number of populations is same as length of sample sizes
+  #check that migration matrix is square with sises equal to number pops
+  results.check <- sapply(params@scenarios, function(sc) {
+    
+    c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
+      nsamps.eq.npops = length(sc@sample.size) == sc@num.pops, 
+      is.mig.square = sapply(sc@migration, function(mig) {
+        nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
+        })
+    )
+  })  
+  return(results.check)
 }
 
 tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), off = FALSE) {
