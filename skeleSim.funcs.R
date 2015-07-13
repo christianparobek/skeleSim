@@ -107,12 +107,12 @@ runSim <- function(params) {
     if(!is.null(params@timing)) tic()
       quit <- FALSE
       # must use nested for loops in order to be able to exit iterations
-      for(sc in 1:num.sc) {
-        if(quit) break # leave scenario for loop if user has decided to quit
-        params@current.scenario <- sc
-        for(r in 1:num.reps) {
+      for(r in 1:num.reps) {
+        if(quit) break # leave replicate for loop if user has decided to quit
+        params@current.replicate <- r
+        for(sc in 1:num.sc) {
+          params@current.scenario <- sc
           # run one replicate of simulator
-          params@current.replicate <- r
           rep.result <- oneRep(params)
           # add analysis results to master matrix
           params@analysis.results <- rbind(params@analysis.results, rep.result)
