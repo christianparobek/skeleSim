@@ -69,6 +69,7 @@ test.params@rep.analysis.func <- function(params) {
 }
 
 # --- Set parameter check function ---
+test.params@simulator.scenario.check <- fsc.params.check
 test.params@param.check.func <- function(params) {
   simulator.scenario.check <- fsc.scenarioCheck
   

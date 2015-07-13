@@ -21,14 +21,12 @@ fsc.locusParamsMat <- function(params) {
     params@locus.type,
     microsat = "MICROSAT", snp = "SNP", sequence = "DNA"
   )
-  if(locus.type == "DNA") params@num.loci <- 1
   num.loci <- params@num.loci
 
   # locus.length
   #  DNA: sequence length
   #  SNP or MICROSAT: number of loci
   locus.length <- params@sequence.length
-  if(locus.type != "DNA") locus.length <- 1
 
   # mut.rate
   #   DNA: mutation rate per bp
