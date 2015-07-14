@@ -180,8 +180,10 @@ runSim <- function(params) {
         # run one replicate of simulator
         rep.result <- oneRep(params)
         # add analysis results to master matrix
+        print(r)
         params@analysis.results <- rbind(params@analysis.results, rep.result)
-        # check timing
+        # check 
+        print(r)
         if(!is.null(params@timing)) {
           elapsed <- toc()
           if(!is.null(elapsed) & elapsed > params@timing) {
