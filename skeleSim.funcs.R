@@ -8,13 +8,15 @@ currentLabel <- function(params) {
   gsub("[[:punct:]]", ".", label)
 }
 
+
 currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
+
 overall.check <- function(params) {
   
-  #TO DO write call non.scenario.check
+  #########TO DO write call non.scenario.check#############
   
   #here we call the scenario checks (simulator specific and general)
   prv_chk<-params@sim.scen.checks  #store what is was in check slot
@@ -23,7 +25,7 @@ overall.check <- function(params) {
   print(prv_chk);  print(ths_chk)
   #if what was there is null, replace with new checks
   if (is.null(prv_chk)) params@sim.scen.checks <- ths_chk
-  
+  #else, check which lines are there and replace info
   else {
     for (i in rownames(ths_chk)) {
       if (i %in% rownames(prv_chk)) prv_chk[i,] <- ths_chk[i,] #if it is there, replace it
@@ -35,9 +37,10 @@ overall.check <- function(params) {
     params@sim.scen.checks <- prv_chk
   } 
   
-  #TO DO write to a file error log
+  ##############TO DO write to a file error log#################
   
   #output result based on both sets of checks
+  
   TRUE # <--- REMOVE BEFORE FLIGHT
 }
 
@@ -58,7 +61,7 @@ gen.scenario.check <-function(params) {
   #check that all migration matrix diagonals are 0
  
   results.check <- sapply(params@scenarios, function(sc) {
-    
+    #This will make a vector of TRUE/ FALSE
     c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
       nsamps.eq.npops = length(sc@sample.size) == sc@num.pops, 
       is.mig.square = sapply(sc@migration, function(mig) {
@@ -79,6 +82,7 @@ gen.scenario.check <-function(params) {
   return(results.check)
 }
 
+
 tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), off = FALSE) {
   if(off) {
     assign(".type", NULL, envir = baseenv())
@@ -93,6 +97,7 @@ tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), of
   invisible(tic)
 }
 
+
 toc <- function(show = FALSE) {
   type <- get(".type", envir = baseenv())
   if(is.null(type)) invisible(NULL)
@@ -103,6 +108,7 @@ toc <- function(show = FALSE) {
   if(show) print(elapsed)
   invisible(elapsed)
 }
+
 
 oneRep <- function(params) {
   # runs one replicate of simulator and loads sample into params@rep.sample
@@ -115,6 +121,7 @@ oneRep <- function(params) {
   save(params, file = file.path(label, file))
   c(scenario = params@current.scenario, params@rep.result)
 }
+
 
 stopRunning <- function(params, elapsed) {
   num.sc <- length(params@scenarios)
@@ -136,6 +143,7 @@ stopRunning <- function(params, elapsed) {
   cont <- readline("Press 'n' to stop or any other key to continue: ")
   tolower(cont == "n")
 }
+
 
 runSim <- function(params) {
   # Check/setup folder structure
@@ -192,6 +200,7 @@ runSim <- function(params) {
   params
 }
 
+
 summ.stats.table<-function(params){
 
   results.datafr<-params@analysis.results
@@ -215,7 +224,6 @@ summ.stats.table<-function(params){
 
   return(params)
 }
-
 
 
 plot.all.stats<-function(params){

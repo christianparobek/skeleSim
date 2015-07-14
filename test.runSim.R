@@ -68,11 +68,11 @@ test.params@rep.analysis.func <- function(params) {
   params
 }
 
-# --- Set parameter check function ---
+# --- Set parameter check function for specific simulator---
 test.params@sim.check.func <- fsc.scenarioCheck
 
 
-# ---- Run replicates ----
+# ---- Run replicates ---- (includes error checking)
 test.params <- runSim(test.params)
 
 
