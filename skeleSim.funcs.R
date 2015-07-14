@@ -32,6 +32,7 @@ overall.check <- function(params) {
       else {
         rbind(prv_chk,ths_chk[i,])  #if not, bind it
         rownames(prv_chk)[nrow(prv_chk)]<-i
+        
       }
     }
     params@sim.scen.checks <- prv_chk
