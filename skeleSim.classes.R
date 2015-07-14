@@ -54,7 +54,7 @@ setClass(
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
             sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
-            other.checks = "logOrNULL"
+            other.checks = "logOrNULL", scenario.reps = "intOrNum"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
                 simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
@@ -63,7 +63,7 @@ setClass(
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
                 summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL,
-                other.checks = NULL
+                other.checks = NULL, scenario.reps = "intOrNum"
   )
 )
 

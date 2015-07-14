@@ -117,34 +117,16 @@ toc <- function(show = FALSE) {
 }
 
 
-oneRep <- function(params) {
-  # runs one replicate of simulator and loads sample into params@rep.sample
-  params <- params@sim.func(params)
-  # analyzes params@rep.sample and loads results into params@rep.result
-  params <- params@rep.analysis.func(params)
-  label <- currentLabel(params)
-  file <- paste(label, ".params.rdata", sep = "")
-  if(!dir.exists(label)) dir.create(label)
-  save(params, file = file.path(label, file))
-  c(scenario = params@current.scenario, params@rep.result)
-}
-
-
-stopRunning <- function(params, elapsed) {
-  num.sc <- length(params@scenarios)
-  num.reps <- params@num.reps
-  reps.complete <- ((params@current.scenario - 1) * num.reps) + params@current.replicate
-  total.reps <- num.sc * num.reps
-  pct.complete <- round(100 * reps.complete / total.reps, 1)
-  seconds.left <- (total.reps - reps.complete) * elapsed / num.reps
+stopRunning <- function(i, n, elapsed) {
+  pct.complete <- round(100 * i / n, 1)
+  seconds.left <- (n - i) * elapsed / n
   eta <- Sys.time() + as.difftime(seconds.left, units = "secs")
   time.left <- eta - Sys.time()
 
   cat("\n--- skeleSim ---\n")
   cat("In ", round(elapsed, 1), " seconds, the simulator is ",
       pct.complete, "% complete: ",
-      params@current.replicate, "/", num.reps, " replicates in ",
-      params@current.scenario, "/", num.sc, " scenarios.\n", sep = "")
+      i, "/", n, " iterations.\n", sep = "")
   cat("At this rate it is estimated to complete in:",
       round(time.left, 2), units(time.left), "\n")
   cont <- readline("Press 'n' to stop or any other key to continue: ")
@@ -175,38 +157,43 @@ runSim <- function(params) {
   tryCatch({
     num.sc <- length(params@scenarios)
     num.reps <- params@num.reps
+    sc.vec <- rep(1:num.sc, num.reps)
+    rep.vec <- rep(1:num.reps, each = num.sc)
+    params@scenario.reps <- cbind(scenario = sc.vec, replicate = rep.vec)
     if(!is.null(params@timing)) tic()
     quit <- FALSE
-    # must use nested for loops in order to be able to exit iterations
-    for(r in 1:num.reps) {
+    # loop through replicates for scenarios
+    num.iter <- nrow(params@scenario.reps)
+    for(i in 1:num.iter) {
       if(quit) break # leave replicate for loop if user has decided to quit
-      params@current.replicate <- r
-      for(sc in 1:num.sc) {
-        params@current.scenario <- sc
-        # run one replicate of simulator
-        rep.result <- oneRep(params)
-        # add analysis results to master matrix
-        print(r)
-        params@analysis.results <- rbind(params@analysis.results, rep.result)
-        # check 
-        print(r)
-        if(!is.null(params@timing)) {
-          elapsed <- toc()
-          if(!is.null(elapsed) & elapsed > params@timing) {
-            params@timing <- NULL
-            tic(off = TRUE)
-            if(stopRunning(params, elapsed)) {
-              quit <- TRUE
-              break
-            }
+      params@current.scenario <- params@scenario.reps[i, "scenario"]
+      params@current.replicate <- params@scenario.reps[i, "replicate"]
+      # run one replicate of simulator
+      params <- params@sim.func(params)
+      # analyzes params@rep.sample and loads results into params@rep.result
+      params <- params@rep.analysis.func(params)
+# -->> REMOVE FOR RELEASE: SAVING params OBJECT FOR TESTING <<--
+      label <- currentLabel(params)
+      file <- paste(label, ".params.rdata", sep = "")
+      if(!dir.exists(label)) dir.create(label)
+      save(params, file = file.path(label, file))
+      # check timing
+      if(!is.null(params@timing)) {
+        elapsed <- toc()
+        if(!is.null(elapsed) & elapsed > params@timing) {
+          params@timing <- NULL
+          tic(off = TRUE)
+          if(stopRunning(i, num.iter, elapsed)) {
+            quit <- TRUE
+            break
           }
         }
       }
     }
   }, finally = setwd(wd))
-  rownames(params@analysis.results) <- NULL
-  params@end.time <- Sys.time()
 
+  # display run timing
+  params@end.time <- Sys.time()
   cat("\n--- skeleSim ---\n")
   cat("Start:", format(params@start.time), "\n")
   cat("End:", format(params@end.time), "\n")
