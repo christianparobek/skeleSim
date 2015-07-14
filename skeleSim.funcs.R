@@ -140,7 +140,9 @@ runSim <- function(params) {
   if(!all(params@other.checks, params@sim.scen.checks)) {
     filewr <- "error.log"
     write.csv(params@sim.scen.checks, file=filewr)
-    write(params@other.checks, file=filewr,append=T)
+    print(params@other.checks)
+    write("\n",file=filewr,append=T)
+    write.table(params@other.checks, file=filewr,append=T)
     
     stop("parameters do not pass checks; see error log for details")
   }

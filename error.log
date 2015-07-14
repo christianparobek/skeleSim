@@ -20,4 +20,8 @@
 "at.lst.1.samp",TRUE,TRUE,TRUE
 "mig.bet.0.1",TRUE,TRUE,TRUE
 "mig.diag.eq.0",TRUE,TRUE,TRUE
-TRUE TRUE
+
+
+"x"
+"title.not.null" TRUE
+"at.least.1.rep" TRUE
