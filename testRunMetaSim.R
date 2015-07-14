@@ -23,7 +23,7 @@ test.params@wd <- "testRun.wd"
 base.scenario <- new("scenario.params")		
 base.scenario@num.pops <- 2		#input from user, only integer allowed
 base.scenario@pop.size <- c(400,400)	#input from user, only vector of integers allowed
-base.scenario@sample.size <- c(30,30)		#input from user, only integer allowed; could change to vector of integers
+base.scenario@sample.size <- c(5,5)		#input from user, only integer allowed; could change to vector of integers
 base.scenario@migration <- list(
           matrix(c(0,.1,.1,0),
           byrow=T,nrow=2
@@ -62,7 +62,7 @@ base.scenario@simulator.params <- rms.params
 # can they choose more than one parameter?
 scenario.list <- lapply(1:3, function(i) base.scenario)
 #  decrease the mutation rate in scenario 2...
-scenario.list[[2]]@mut.rate <- rep(1e-5,1)
+scenario.list[[2]]@mut.rate <- rep(1e-5,10)
 #  decrease the migration rate in scenario 3...
 scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
 

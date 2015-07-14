@@ -32,6 +32,7 @@ overall.check <- function(params) {
       else {
         rbind(prv_chk,ths_chk[i,])  #if not, bind it
         rownames(prv_chk)[nrow(prv_chk)]<-i
+        
       }
     }
     params@sim.scen.checks <- prv_chk
@@ -252,3 +253,16 @@ plot.all.stats<-function(params){
   facet_grid(variable~scenario, scales="free")
 
  }
+
+#function to calculate Garza Williamson M ratio (bottleneck) statistic, per pop, per loc
+calc.gw <- function(gen.data, p, l) {  
+  #first subset the genind object for population p and locus l
+  this.pop<-gen.data[pop=p,loc=l]
+  #find the smallest allele present
+  min.all <- min(which(colSums(this.pop@tab)>0))
+  #find the largest allele present
+  max.all <- max(which(colSums(this.pop@tab)>0))	
+  #calculate the number of alleles present 
+  sum.all.present <- sum((colSums(this.pop@tab)>0))
+  sum.all.present/(max.all-min.all+1)
+}
