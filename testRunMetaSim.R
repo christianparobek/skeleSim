@@ -23,9 +23,11 @@ test.params@wd <- "testRun.wd"
 base.scenario <- new("scenario.params")		
 base.scenario@num.pops <- 2		#input from user, only integer allowed
 base.scenario@pop.size <- c(400,400)	#input from user, only vector of integers allowed
-base.scenario@sample.size <- 30		#input from user, only integer allowed
-					#could change to vector of integers
-base.scenario@migration <- matrix(c(0,.1,.1,0),byrow=T,nrow=2) 	#input from user, only matrix
+base.scenario@sample.size <- c(30,30)		#input from user, only integer allowed; could change to vector of integers
+base.scenario@migration <- list(
+          matrix(c(0,.1,.1,0),
+          byrow=T,nrow=2
+          )) 	#input from user, only list of matrices
 base.scenario@locus.type <- "microsat"	#input from user, a choice of three types 
 base.scenario@num.loci <- 10		#input from user, only integer allowed
 base.scenario@mut.rate <- rep(1e-4,10) 		#input from user, only numeric between 0 and 1 allowed
@@ -62,7 +64,7 @@ scenario.list <- lapply(1:3, function(i) base.scenario)
 #  decrease the mutation rate in scenario 2...
 scenario.list[[2]]@mut.rate <- 1e-5
 #  decrease the migration rate in scenario 3...
-scenario.list[[3]]@migration <- scenario.list[[3]]@migration * 0.1
+scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
 
 # load scenarios
 test.params@scenarios <- scenario.list
@@ -76,6 +78,9 @@ test.params@rep.analysis.func <- function(params) {
   params@rep.result <- result
   params
 }
+
+# --- Set parameter check function for specific simulator---
+test.params@sim.check.func <- rms.scenarioCheck
 
 
 # ---- Run replicates ----

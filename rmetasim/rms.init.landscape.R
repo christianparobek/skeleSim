@@ -22,7 +22,7 @@ for (i in 1:num.pops)
 
 #cross habitat matrices
 epoch_s_matr<-matrix(0,nrow=4, ncol=4)
-epoch_r_matr<-landscape.mig.matrix(h=num.pops,s=num.stgs,R.custom=mig.rates, mig.model="custom")$R
+epoch_r_matr<-landscape.mig.matrix(h=num.pops,s=num.stgs,mig.model="stepping.stone.linear")$R
 epoch_m_matr<-matrix(0,nrow=4, ncol=4)
 
 #no extinction allowed, hard coded

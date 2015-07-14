@@ -78,9 +78,9 @@ gen.scenario.check <-function(params) {
       at.lst.1.loc = sc@num.loci >= 1,
       mut.rate.ok = all((sc@mut.rate>=0)&(sc@mut.rate<1)),
       at.lst.1.samp = min(sc@sample.size)>0,
-      mig.bet.0.1 = sapply(sc@migration, function(mig) {
-        all((mig>=0)&(mig<=1))
-      }),
+      #mig.bet.0.1 = sapply(sc@migration, function(mig) {
+      #  all((mig>=0)&(mig<=1))
+      #}),
       mig.diag.eq.0 = sapply(sc@migration, function(mig) {
         all(diag(mig)==0)
       })
@@ -180,8 +180,10 @@ runSim <- function(params) {
         # run one replicate of simulator
         rep.result <- oneRep(params)
         # add analysis results to master matrix
+        print(r)
         params@analysis.results <- rbind(params@analysis.results, rep.result)
-        # check timing
+        # check 
+        print(r)
         if(!is.null(params@timing)) {
           elapsed <- toc()
           if(!is.null(elapsed) & elapsed > params@timing) {
