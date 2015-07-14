@@ -17,7 +17,7 @@ currentScenario <- function(params) {
 overall.check <- function(params) {
 
   params@other.checks<-non.scenario.check(params)
-  print(params)
+  print(params@other.checks)
   #here we call the scenario checks (simulator specific and general)
   prv_chk<-params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
@@ -153,16 +153,22 @@ stopRunning <- function(params, elapsed) {
 
 
 runSim <- function(params) {
+  # check parameters
+  params<-overall.check(params)
+  if(!all(params@other.checks, params@sim.scen.checks)) {
+    filewr <- "error.log"
+    write.csv(params@sim.scen.checks, file=filewr)
+    write(params@other.checks, file=filewr,append=T)
+    
+    stop("parameters do not pass checks; see error log for details")
+  }
+  
   # Check/setup folder structure
   if(file.exists(params@wd)) {
     unlink(params@wd, recursive = TRUE, force = TRUE)
   }
   dir.create(params@wd)
   wd <- setwd(params@wd)
-
-  # check parameters
-  params<-overall.check(params)
-  if(!all(params@other.checks, params@sim.scen.checks)) stop("parameters do not pass checks")
 
   params@start.time <- Sys.time()
   params@analysis.results <- NULL
