@@ -36,9 +36,9 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot sim.summary.func a function to summarize \code{rep.analysis}.
 #' @slot summary.results a list containign result from call to
 #'   \code{sim.summary.func}.
-#' @slot param.check.func a function to check the parameters object prior to
+#' @slot sim.check.func a function to check the parameters object prior to
 #'   running the simualtions
-#' @slot scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
+#' @slot sim.scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
 #'
 setClass(
   Class = "skeleSim.params",
@@ -51,7 +51,7 @@ setClass(
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
-            param.check.func = "funcOrNULL", scen.checks = "matrOrNULL"
+            sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
                 simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
@@ -59,7 +59,7 @@ setClass(
                 current.scenario = 1, current.replicate = NULL,
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
-                summary.results = NULL, param.check.func = NULL, scen.checks = NULL
+                summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL
   )
 )
 

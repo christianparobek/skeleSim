@@ -12,6 +12,40 @@ currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
+overall.check <- function(params) {
+  
+  #TO DO write call non.scenario.check
+  
+  #here we call the scenario checks (simulator specific and general)
+  prv_chk<-params@sim.scen.checks  #store what is was in check slot
+  #then calculate new checks
+  ths_chk<-(rbind(params@sim.check.func(params),gen.scenario.check(params)))
+  print(prv_chk);  print(ths_chk)
+  #if what was there is null, replace with new checks
+  if (is.null(prv_chk)) params@sim.scen.checks <- ths_chk
+  
+  else {
+    for (i in rownames(ths_chk)) {
+      if (i %in% rownames(prv_chk)) prv_chk[i,] <- ths_chk[i,] #if it is there, replace it
+      else {
+        rbind(prv_chk,ths_chk[i,])  #if not, bind it
+        rownames(prv_chk)[nrow(prv_chk)]<-i
+      }
+    }
+    params@sim.scen.checks <- prv_chk
+  } 
+  
+  #TO DO write to a file error log
+  
+  #output result based on both sets of checks
+  TRUE # <--- REMOVE BEFORE FLIGHT
+}
+
+
+non.scenario.check<- function(params) {
+  #TO DO STUFF
+}
+
 gen.scenario.check <-function(params) {
   #check that number of populations is same as length of pop sizes
   #check that number of populations is same as length of sample sizes
@@ -22,7 +56,7 @@ gen.scenario.check <-function(params) {
   #check that at least one sample sizes has to be greater than 0
   #check that migration matrix all between 0 and 1
   #check that all migration matrix diagonals are 0
-  
+ 
   results.check <- sapply(params@scenarios, function(sc) {
     
     c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
@@ -112,9 +146,8 @@ runSim <- function(params) {
   wd <- setwd(test.params@wd)
 
   # check parameters
-  if(!is.null(params@param.check.func)) {
-    if(!params@param.check.func(params)) stop("parameters do not pass checks")
-  }
+    if(!overall.check(params)) stop("parameters do not pass checks")
+  
 
   params@start.time <- Sys.time()
   params@analysis.results <- NULL
