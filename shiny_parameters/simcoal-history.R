@@ -61,11 +61,11 @@ simcoal.history.plot <- function(history
                         arrows(x.source,y,x.sink,y)
                     }
             }
-        ###now deal with the sink-only situations (should be one at most)
+        ###now deal with the sink-only situations (should be one)
         spops <- unique(history$sink[!history$sink%in%history$source])
         for (i in spops)
             {
-                arrows(i,0,i,max(history$time)*1.1)
+                arrows(i,0,i,max(history$time)*1.2)
             }
     }
 
@@ -92,6 +92,9 @@ simcoal.history.change <- function(history,
                                        0)
         #            history
                 }
+            #check and make sure that the oldest sink does not sink into another deme
+            history <- history[order(-history$time),]
+            if (history[1,3] %in% history[,2]) {history <- history[-1,]}
         }
     if (is.history(history)) history else oldhist
 }

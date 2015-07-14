@@ -3,6 +3,36 @@
 # these are renderUI statements that only make sense
 # included into the skelesim parameter interface
 # using source()
+
+#scenario UIs  this allows the defaults to be set for particular scenarios
+
+output$scenarioNumberUI <- renderUI({
+    numericInput("scenarioNumber", "Which scenario",
+             value = 1)
+})
+
+output$mutrateUI <- renderUI({
+    numericInput("mut.rate", "Mutation Rate",
+             value = 1e-4)
+})
+
+
+
+output$mutrateUI <- renderUI({
+    numericInput("mut.rate", "Mutation Rate",
+             value = 1e-4)
+})
+
+
+output$migmodelUI <- renderUI({
+selectInput("migModel", "Migration Model",
+            c("island","stepping.stone.linear",
+              "stepping.stone.circular","twoD","twoDwDiagonal","distance"))
+})
+
+output$migrateUI <- renderUI(
+    {numericInput("migRate", "Migration rate",1)}
+    )
                                         #
 output$rows <- renderUI({
     if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))

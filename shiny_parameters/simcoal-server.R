@@ -7,16 +7,25 @@ hst <- reactive({
         {
             histry <<- NULL
         } 
-    if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
-#    print(input$numpops)
-#    print(is.null(histry))
-    
+
     if (!is.null(input$histplotDblclick)) lstdblclick <<- input$histplotDblclick
     if (!is.null(input$histplotClick)) lstclick <<- input$histplotClick
+
+    if (!is.null(histry))
+        {
+            plist <- unique(c(histry[,2],histry[,3]))
+            if (length(plist)!=input$numpops) {
+                print(plist)
+                print(input$numpops)
+                print ("Resetting history")
+                histry <<- NULL
+            }
+        }
     
-    
+
     if (is.null(histry))
         {
+            if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
             histry<<-create.new.history(npop=pops)
 #            print("TEST")
         }  else  {

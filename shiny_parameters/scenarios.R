@@ -27,10 +27,13 @@ inmat <- reactive({
 })
 
 observe({
+#    print(input$numpops)
+#    print(paste("repopMig",input$repopulateMig))
     if (input$repopulateMig == 0) 
         return()
    isolate({
     output$migmat <-renderTable({
+
         mat <- mig.mat()
         retmat <- matrix("",dim(mat)[1],dim(mat)[2])
         for (row in 1:input$numpops)

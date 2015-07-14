@@ -1,12 +1,19 @@
 source("setup.R")
 
 ####
-### dreaded global variable
-histry <<- NULL  #saves a simcoal history
-lstclick <- NULL
-lstdblclick <- NULL
-shinyServer(function(input, output,session) {
+### dreaded global variables
+histry <<- NULL     #saves a simcoal history
+lstclick <<- NULL    #last click
+lstdblclick <<- NULL #last double click
+scenarios <<- vector("list",1)   #will be a list of scenarios, start with one
 
+
+shinyServer(function(input, output,session) {
+    
+##################### include the server code for Christians implemntation of
+##################### the initial skelesim questions
+source("intro-questions-server.R",local=T)
+    
 ##################### server-side user interface specifcations
 #####################  are in the file renderUI.R
 source("renderUI.R",local=T)

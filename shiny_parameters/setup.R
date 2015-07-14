@@ -9,4 +9,4 @@ require(igraph)
 source("utils.R")
 source("mig.matrix.R")
 source("simcoal-history.R")
-
+source("../skeleSim.classes.R")
