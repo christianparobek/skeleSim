@@ -4,7 +4,7 @@ rms.scenarioCheck <- function(params) {
   results <- sapply(params@scenarios, function(sc) {
     
     c(
-      dim(sc@simulator.params@surv.matr)==dim(sc@simulator.params@repr.matr)
+      dem.matr.same.dims <- dim(sc@simulator.params@surv.matr)==dim(sc@simulator.params@repr.matr)
     )
   })
   return(results)

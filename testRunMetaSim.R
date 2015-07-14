@@ -14,7 +14,7 @@ test.params@question <- "n"
 test.params@simulator.type <- "f"	#input from user, choice
 test.params@simulator <- "rms"
 test.params@num.reps <- 10	#input from user, only integer allowed
-test.params@timing <- 2		#input from user (or hard code), only integer allowed
+test.params@timing <- 10		#input from user (or hard code), only integer allowed
 test.params@sim.func <- rms.run
 test.params@wd <- "testRun.wd"
 
@@ -46,7 +46,7 @@ rms.params@male.matr = matrix(c(	0,0,
 	                        		0,1),nrow=2,byrow=T)
 rms.params@init.pop.sizes = c(100,100,100,100)	#input from user, only vector of integers
 					#NOTE: this is per stage, per habitat, so SxH integers needed
-rms.params@num.gen = 5				#input from user, only vector of integers
+rms.params@num.gen = 1				#input from user, only vector of integers
 rms.params@num.alleles = rep(5,10) 	#input from user, only vector of length number of loci, integers
 					#NOTE this is a number of alleles for each locus
 rms.params@allele.freqs = rep(.2,5)	#input from user, only vector of length number of alleles, numeric
@@ -62,7 +62,7 @@ base.scenario@simulator.params <- rms.params
 # can they choose more than one parameter?
 scenario.list <- lapply(1:3, function(i) base.scenario)
 #  decrease the mutation rate in scenario 2...
-scenario.list[[2]]@mut.rate <- 1e-5
+scenario.list[[2]]@mut.rate <- rep(1e-5,10)
 #  decrease the migration rate in scenario 3...
 scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
 
@@ -88,7 +88,7 @@ test.params <- runSim(test.params)
 
 
 # ---- Summarize analysis results ----
-test.params <- summ.stats.table(test.params)
+#test.params <- summ.stats.table(test.params)
 
-plot.all.stats(test.params)
+#plot.all.stats(test.params)
 
