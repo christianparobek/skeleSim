@@ -43,6 +43,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot other.checks a vector containing results of 'checks' on other param object elements
 #' @slot scenario.reps a two column matrix describing which iteration matches
 #'   which scenario/replicate
+#' @slot analyses.requested vector of logicals specifying "Global", "Population",
+#'   "Locus", or "Pairwise" analyses have been requested.
 #'
 setClass(
   Class = "skeleSim.params",
@@ -53,10 +55,11 @@ setClass(
             num.reps = "intOrNum", timing = "intOrNum", sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
-            rep.result = "intOrNum", analysis.results = "intOrNum",
+            rep.result = "intOrNum", analysis.results = "ANY",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
             sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
-            other.checks = "logOrNULL", scenario.reps = "intOrNum"
+            other.checks = "logOrNULL", scenario.reps = "intOrNum",
+            analyses.requested = "logOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
                 simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
@@ -65,7 +68,9 @@ setClass(
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
                 summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL,
-                other.checks = NULL, scenario.reps = "intOrNum"
+                other.checks = NULL, scenario.reps = NULL,
+                analyses.requested = c(Global = TRUE, Population = TRUE, Locus = TRUE,
+                                       Pairwise = TRUE)
   )
 )
 

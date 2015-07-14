@@ -18,7 +18,7 @@ shinyUI(navbarPage("skelesim",
                                         # for the file uploader
                                     fileInput("file", label = h3("OR choose file to upload"))
                                     ),
-                                
+
                                 mainPanel(
                                     includeMarkdown("helpfiles/help-questions.md"),
                                     h3(textOutput("simname", container = span)),
@@ -52,7 +52,7 @@ shinyUI(navbarPage("skelesim",
                                     ),
                                 mainPanel()
                                 )),
-                   
+
                    tabPanel("Scenario Config.",
                             sidebarLayout(
                                 sidebarPanel(
@@ -76,14 +76,14 @@ shinyUI(navbarPage("skelesim",
                                                  textOutput("scenDebug"))
                                         ))
                                 )),
-                   
+
                    tabPanel("Specific simulation config.",
                             sidebarLayout(
                                 sidebarPanel(
                                     uiOutput("infsitesUI"),
                                     uiOutput("simhistUI")
                                     ),
-                                
+
                                 mainPanel(
                                     conditionalPanel(
                                         condition = "input.coalescent == true",
@@ -97,6 +97,13 @@ shinyUI(navbarPage("skelesim",
                                             )
                                         )
                                     ))
-                            )
+                            ),
+                   # Adding Simulator tab
+                   tabPanel("Run Simulator.",
+                            sidebarLayout(
+                              sidebarPanel(actionButton("runSim", "Run Simulation")),
+                              mainPanel()
+                   )
                    )
         )
+)
