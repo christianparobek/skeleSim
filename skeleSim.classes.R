@@ -41,6 +41,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'   running the simualtions
 #' @slot sim.scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
 #' @slot other.checks a vector containing results of 'checks' on other param object elements
+#' @slot scenario.reps a two column matrix describing which iteration matches
+#'   which scenario/replicate
 #'
 setClass(
   Class = "skeleSim.params",
