@@ -53,7 +53,7 @@ setClass(
             num.reps = "intOrNum", timing = "intOrNum", sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
-            rep.result = "intOrNum", analysis.results = "intOrNum",
+            rep.result = "intOrNum", analysis.results = "ANY",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
             sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
             other.checks = "logOrNULL", scenario.reps = "intOrNum"
