@@ -65,7 +65,7 @@ output$infsitesUI <- renderUI({
                           value = FALSE)
         } else {
         }
-})        
+})
 
 output$simhistUI <- renderUI({
     if (input$coalescent==T)
@@ -74,6 +74,6 @@ output$simhistUI <- renderUI({
                           value = FALSE)
         } else {
         }
-})        
+})
 
 
