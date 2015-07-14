@@ -23,7 +23,7 @@ test.params@wd <- "testRun.wd"
 base.scenario <- new("scenario.params")
 base.scenario@num.pops <- 3
 base.scenario@pop.size <- c(50, 100, 500)
-base.scenario@sample.size <- c(25, 50)
+base.scenario@sample.size <- c(25, 50, 25)
 base.scenario@migration <- list(matrix(
   c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
   nrow = base.scenario@num.pops
