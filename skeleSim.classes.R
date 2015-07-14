@@ -4,6 +4,7 @@ setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
+setClassUnion("vectOrNULL", c("vector", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 
 #' @title skeleSim Parameters Class
@@ -39,6 +40,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot sim.check.func a function to check the parameters object prior to
 #'   running the simualtions
 #' @slot sim.scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
+#' @slot other.checks a vector containing results of 'checks' on other param object elements
 #'
 setClass(
   Class = "skeleSim.params",
@@ -51,7 +53,8 @@ setClass(
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "intOrNum",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
-            sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL"
+            sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
+            other.checks = "logOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
                 simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
@@ -59,7 +62,8 @@ setClass(
                 current.scenario = 1, current.replicate = NULL,
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
-                summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL
+                summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL,
+                other.checks = NULL
   )
 )
 

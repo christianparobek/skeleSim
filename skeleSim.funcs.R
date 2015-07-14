@@ -16,8 +16,8 @@ currentScenario <- function(params) {
 
 overall.check <- function(params) {
   
-  #########TO DO write call non.scenario.check#############
-  
+  params@other.checks<-non.scenario.check(params)
+  print(params)
   #here we call the scenario checks (simulator specific and general)
   prv_chk<-params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
@@ -40,13 +40,20 @@ overall.check <- function(params) {
   ##############TO DO write to a file error log#################
   
   #output result based on both sets of checks
+  return(params)
   
-  TRUE # <--- REMOVE BEFORE FLIGHT
 }
 
 
 non.scenario.check<- function(params) {
-  #TO DO STUFF
+  #check that number of reps is greater than 0
+  results.check <- c(
+    title.not.null <- !is.null(params@title),
+    at.least.1.rep <- params@num.reps > 0
+  )
+  names(results.check) <- c("title.not.null", "at.least.1.rep")
+  print(results.check)
+  return(results.check)
 }
 
 gen.scenario.check <-function(params) {
@@ -147,15 +154,15 @@ stopRunning <- function(params, elapsed) {
 
 runSim <- function(params) {
   # Check/setup folder structure
-  if(file.exists(test.params@wd)) {
-    unlink(test.params@wd, recursive = TRUE, force = TRUE)
+  if(file.exists(params@wd)) {
+    unlink(params@wd, recursive = TRUE, force = TRUE)
   }
-  dir.create(test.params@wd)
-  wd <- setwd(test.params@wd)
+  dir.create(params@wd)
+  wd <- setwd(params@wd)
 
   # check parameters
-    if(!overall.check(params)) stop("parameters do not pass checks")
-  
+  params<-overall.check(params)
+  if(!(params@other.checks==TRUE)&(params@sim.scen.checks==TRUE)) stop("parameters do not pass checks")
 
   params@start.time <- Sys.time()
   params@analysis.results <- NULL

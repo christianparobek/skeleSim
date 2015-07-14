@@ -23,7 +23,7 @@ test.params@wd <- "testRun.wd"
 base.scenario <- new("scenario.params")
 base.scenario@num.pops <- 3
 base.scenario@pop.size <- c(50, 100, 500)
-base.scenario@sample.size <- c(25, 50, 25)
+base.scenario@sample.size <- c(25, 50)
 base.scenario@migration <- list(matrix(
   c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
   nrow = base.scenario@num.pops
@@ -35,6 +35,7 @@ base.scenario@mut.rate <- 1e-4
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
+fsc.params@fastsimcoal.exec <- "fsc252.exe" #for windows machines
 # to change the executable, either explicitly set the @fastsimcoal.exec slot or
 # initialize with:
 #   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
