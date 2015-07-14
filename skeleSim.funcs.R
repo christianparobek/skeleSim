@@ -15,7 +15,7 @@ currentScenario <- function(params) {
 
 
 overall.check <- function(params) {
-  
+
   params@other.checks<-non.scenario.check(params)
   print(params)
   #here we call the scenario checks (simulator specific and general)
@@ -35,13 +35,13 @@ overall.check <- function(params) {
       }
     }
     params@sim.scen.checks <- prv_chk
-  } 
-  
+  }
+
   ##############TO DO write to a file error log#################
-  
+
   #output result based on both sets of checks
   return(params)
-  
+
 }
 
 
@@ -66,11 +66,11 @@ gen.scenario.check <-function(params) {
   #check that at least one sample sizes has to be greater than 0
   #check that migration matrix all between 0 and 1
   #check that all migration matrix diagonals are 0
- 
+
   results.check <- sapply(params@scenarios, function(sc) {
     #This will make a vector of TRUE/ FALSE
     c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
-      nsamps.eq.npops = length(sc@sample.size) == sc@num.pops, 
+      nsamps.eq.npops = length(sc@sample.size) == sc@num.pops,
       is.mig.square = sapply(sc@migration, function(mig) {
         nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
         }),
@@ -85,7 +85,7 @@ gen.scenario.check <-function(params) {
         all(diag(mig)==0)
       })
     )
-  })  
+  })
   return(results.check)
 }
 
@@ -162,7 +162,7 @@ runSim <- function(params) {
 
   # check parameters
   params<-overall.check(params)
-  if(!(params@other.checks==TRUE)&(params@sim.scen.checks==TRUE)) stop("parameters do not pass checks")
+  if(!all(params@other.checks, params@sim.scen.checks)) stop("parameters do not pass checks")
 
   params@start.time <- Sys.time()
   params@analysis.results <- NULL

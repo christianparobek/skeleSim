@@ -35,7 +35,7 @@ base.scenario@mut.rate <- 1e-4
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
-fsc.params@fastsimcoal.exec <- "fsc252.exe" #for windows machines
+fsc.params@fastsimcoal.exec <- if(.Platform$OS.type == "windows") "fsc252.exe" else "fsc252"
 # to change the executable, either explicitly set the @fastsimcoal.exec slot or
 # initialize with:
 #   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
