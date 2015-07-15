@@ -49,12 +49,11 @@ if(is.null(params@analysis.results)){
     # in each iteration of the for loop, x will have only one value!
 
 if(x == "Global"){
-  # check the data type and do conversions for what is needed
-
-
   #initialize arrays
   if (class(params@analysis.result)=="multidna")
     scenario.results[[x]][[params@current.scenario]] <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
+  ## need to convert to gtypes (list of DNAbin) objects and iterate over sequences
+
   else if (class(params@analysis.result)=="genind")
     scenario.results[[x]][[params@current.scenario]] <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
 
