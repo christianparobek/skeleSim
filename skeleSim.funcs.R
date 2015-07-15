@@ -15,13 +15,12 @@ currentScenario <- function(params) {
 
 
 overall.check <- function(params) {
-
-  params@other.checks<-non.scenario.check(params)
+  params@other.checks <- non.scenario.check(params)
   print(params@other.checks)
   #here we call the scenario checks (simulator specific and general)
   prv_chk<-params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
-  ths_chk<-(rbind(params@sim.check.func(params),gen.scenario.check(params)))
+  ths_chk <- rbind(params@sim.check.func(params), gen.scenario.check(params))
   print(prv_chk);  print(ths_chk)
   #if what was there is null, replace with new checks
   if (is.null(prv_chk)) params@sim.scen.checks <- ths_chk
@@ -47,12 +46,11 @@ overall.check <- function(params) {
 
 
 non.scenario.check<- function(params) {
-  #check that number of reps is greater than 0
   results.check <- c(
-    title.not.null <- !is.null(params@title),
-    at.least.1.rep <- params@num.reps > 0
+    title.not.null = !is.null(params@title),
+    #check that number of reps is greater than 0
+    at.least.1.rep = params@num.reps > 0
   )
-  names(results.check) <- c("title.not.null", "at.least.1.rep")
   print(results.check)
   return(results.check)
 }
@@ -120,7 +118,7 @@ toc <- function(show = FALSE) {
 
 stopRunning <- function(i, n, elapsed) {
   pct.complete <- round(100 * i / n, 1)
-  seconds.left <- (n - i) * elapsed / n
+  seconds.left <- (n - i) * elapsed / i
   eta <- Sys.time() + as.difftime(seconds.left, units = "secs")
   time.left <- eta - Sys.time()
 
