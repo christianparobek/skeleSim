@@ -101,8 +101,8 @@ shinyUI(navbarPage("skelesim",
                    # Adding Simulator tab
                    tabPanel("Run Simulator.",
                             sidebarLayout(
-                              sidebarPanel(actionButton("runSim", "Run Simulation")),
-                              mainPanel()
+                              sidebarPanel(actionButton("btnRunSim", "Run Simulation")),
+                              mainPanel(textOutput("runText"))
                    )
                    )
         )
