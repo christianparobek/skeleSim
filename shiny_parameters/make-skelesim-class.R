@@ -6,64 +6,91 @@
 # is incremented
 
 scenario.observe <- observe({     
-    sn <- input$scenarioNumber
+    ##### test for nulls in the reactives
+    anynull <- FALSE
+    browser()
+    if (is.null(input$scenarioNumber)&(!anynull)) anynull <- TRUE
+    if (is.null(input$numpops)&(!anynull)) anynull <- TRUE
+    if (is.null(input$numloci)&(!anynull)) anynull <- TRUE
+    if (is.null(input$mut.rate)&(!anynull)) anynull <- TRUE
+    if (is.null(input$migModel)&(!anynull)) anynull <- TRUE
+    if (is.null(input$migRate)&(!anynull)) anynull <- TRUE
 
-    if (is.null(sn)) {sn <- 1}   #at least one scenario
-    print(paste("sn",sn))
-    locscen <- scenarios
-
-    print(str(locscen))
+    print (paste("anynull",anynull))
     
-    print(paste("len scen",length(scenarios)))
-    print(paste("len locscen",length(locscen)))
-    if (!is.null(input$numpops))
-        {
-    ####here is the situation where there is a new scenario added
-    if (sn<=length(locscen))
-        {
-            print("enter cond true")
-            locscen[[sn]] <- new("scenario.params")
-            locscen[[sn]]@num.pops <- input$numpops
-            locscen[[sn]]@migration <- inmat()
-                        print("so far")
+if (!anynull)
+    {
+        sn <- input$scenarioNumber
+        print(paste("sn first",sn))
+        if (is.null(ssClass@scenarios))
+            {
+                ssClass@scenarios <- list(new("scenario.params"))
+            }
+        locscen <- ssClass@scenarios
+        print(paste("len locscen",length(locscen)))
 
-            print("before rep")
-            locscen[[sn]]@pop.size <- rep(100,input$numpops) #hard-coded need to fix
-            locscen[[sn]]@sample.size <- rep(25,input$numpops) #hard-coded need to fix
-            locscen[[sn]]@locus.type <- "sequence"            #hard-coded
-            locscen[[sn]]@sequence.length <- 400            #hard-coded
-            print("after rep")
-            locscen[[sn]]@num.loci <- input$numloci
-            locscen[[sn]]@mut.rate <- input$mutRate
-        } else  {
-            print(paste("sn",sn))
-            locscen <- c(locscen,locscen[rep(1,(length(locscen)-sn))])
-            for (s in (length(locscen)+1):sn)
-                {
-                    locscen[[s]] <- locscen[[1]]
-                }
-        }
-    scenarios<<-locscen
-}
+        print(input$numpops)
+####here is the situation where there is a new scenario added
+        if (sn<=length(locscen))
+            {
+                print("enter cond true")
+                locscen[[sn]]@num.pops <- input$numpops
+                locscen[[sn]]@migration <- list(inmat())
+                locscen[[sn]]@mig.helper <- list(mig.model = input$migModel,
+                                                 mig.rate  = input$migRate,
+                                                 landrows  = input$rows,
+                                                 landcols  = input$cols,
+                                                 distfun   = input$distfun)
+                locscen[[sn]]@pop.size <- rep(100,input$numpops) #hard-coded need to fix
+                locscen[[sn]]@sample.size <- rep(25,input$numpops) #hard-coded need to fix
+                locscen[[sn]]@locus.type <- "sequence"            #hard-coded
+                locscen[[sn]]@sequence.length <- 400            #hard-coded
+                locscen[[sn]]@num.loci <- input$numloci
+                locscen[[sn]]@mut.rate <- input$mut.rate
+            } else  {
+                print(paste("sn2",sn))
+                print(paste("length locscen2",length(locscen)))
+                oldlen <- length(locscen)
+                locscen <- c(locscen,locscen[rep(1,(sn-length(locscen)))])
+                for (s in (oldlen+1):sn)
+                    {
+                        locscen[[s]] <- locscen[[1]]
+                    }
+            }
+                                        # browser(length(locscen)>0)           
+        ssClass@scenarios<<-locscen
+        print("scenarios")
+        print(str(ssClass@scenarios))
+    }
+}, priority=100)
+
+scenario.return <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
+
+####################################
+### use shiny input to modify skelesim class (global ssClass)
+observe({
+    
+ssClass@title <<- input$title
+ssClass@date <<- as.POSIXct(Sys.time())
+ssClass@quiet <<- input$quiet
+ssClass@question <<- "n"      #not sure what to do here yet
+print(paste("coal",input$coalescent))
+if (!is.null(input$coalescent))
+    {
+        if (input$coalescent)
+            {
+                ssClass@simulator.type <<- "c"
+                ssClass@sim.func <<- fsc.run
+            } else {
+                ssClass@simulator.type <<- "f"
+                ssClass@sim.func <<- rms.run
+            }
+    }        
+ssClass@simulator <<- "fsc"   #this is hard-coded but might need some work
+ssClass@num.reps <<- input$reps
+ssClass@timing <<- input$timing
+ssClass@wd <<- input$wd
+#print(ssClass)
 })
 
-scenario.return <- reactive( {scenarios[[input$scenarioNumber]]} )
-
-output$scenDebug <- renderText({scenario.return()})
-
-
-skelesim.class <- reactive({
-    
-params <- new("skeleSim.params")
-params@title <- input$title
-params@date <- input$date
-params@quiet <- input$quiet
-params@question <- "n"      #not sure what to do here yet
-params@simulator.type <- ifelse(input$coalescent,"c","i")
-params@simulator <- "fsc"   #this is hard-coded but might need some work
-params@num.reps <- input$reps
-params@timing <- input$timing
-params@sim.func <- fsc.run  #hard-coded right now
-params@wd <- input$wd
-})
 

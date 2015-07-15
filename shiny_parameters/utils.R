@@ -4,8 +4,8 @@
 make.interactive.matrix <- function(mat,rows=dim(mat)[1],cols=dim(mat)[2])
     {
         if (!is.matrix(mat)) {stop("mat passed to make.interactive.matrix() is not an actual matrix")}
-        print(paste("mim rows",rows))
-        print(paste("mim cols",cols))
+#        print(paste("mim rows",rows))
+#        print(paste("mim cols",cols))
         retmat <- matrix("",rows,cols)
         for (row in 1:rows)
             for (col in 1:cols)

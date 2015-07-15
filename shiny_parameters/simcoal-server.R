@@ -15,9 +15,9 @@ hst <- reactive({
         {
             plist <- unique(c(histry[,2],histry[,3]))
             if (length(plist)!=input$numpops) {
-                print(plist)
-                print(input$numpops)
-                print ("Resetting history")
+#                print(plist)
+#                print(input$numpops)
+#                print ("Resetting history")
                 histry <<- NULL
             }
         }

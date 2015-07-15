@@ -1,0 +1,1 @@
+fnameLabel <- NULL # combination of ssClass@label and timestamp for labelling filenames

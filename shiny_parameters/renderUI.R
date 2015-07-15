@@ -4,6 +4,58 @@
 # included into the skelesim parameter interface
 # using source()
 
+##########general parameter values
+output$titleUI <- renderUI({
+    val="Project title"
+    if (!is.null(ssClass@title)) {val <- ssClass@title}
+    textInput("title", "Title",
+              value = "Project title")
+
+})
+
+output$quietUI <- renderUI({
+    val=FALSE
+    if (!is.null(ssClass@quiet)) {val <- ssClass@quiet}
+    checkboxInput("quiet", "Quiet?",
+              value = FALSE)
+
+})
+
+output$coalescentUI <- renderUI({
+    val=TRUE
+    if (!is.null(ssClass@simulator.type)) {val <- ifelse(ssClass@simulator.type=="c",T,F)}
+    checkboxInput("coalescent", "Coalescent simulator?",
+                  value = val)
+    
+})
+
+output$repsUI <- renderUI({
+    val=1
+    if (!is.null(ssClass@num.reps)) {val <- ssClass@num.reps}
+    numericInput("reps", "Number of simulation reps",
+              value = val)
+
+})
+
+output$timingUI <- renderUI({
+    val=2
+    if (!is.null(ssClass@timing)) {val <- ssClass@timing}
+    numericInput("timing", "Number of simulation reps",
+              value = val)
+
+})
+
+output$wdUI <- renderUI({
+    val="wdTest"
+    if (!is.null(ssClass@wd)) {val <- ssClass@wd}
+    textInput("wd", "Working directory for simulation",
+              value = val)
+
+})
+
+
+
+
 #scenario UIs  this allows the defaults to be set for particular scenarios
 
 output$scenarioNumberUI <- renderUI({
@@ -11,27 +63,71 @@ output$scenarioNumberUI <- renderUI({
              value = 1)
 })
 
-output$mutrateUI <- renderUI({
-    numericInput("mut.rate", "Mutation Rate",
-             value = 1e-4)
+scenario.exists <- reactive({
+    res <- FALSE
+    if ((length(input$scenarioNumber)>0)&length(ssClass@scenarios)>0)
+        if (input$scenarioNumber<=length(ssClass@scenarios))
+            res <- TRUE
+    res
+})
+
+
+output$numpopsUI <- renderUI({
+    val <- 3
+    if ((scenario.exists()) && (!is.null(ssClass@scenarios[[input$scenarioNumber]])))
+        val <- ssClass@scenarios[[input$scenarioNumber]]@num.pops
+    numericInput("numpops", "Populations",
+             value = val)
+})
+
+output$numlociUI <- renderUI({
+    val <- 3
+    if ((scenario.exists()) && (!is.null(ssClass@scenarios[[input$scenarioNumber]])))
+        {val <- ssClass@scenarios[[input$scenarioNumber]]@num.loci}
+    numericInput("numloci", "Number of loci",
+             value = val)
 })
 
 
 
 output$mutrateUI <- renderUI({
+    val <- 1e-4
+    if ((scenario.exists()) && (!is.null(ssClass@scenarios[[input$scenarioNumber]])))
+        {
+            val <- ssClass@scenarios[[input$scenarioNumber]]@mut.rate
+        }
     numericInput("mut.rate", "Mutation Rate",
-             value = 1e-4)
+                 value = val)
 })
-
 
 output$migmodelUI <- renderUI({
-selectInput("migModel", "Migration Model",
-            c("island","stepping.stone.linear",
-              "stepping.stone.circular","twoD","twoDwDiagonal","distance"))
+    choices <- c("island","stepping.stone.linear",
+                  "stepping.stone.circular","twoD","twoDwDiagonal","distance")
+    val <- which(choices=="island")
+    print(paste("input$scenarioNumber",input$scenarioNumber))
+    print(paste("scenario.exists()",scenario.exists()))
+#    browser()
+    if ((scenario.exists()) && (!is.null(ssClass@scenarios[[input$scenarioNumber]])))
+        {
+          if (!is.null(ssClass@scenarios[[input$scenarioNumber]]))
+              {
+#                  browser()
+                  val <- which(choices==ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.model)
+                  print(paste("mig model val",val))
+              }
+      }
+    selectInput("migModel", "Migration Model",choices=choices,selected=val)
 })
 
 output$migrateUI <- renderUI(
-    {numericInput("migRate", "Migration rate",1)}
+    {
+        val <- 1
+        if (input$scenarioNumber<=length(ssClass@scenarios))
+            if (!is.null(ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.rate))
+                {val <- ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.rate}
+        
+        numericInput("migRate", "Migration rate",1)
+    }
     )
                                         #
 output$rows <- renderUI({

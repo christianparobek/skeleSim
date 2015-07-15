@@ -1,8 +1,8 @@
 output$networkPlot <- renderPlot({
-    print("running inmat from networkplot")
+#    print("running inmat from networkplot")
     mat <- as.matrix(inmat())
-    print(inmat())
-    print("finished running inmat from networkplot")
+#    print(inmat())
+#    print("finished running inmat from networkplot")
                                         #                    Sys.sleep(0.05)                
     grph <-graph.adjacency(t(mat),weighted=T)
     if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))

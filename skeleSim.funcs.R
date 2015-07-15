@@ -15,13 +15,12 @@ currentScenario <- function(params) {
 
 
 overall.check <- function(params) {
-
-  params@other.checks<-non.scenario.check(params)
+  params@other.checks <- non.scenario.check(params)
   print(params@other.checks)
   #here we call the scenario checks (simulator specific and general)
   prv_chk<-params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
-  ths_chk<-(rbind(params@sim.check.func(params),gen.scenario.check(params)))
+  ths_chk <- rbind(params@sim.check.func(params), gen.scenario.check(params))
   print(prv_chk);  print(ths_chk)
   #if what was there is null, replace with new checks
   if (is.null(prv_chk)) params@sim.scen.checks <- ths_chk
@@ -32,7 +31,7 @@ overall.check <- function(params) {
       else {
         rbind(prv_chk,ths_chk[i,])  #if not, bind it
         rownames(prv_chk)[nrow(prv_chk)]<-i
-        
+
       }
     }
     params@sim.scen.checks <- prv_chk
@@ -47,12 +46,11 @@ overall.check <- function(params) {
 
 
 non.scenario.check<- function(params) {
-  #check that number of reps is greater than 0
   results.check <- c(
-    title.not.null <- !is.null(params@title),
-    at.least.1.rep <- params@num.reps > 0
+    title.not.null = !is.null(params@title),
+    #check that number of reps is greater than 0
+    at.least.1.rep = params@num.reps > 0
   )
-  names(results.check) <- c("title.not.null", "at.least.1.rep")
   print(results.check)
   return(results.check)
 }
@@ -120,7 +118,7 @@ toc <- function(show = FALSE) {
 
 stopRunning <- function(i, n, elapsed) {
   pct.complete <- round(100 * i / n, 1)
-  seconds.left <- (n - i) * elapsed / n
+  seconds.left <- (n - i) * elapsed / i
   eta <- Sys.time() + as.difftime(seconds.left, units = "secs")
   time.left <- eta - Sys.time()
 
@@ -144,10 +142,10 @@ runSim <- function(params) {
     print(params@other.checks)
     write("\n",file=filewr,append=T)
     write.table(params@other.checks, file=filewr,append=T)
-    
+
     stop("parameters do not pass checks; see error log for details")
   }
-  
+
   # Check/setup folder structure
   if(file.exists(params@wd)) {
     unlink(params@wd, recursive = TRUE, force = TRUE)
@@ -255,15 +253,15 @@ plot.all.stats<-function(params){
  }
 
 #function to calculate Garza Williamson M ratio (bottleneck) statistic, per pop, per loc
-calc.gw <- function(gen.data, p, l, one.pop=T) {  
+calc.gw <- function(gen.data, p, l, one.pop=T) {
   #first subset the genind object for population p and locus l
   if (one.pop==T) this.pop<-gen.data[,loc=l]
   else this.pop<-gen.data[pop=p,loc=l]
   #find the smallest allele present
   min.all <- min(which(colSums(this.pop@tab,na.rm=T)>0))
   #find the largest allele present
-  max.all <- max(which(colSums(this.pop@tab,na.rm=T)>0))	
-  #calculate the number of alleles present 
+  max.all <- max(which(colSums(this.pop@tab,na.rm=T)>0))
+  #calculate the number of alleles present
   sum.all.present <- sum((colSums(this.pop@tab,na.rm=T)>0))
   sum.all.present/(max.all-min.all+1)
 }
