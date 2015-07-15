@@ -86,6 +86,9 @@ setClass(
 #'   samples to take from each population.
 #' @slot migration a \code{num.pop} x \code{num.pop} matrix giving the
 #'   migration rates between each population.
+#' @slot mig.helper a list of flags that are needed for te shiny interface but are not needed for the simulation
+#'   itself.  Makes it easier to keep track of different ways to specify migration matrices for different scenarios.
+#'   List elements will include migration model, rows and columns of landscape and distance function.  
 #' @slot simulator.params an object storing simulator-specific parameters. Can
 #'   be a list or a simulator-specific class.
 #'
@@ -93,12 +96,13 @@ setClass(
   Class = "scenario.params",
   slots = c(num.pops = "intOrNum", pop.size = "intOrNum",
             sample.size = "intOrNum", migration = "listOrNULL",
+            mig.helper = "listOrNULL",
             locus.type = "charOrNULL", num.loci = "intOrNum",
             sequence.length = "intOrNum", mut.rate = "intOrNum",
             simulator.params = "ANY"
   ),
   prototype = c(num.pops = NULL, pop.size = NULL, sample.size = NULL,
-                migration = NULL, locus.type = NULL, num.loci = NULL,
+                migration = NULL, mig.helper = NULL, locus.type = NULL, num.loci = NULL,
                 sequence.length = NULL, mut.rate = NULL,
                 simulator.params = NULL
   )
