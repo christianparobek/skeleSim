@@ -72,6 +72,8 @@ test.params@rep.analysis.func <- function(params) {
 # --- Set parameter check function for specific simulator---
 test.params@sim.check.func <- fsc.scenarioCheck
 
+ssClass <- test.params
+save.image("test.ssClass.rdata")
 
 # ---- Run replicates ---- (includes error checking)
 test.params <- runSim(test.params)
