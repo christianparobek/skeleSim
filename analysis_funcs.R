@@ -15,41 +15,95 @@
 # params@rep.result will be genind, after can overwrite @rep.result with gtypes, can assign NULL to @rep.results
 # simulation -> genind - do all calcs -> gtypes conversion - do all calculations (overwrite, only one object)
 
+####      ROW NAMES
+# for pairwise populations, take number of populations = 'npop'
+npp <- combn(1:npop, 2)
+names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
+
+# for pairwise loci, take number of loci = nloc
+npl <- combn(1:nloc, 2)
+names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
+
+# for simple populations
+names <-  c("overall", 1:npop)
+
+# for loci
+names <- c("overall", 1:nloc)
+#####################################################################
+
+
 function(params){
+
+  curr_scn<-params@current.scenario
+  curr_rep<-params@current.replicate
+  num_loci<-params@scenarios[[curr_scn]]@num.loci
+  num_reps<-params@num.reps
 
 if(is.null(params@analysis.results)){
 
   scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
+  for(group in names(which(params@analyses.requested)))
+    scenario.results[[x]] <- vector('list', length(params@scenarios))
+
 } else {
 
-  for(x in names(which(params@analyses.requested))){
+  for(group in names(which(params@analyses.requested))){
 
 
-    # three dimensional array, thrid dimension is each replicate
-    scenario.results <- vector('list', length(params@scenarios))
+    # group will cycle through selected among Global, Popualtion, Locus, and Pairwise
+    # in each iteration of the for loop, group will have only one value!
 
-# x will cycle through selected among Global, Popualtion, Locus, and Pairwise
-# in each iteration of the for loop, x will have only one value!
+if(group == "Global"){
 
-if(x == "Global"){
-  # check the data type and do conversions for what is needed
-  ovl <- overallTest(params@rep.result, nrep = 5, stat.list = statList("chi2"), quetly = TRUE)
-  t(ovl$result)
-  global <- t(ovl$result)
-  pnam <- c() # add p-vlaues in columns
-  for(i in 1:length(colnames(global))){
-    pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
+  # TO DO check the data type and do conversions for what is needed
+
+  #initialize arrays
+  if (class(params@analysis.result)=="multidna")
+    scenario.results[[group]][[params@current.scenario]]{
+      <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
+
+
+
+
+
+
+    }
+  else if (class(params@analysis.result)=="genind"){
+    scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,SOMETHING NUM ANALYSIS,num_reps))
+
+    results_genind<-params@rep.result
+    #convert genind to gtypes
+    results_gtype<-genind2gtypes(results_genind)
+
+
+  #run overall analysis
+  overall_stats<- function(results_gtype){
+    ovl <- overallTest(results_gtype, nrep = SOMETHING PERMUTES, quietly = TRUE)
+    as.vector(t(ovl$result)) # by row to a vector
+    pnam <- c()
+    for(i in 1:nrows(ovl$result))
+      pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
+
+    global.wide <- c(ovl$result[1,],ovl$result[2,])
+    names(global.wide) <- c(rownames(ovl$result),pnam)
+    global.wide
   }
-  global.wide <- c(global[1,],global[2,])
-  names(global.wide) <- c(colnames(global),pnam)
 
-  ####  NEED TO DO IN EACH!!!
-  ### check that we remove columns that aren't useful
-  # params@current.replicate need to add how deep to put each new run in which list (@current.scenario)
-    scenario.results[[params@current.scenario]] <- global.wide
-  params@summary.results <- scenario.results
+  #put overall analysis in first row
+  # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
+  scenario.results[[group]][[curr_scn]][1,,curr_rep] <- overall_stats(results_gtype)
 
+  #run by locus analysis
+  lapply(locNames(results_gtype), function (l){
+    gtypes_this_loc<-subset(results_gtype, loci=l)
+    scenario.results[[group]][[curr_scn]][l+1,,curr_rep] <- overall_stats(gtypes_this_loc)
+
+  })
+
+  params@analysis.results <- scenario.results
+
+}
 
 } else if(x == "Locus"){
   data.cube <- # locus only things
