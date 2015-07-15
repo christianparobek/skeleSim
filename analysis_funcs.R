@@ -15,6 +15,23 @@
 # params@rep.result will be genind, after can overwrite @rep.result with gtypes, can assign NULL to @rep.results
 # simulation -> genind - do all calcs -> gtypes conversion - do all calculations (overwrite, only one object)
 
+####      ROW NAMES
+# for pairwise populations, take number of populations = 'npop'
+npp <- combn(1:npop, 2)
+names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
+
+# for pairwise loci, take number of loci = nloc
+npl <- combn(1:nloc, 2)
+names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
+
+# for simple populations
+names <-  c("overall", 1:npop)
+
+# for loci
+names <- c("overall", 1:nloc)
+#####################################################################
+
+
 function(params){
 
 if(is.null(params@analysis.results)){
