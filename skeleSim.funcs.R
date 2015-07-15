@@ -32,7 +32,7 @@ overall.check <- function(params) {
       else {
         rbind(prv_chk,ths_chk[i,])  #if not, bind it
         rownames(prv_chk)[nrow(prv_chk)]<-i
-        
+
       }
     }
     params@sim.scen.checks <- prv_chk
@@ -144,10 +144,10 @@ runSim <- function(params) {
     print(params@other.checks)
     write("\n",file=filewr,append=T)
     write.table(params@other.checks, file=filewr,append=T)
-    
+
     stop("parameters do not pass checks; see error log for details")
   }
-  
+
   # Check/setup folder structure
   if(file.exists(params@wd)) {
     unlink(params@wd, recursive = TRUE, force = TRUE)
@@ -255,15 +255,29 @@ plot.all.stats<-function(params){
  }
 
 #function to calculate Garza Williamson M ratio (bottleneck) statistic, per pop, per loc
-calc.gw <- function(gen.data, p, l, one.pop=T) {  
+calc.gw <- function(gen.data, p, l, one.pop=T) {
   #first subset the genind object for population p and locus l
   if (one.pop==T) this.pop<-gen.data[,loc=l]
   else this.pop<-gen.data[pop=p,loc=l]
   #find the smallest allele present
   min.all <- min(which(colSums(this.pop@tab,na.rm=T)>0))
   #find the largest allele present
-  max.all <- max(which(colSums(this.pop@tab,na.rm=T)>0))	
-  #calculate the number of alleles present 
+  max.all <- max(which(colSums(this.pop@tab,na.rm=T)>0))
+  #calculate the number of alleles present
   sum.all.present <- sum((colSums(this.pop@tab,na.rm=T)>0))
   sum.all.present/(max.all-min.all+1)
+}
+
+
+#run overall analysis
+overall_stats<- function(results_gtype){
+  ovl <- overallTest(results_gtype, nrep = 5, quietly = TRUE)
+
+  pnam <- c()
+  for(i in 1:nrow(ovl$result))
+    pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
+
+  global.wide <- as.vector(t(ovl$result))
+  names(global.wide) <- pnam
+  global.wide
 }

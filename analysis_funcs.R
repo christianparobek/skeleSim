@@ -38,10 +38,14 @@ function(params){
   curr_rep<-params@current.replicate
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
+  num_pops<-params@scenarios[[curr_scn]]@num.pops
+
 
 if(is.null(params@analysis.results)){
 
   scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
+
+
 
   for(group in names(which(params@analyses.requested)))
     scenario.results[[x]] <- vector('list', length(params@scenarios))
@@ -59,55 +63,98 @@ if(group == "Global"){
   # TO DO check the data type and do conversions for what is needed
 
   #initialize arrays
-  if (class(params@analysis.result)=="multidna")
-    scenario.results[[group]][[params@current.scenario]]{
-      <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
+  if (class(params@analysis.result)=="multidna"){
+
+    analyses <- names(overall_stats(results_gtype))
+    num_analyses <- length(analyses)
+
+    genes <- params@analysis.result[[2]]
+    names(genes@dna) <- paste("gene", 1:length(genes@dna))
+    id <- genes@labels
+    df <- data.frame(id = id, strata = params@analysis.result[[1]], hap = id)
+    results_gtype<-df2gtypes(df, 1, sequences = genes)
+
+
+      scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                                     dimnames = list(1:num_loci,analyses,1:num_reps))
+
+
+################################### once Eric fixes naming the loci, start here for multidna objects global for each gene ###########
 
 
 
-
-
-
-    }
-  else if (class(params@analysis.result)=="genind"){
-    scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,SOMETHING NUM ANALYSIS,num_reps))
+    } else if(class(params@analysis.result)=="genind"){
 
     results_genind<-params@rep.result
     #convert genind to gtypes
     results_gtype<-genind2gtypes(results_genind)
 
+    analyses <- names(overall_stats(results_gtype))
+    num_analyses <- length(analyses)
 
-  #run overall analysis
-  overall_stats<- function(results_gtype){
-    ovl <- overallTest(results_gtype, nrep = SOMETHING PERMUTES, quietly = TRUE)
-    as.vector(t(ovl$result)) # by row to a vector
-    pnam <- c()
-    for(i in 1:nrows(ovl$result))
-      pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
 
-    global.wide <- c(ovl$result[1,],ovl$result[2,])
-    names(global.wide) <- c(rownames(ovl$result),pnam)
-    global.wide
-  }
+    # The first row will hold summary statistics over all loci regardless of population structure.
+    # The remaining rows will hold summary statistics per locus
+    scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
+                                                  dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
 
-  #put overall analysis in first row
+  #put overall analysis in first row using overall_stats()
   # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
-  scenario.results[[group]][[curr_scn]][1,,curr_rep] <- overall_stats(results_gtype)
-
   #run by locus analysis
-  lapply(locNames(results_gtype), function (l){
+  mat <- t(sapply(locNames(results_gtype), function (l){
     gtypes_this_loc<-subset(results_gtype, loci=l)
-    scenario.results[[group]][[curr_scn]][l+1,,curr_rep] <- overall_stats(gtypes_this_loc)
+    overall_stats(gtypes_this_loc)
+  }))
 
-  })
+  # combining overall statistics and locus by locus matrix
+  scenario.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
 
   params@analysis.results <- scenario.results
 
 }
 
+
+################################### LOCUS ######################################
 } else if(x == "Locus"){
-  data.cube <- # locus only things
-    scenario.results[[params@current.scenario]] <- data.cube
+
+  else if(class(params@analysis.result)=="genind"){
+
+    # genind to gtypes - split -> genind of split and then do
+
+    results_genind<-params@rep.result
+
+    seppop(results_genind)
+
+    #Hardy Weiberg test
+    pops_as_list<-seppop(results_genind)
+    hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
+    hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
+    analysis_names2 <- colnames(hw_results.all)
+
+
+    #convert genind to gtypes
+    results_gtype<-genind2gtypes(results_genind)
+
+ # analysis_names <- colnames(summarizeLoci(results_gtype))
+  locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
+
+ #by loci
+  smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(msats))
+  analysis_names1 <- colnames(smryLoci)
+
+ #by population
+  smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(msats, by.strata = TRUE)))
+
+ if(is.null(scenario.results[[group]][[curr_scn]])){
+   scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names)+4,num_reps),
+                                                dimnames = list(1:(num_loci*(num_pops+1)),c(analysis_names1,analysis_names2),1:num_reps))
+
+ }
+
+  scenario.results[[group]][[curr_scn]][,,curr_rep] <-  cbind(rbind(smryLoci,smryPop),hw_results.all)
+
+  }
+
 
 } else if(x == "Pairwise"){
   #Genotype data
