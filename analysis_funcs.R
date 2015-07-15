@@ -38,24 +38,35 @@ if(is.null(params@analysis.results)){
 
   scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
+  for(x in names(which(params@analyses.requested)))
+    scenario.results[[x]] <- vector('list', length(params@scenarios))
+
 } else {
 
   for(x in names(which(params@analyses.requested))){
 
-
-    # three dimensional array, thrid dimension is each replicate
-    scenario.results <- vector('list', length(params@scenarios))
-
-# x will cycle through selected among Global, Popualtion, Locus, and Pairwise
-# in each iteration of the for loop, x will have only one value!
+    # x will cycle through selected among Global, Popualtion, Locus, and Pairwise
+    # in each iteration of the for loop, x will have only one value!
 
 if(x == "Global"){
   # check the data type and do conversions for what is needed
-  ovl <- overallTest(params@rep.result, nrep = 5, stat.list = statList("chi2"), quetly = TRUE)
-  as.vector(t(ovl$result)) # by row to a vector
-  pnam <- c()
-  for(i in 1:7){
-    pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
+
+
+  #initialize arrays
+  if (class(params@analysis.result)=="multidna")
+    scenario.results[[x]][[params@current.scenario]] <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
+  else if (class(params@analysis.result)=="genind")
+    scenario.results[[x]][[params@current.scenario]] <- array(0, dim=c(1,SOMETHING NUM ANALYSIS,params@numreps))
+
+  # TOD check the data type and do conversions for what is needed
+
+  #run overall analysis
+ovl <- overallTest(params@rep.result, nrep = 5, stat.list = statList("chi2"), quetly = TRUE)
+as.vector(t(ovl$result)) # by row to a vector
+pnam <- c()
+for(i in 1:7){
+  pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
+
   }
   global.wide <- c(ovl$result[1,],ovl$result[2,])
   names(global.wide) <- c(rownames(ovl$result),pnam)
