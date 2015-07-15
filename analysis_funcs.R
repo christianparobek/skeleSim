@@ -21,16 +21,25 @@ if(is.null(params@analysis.results)){
 
   scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
+  for(x in names(which(params@analyses.requested))){
+    
+    # three dimensional array, third dimension is each replicate
+    scenario.results[[x]] <- vector('list', length(params@scenarios))
+    
+    for(y in length(params@scenarios)){
+      
+      scenario.results[[x]][[y]] <- array(0, dim=c())
+      
+    }
+    
+  }
+    
 } else {
 
   for(x in names(which(params@analyses.requested))){
-
-
-    # three dimensional array, thrid dimension is each replicate
-    scenario.results <- vector('list', length(params@scenarios))
-
-# x will cycle through selected among Global, Popualtion, Locus, and Pairwise
-# in each iteration of the for loop, x will have only one value!
+    
+    # x will cycle through selected among Global, Popualtion, Locus, and Pairwise
+    # in each iteration of the for loop, x will have only one value!
 
 if(x == "Global"){
   # check the data type and do conversions for what is needed
