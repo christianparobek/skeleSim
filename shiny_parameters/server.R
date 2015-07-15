@@ -5,8 +5,9 @@ source("setup.R")
 histry <<- NULL     #saves a simcoal history
 lstclick <<- NULL    #last click
 lstdblclick <<- NULL #last double click
-scenarios <<- vector("list",1)   #will be a list of scenarios, start with one
+coalParams <<- new
 
+ssClass <<- new("skeleSim.params")
 
 shinyServer(function(input, output,session) {
     
@@ -31,7 +32,7 @@ source("simcoal-server.R",local=T)
 source("serverplots.R",local=T)
     
 ######################## skeleSim class setup
-#source("make-skelesim-class.R",local=T)
+source("make-skelesim-class.R",local=T)
 
 #############debugging
                 output$tbl <- renderTable({

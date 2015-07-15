@@ -28,27 +28,12 @@ shinyUI(navbarPage("skelesim",
                    tabPanel("General Config.",
                             sidebarLayout(
                                 sidebarPanel(
-                                    textInput("title", "Title",
-                                              value = "Project title"),
-
-                                    textInput("date", "Date",
-                                              value = Sys.time()),
-                                    checkboxInput("quiet", "Quiet",
-                                                  value = FALSE),
-                                    checkboxInput("coalescent", "Coalescent Simulator?",
-                                                  value = TRUE),
-                                    numericInput("numpops", "Number of populations",
-                                                 value = 3),
-                                    numericInput("numloci", "Number of loci",
-                                                 value = 1),
-                                    numericInput("reps", "Number of simulation reps",
-                                                 value = 1),
-                                    numericInput("timing", "Timing",
-                                                 value = 2),
-                                    textInput("simfunc", "Simulation Function",
-                                              value = "fsc.run"),
-                                    textInput("wd", "Simulation working directory",
-                                              value = "test.wd")
+                                    uiOutput("titleUI"),
+                                    uiOutput("quietUI"),
+                                    uiOutput("coalescentUI"),
+                                    uiOutput("repsUI"),
+                                    uiOutput("timing"),
+                                    uiOutput("wdUI")
                                     ),
                                 mainPanel()
                                 )),
@@ -57,8 +42,11 @@ shinyUI(navbarPage("skelesim",
                             sidebarLayout(
                                 sidebarPanel(
                                     uiOutput("scenarioNumberUI"),
+                                    uiOutput("numpopsUI"),
+                                    uiOutput("numlociUI"),
                                     uiOutput("mutrateUI"),
-                                    checkboxInput("repopulateMig","Rewrite migration matrix",TRUE),
+                                    br(),
+                                    actionButton("repopulateMig","Rewrite migration matrix"),
                                     uiOutput("migmodelUI"),
                                     uiOutput("migrateUI"),
                                     uiOutput("rows"),
@@ -71,9 +59,10 @@ shinyUI(navbarPage("skelesim",
                                                  includeMarkdown("helpfiles/help-migration.md"),
                                                  tableOutput("migmat")),
                                         tabPanel("Migration graph",
-                                                 plotOutput("networkPlot")),
-                                        tabPanel("debug",
-                                                 textOutput("scenDebug"))
+                                                 plotOutput("networkPlot"))
+#                                        ,
+#                                        tabPanel("debug",
+#                                                 textOutput("scenDebug"))
                                         ))
                                 )),
                    
