@@ -52,14 +52,13 @@ if(is.null(params@analysis.results)){
 if(x == "Global"){
   # check the data type and do conversions for what is needed
   ovl <- overallTest(params@rep.result, nrep = 5, stat.list = statList("chi2"), quetly = TRUE)
-  t(ovl$result)
-  global <- t(ovl$result)
-  pnam <- c() # add p-vlaues in columns
-  for(i in 1:length(colnames(global))){
-    pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
+  as.vector(t(ovl$result)) # by row to a vector
+  pnam <- c()
+  for(i in 1:7){
+    pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
   }
-  global.wide <- c(global[1,],global[2,])
-  names(global.wide) <- c(colnames(global),pnam)
+  global.wide <- c(ovl$result[1,],ovl$result[2,])
+  names(global.wide) <- c(rownames(ovl$result),pnam)
 
   ####  NEED TO DO IN EACH!!!
   ### check that we remove columns that aren't useful
