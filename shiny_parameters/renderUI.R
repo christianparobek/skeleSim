@@ -26,7 +26,7 @@ output$coalescentUI <- renderUI({
     if (!is.null(ssClass@simulator.type)) {val <- ifelse(ssClass@simulator.type=="c",T,F)}
     checkboxInput("coalescent", "Coalescent simulator?",
                   value = val)
-    
+
 })
 
 output$repsUI <- renderUI({
@@ -37,13 +37,6 @@ output$repsUI <- renderUI({
 
 })
 
-output$timingUI <- renderUI({
-    val=2
-    if (!is.null(ssClass@timing)) {val <- ssClass@timing}
-    numericInput("timing", "Number of simulation reps",
-              value = val)
-
-})
 
 output$wdUI <- renderUI({
     val="wdTest"
@@ -163,7 +156,7 @@ output$infsitesUI <- renderUI({
                           value = FALSE)
         } else {
         }
-})        
+})
 
 output$simhistUI <- renderUI({
     if (input$coalescent==T)
@@ -172,6 +165,6 @@ output$simhistUI <- renderUI({
                           value = FALSE)
         } else {
         }
-})        
+})
 
 
