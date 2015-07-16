@@ -14,5 +14,6 @@ histry <- NULL     #saves a simcoal history
 lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click
 # coalParams <- new
-#ssClass <<- new("skeleSim.params")
-fnameLabel <- NULL # combination of ssClass@label and timestamp for labelling filenames
+ssClass <<- new("skeleSim.params")
+objLabel <- NULL # syntactically valid name from 'title' slot of parameter object
+fnameLabel <- NULL # combination of objLabel and timestamp for labelling filenames

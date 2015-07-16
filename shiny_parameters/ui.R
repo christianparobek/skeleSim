@@ -13,7 +13,8 @@ shinyUI(
                tabPanel(
                  "Save parameters",
                  #  !!!! GET 'label' FROM ssClass@label
-                 textInput("txtParamsFname", label = h4("Label for files"), value = "label"),
+                 textInput("txtTitle", label = h4("Title"), value = ssClass@title),
+                 textOutput("txtObjLabel"),
                  actionButton("btnSaveParams", "Save"),
                  textOutput("txtSaveStatus")
                )

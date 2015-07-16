@@ -1,9 +1,13 @@
+observeEvent(input$txtParamsFname, {
+  objLabel <<- make.names(input$txtParamsFname)
+  output$txtObjLabel <- renderText({objLabel})
+})
+
 observeEvent(input$btnSaveParams, {
   # save skeleSim class object (ssClass)
   #   uses global variable 'fnameLabel' defined in 'global.R'
-  fnameLabel <<- gsub("[[:punct:]|[[:space:]]", ".", input$txtParamsFname)
-  fnameLabel <<- paste(fnameLabel, format(Sys.time(), "%Y%m%d.%H%M"), sep = ".")
-  paramsFname <- paste(fnameLabel, ".params.rdata", sep = "")
+  fnameLabel <<- paste(objLabel, format(Sys.time(), "%Y%m%d.%H%M"), sep = ".")
+  paramsFname <- paste(fnameLabel, "params.rdata", sep = ".")
 # !!! CHANGE 'label' to ssClass !!!
   save(fnameLabel, file = paramsFname)
 
