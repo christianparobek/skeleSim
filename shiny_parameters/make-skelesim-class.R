@@ -35,7 +35,7 @@ if (!anynull)
             {
                 print("scenario number greater than the total number of scenarios to this point")
                 locscen[[sn]]@num.pops <- input$numpops
-                locscen[[sn]]@migration <- list(inmat())
+                locscen[[sn]]@migration <- list(ssClass.scenario.mig())
                 locscen[[sn]]@mig.helper <- list(mig.model = input$migModel,
                                                  mig.rate  = input$migRate,
                                                  landrows  = input$rows,
