@@ -15,9 +15,7 @@ shinyUI(
         ),
         tabPanel(
           "Save parameters",
-          #  !!!! GET 'label' FROM ssClass@label
-          uiOutput("txtChangeTitle"),
-          textInput("txtTitle", label = h4("Title"), value = ssClass@title),
+          textInput("txtTitle", label = h4("Project Title"), value = ssClass@title),
           h4("Save parameter file"),
           uiOutput("uiBtnSaveParams"),
           textOutput("txtSaveStatus")
