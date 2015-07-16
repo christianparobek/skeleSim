@@ -152,6 +152,7 @@ function(params){
 
 
             ################# #Convert from genind to loci (package pegas))
+          #Allan, Sean and I decided that a workable alternative to Fis estimation below is to use:   Fis = 1-(Ho/He) since we already have obs.He and exp.He is the results
           results_loci<-genind2loci(results_genind)
           #for loci
           FSTloci<-Fst(results_loci)
