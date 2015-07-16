@@ -200,8 +200,7 @@ function(params){
 
 
           ############### #mratio.p.val
-
-          ################ #allelic.diversity
+          
 
          locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all)
          analysis_names <- colnames(locus.final)

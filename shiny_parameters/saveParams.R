@@ -1,10 +1,20 @@
-output$txtObjLabel <- renderText({
+output$uiBtnSaveParams <- renderUI({
+  # sets global variable 'objLabel' based on user update of class title
   objLabel <<- if(is.null(input$txtTitle) | input$txtTitle == "") {
     NULL
   } else {
     make.names(input$txtTitle)
   }
-  if(is.null(objLabel)) "<EMPTY>" else objLabel
+
+  # reset sim running button
+  output$btnRun <- renderUI({h5("<Parameter File Not Saved>")})
+
+  # fill construct save button and return label field
+  if(is.null(objLabel)) {
+    h5("<EMPTY>")
+  } else {
+    actionButton("btnSaveParams", objLabel)
+  }
 })
 
 observeEvent(input$btnSaveParams, {
@@ -17,16 +27,14 @@ observeEvent(input$btnSaveParams, {
     assign(objLabel, ssClass)
     save(list = objLabel, file = paramsFname)
 
+    # report write status and setup sim running button
     output$txtSaveStatus <- renderText({
       if(file.exists(paramsFname)) {
+        output$btnRun <- renderUI({
+          actionButton("btnRunSim", paste("Run", fnameLabel))
+        })
         paste("Wrote skeleSim parameter file: '", paramsFname, "'", sep = "")
-      } else {
-        "Error writing files."
-      }
-    })
-
-    output$btnRun <- renderUI({
-      actionButton("btnRunSim", paste("Run", fnameLabel))
+      } else "Error writing files."
     })
   }
 })
