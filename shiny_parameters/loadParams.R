@@ -22,6 +22,9 @@ output$uiSelectParamObj <- renderUI({
 observe({
   if(!is.null(input$slctParams)) {
     ssClass <<- get(input$slctParams, envir = ssUserEnv)
+    output$txtChangeTitle <- renderUI({
+      textInput("txtNewTitle", label = h4("Title"), value = ssClass@title)
+    })
     print(ssClass@title)
   }
 })
