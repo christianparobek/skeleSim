@@ -1,3 +1,0 @@
-observeEvent(input$btnLoadParams, {
-
-})

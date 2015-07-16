@@ -159,7 +159,7 @@ function(params){
           Fitloci <- FSTloci[ , c("Fit")]
           Fstloci <- FSTloci[ , c("Fst")]
           #for pops
-          FSTpop<-Fst(results_loci, pop = #column with pop information#)
+          FSTpop<-Fst(results_loci, pop = results_loci$population) #column with pop information#)
                         Fispop <- FSTpop[ , c("Fis")]
                       Fitpop <- FSTpop[ , c("Fit")]
                       Fstpop <- FSTpop[ , c("Fst")]
