@@ -1,72 +1,43 @@
 #####################################################################
-####      ROW NAMES
-# for pairwise populations, take number of populations = 'params@num.pops'
-
-# params@rep.sample
-# params@num.pops
-
-
-### create containers with different sizes by scenario
-# as many cubes as scenario, the size is the replicate
-# rows will be number of loci and this will change/vary by scenario
-# in order to look at number of loci needed (power analysis)
-# loop for x in which(names(params@analysis.requested))
-
-# params@rep.result will be genind, after can overwrite @rep.result with gtypes, can assign NULL to @rep.results
-# simulation -> genind - do all calcs -> gtypes conversion - do all calculations (overwrite, only one object)
-
-####      ROW NAMES
-# for pairwise populations, take number of populations = 'npop'
-npp <- combn(1:npop, 2)
-names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
-
-# for pairwise loci, take number of loci = nloc
-npl <- combn(1:nloc, 2)
-names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
-
-# for simple populations
-names <-  c("overall", 1:npop)
-
-# for loci
-names <- c("overall", 1:nloc)
-#####################################################################
 
 
 function(params){
 
+  # saving global variables
   curr_scn<-params@current.scenario
   curr_rep<-params@current.replicate
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
 
-
+# If analysis results is empty, the first analysis done creates the list to hold the data
 if(is.null(params@analysis.results)){
 
   scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
 
-
+# creates a list of length scenarios for each requested groups of analyses
   for(group in names(which(params@analyses.requested)))
-    scenario.results[[x]] <- vector('list', length(params@scenarios))
+    scenario.results[[group]] <- vector('list', length(params@scenarios))
 
 } else {
 
   for(group in names(which(params@analyses.requested))){
 
 
-    # group will cycle through selected among Global, Popualtion, Locus, and Pairwise
-    # in each iteration of the for loop, group will have only one value!
+    # group will cycle through selected among Global, Locus, and Pairwise
+    # in each iteration of the for loop, group will have only one value
 
 if(group == "Global"){
 
-  # TO DO check the data type and do conversions for what is needed
+  # TO DO check the data type and do conversions for what is needed ####@$@#$@#$#@
 
+  # For multidna class objects we convert to a gtypes and use strataG for analysis
   #initialize arrays
   if (class(params@analysis.result)=="multidna"){
 
-    analyses <- names(overall_stats(results_gtype))
-    num_analyses <- length(analyses)
+   # analyses <- names(overall_stats(results_gtype))
+    # num_analyses <- length(analyses)
 
     genes <- params@analysis.result[[2]]
     names(genes@dna) <- paste("gene", 1:length(genes@dna))
@@ -74,10 +45,14 @@ if(group == "Global"){
     df <- data.frame(id = id, strata = params@analysis.result[[1]], hap = id)
     results_gtype<-df2gtypes(df, 1, sequences = genes)
 
+################ IS THIS WHERE IT GOES?!?!?!  ########################
 
-      scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
-                                                     dimnames = list(1:num_loci,analyses,1:num_reps))
+##### Will need to finish these analyses, get the names and length from the analyses and then put them into the cube once Eric fixes naming the multi genes
 
+if(is.null(scenario.results[[group]][[curr_scn]])){
+  scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                                   dimnames = list(1:num_loci,analyses,1:num_reps))
+}
 
 ################################### once Eric fixes naming the loci, start here for multidna objects global for each gene ###########
 
@@ -89,14 +64,10 @@ if(group == "Global"){
     #convert genind to gtypes
     results_gtype<-genind2gtypes(results_genind)
 
-    analyses <- names(overall_stats(results_gtype))
-    num_analyses <- length(analyses)
+ #   analyses <- names(overall_stats(results_gtype))
+#    num_analyses <- length(analyses)
 
 
-    # The first row will hold summary statistics over all loci regardless of population structure.
-    # The remaining rows will hold summary statistics per locus
-    scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
-                                                  dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
 
   #put overall analysis in first row using overall_stats()
   # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
@@ -105,6 +76,16 @@ if(group == "Global"){
     gtypes_this_loc<-subset(results_gtype, loci=l)
     overall_stats(gtypes_this_loc)
   }))
+  analyses <- colnames(mat)
+  num_analyses <- length(analyses)
+
+  # The first row will hold summary statistics over all loci regardless of population structure.
+  # The remaining rows will hold summary statistics per locus
+if(is.null(scenario.results[[group]][[curr_scn]])){
+  scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
+                                                 dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
+}
+
 
   # combining overall statistics and locus by locus matrix
   scenario.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
@@ -117,34 +98,43 @@ if(group == "Global"){
 ################################### LOCUS ######################################
 } else if(x == "Locus"){
 
-  else if(class(params@analysis.result)=="genind"){
-
-    # genind to gtypes - split -> genind of split and then do
+  if(class(params@analysis.result)=="genind"){
 
     results_genind<-params@rep.result
 
-    seppop(results_genind)
-
-    #Hardy Weiberg test
+    #Hardy Weiberg test per population and overall
     pops_as_list<-seppop(results_genind)
     hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
     hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
     analysis_names2 <- colnames(hw_results.all)
 
 
-    #convert genind to gtypes
+    #convert genind to gtypes for remaining analyses
     results_gtype<-genind2gtypes(results_genind)
 
- # analysis_names <- colnames(summarizeLoci(results_gtype))
-  locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
+    #by locus
+    smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(msats))
+    analysis_names1 <- colnames(smryLoci)
 
- #by loci
-  smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(msats))
-  analysis_names1 <- colnames(smryLoci)
+   #by population
+   locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
+   smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(msats, by.strata = TRUE)))
 
- #by population
-  smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(msats, by.strata = TRUE)))
+   #Number of private alleles by locus
+   alleleFreqs <- alleleFreqs(msats, by.strata = TRUE)
+   by.loc <- sapply(alleleFreqs, function(loc) {
+     mat <- loc[, "freq", ]
+     rowSums(apply(mat, 1, function(r) {
+       result <- rep(FALSE, length(r))
+       if(sum(r > 0) == 1) result[r > 0] <- TRUE
+       result
+     }))
+   })
+   rownames(by.loc) <- strataNames(msats)
+   perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
+   t(by.loc) #the rows will be have the private alleles for each population by locus
 
+ # Create the data array first time through
  if(is.null(scenario.results[[group]][[curr_scn]])){
    scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names)+4,num_reps),
                                                 dimnames = list(1:(num_loci*(num_pops+1)),c(analysis_names1,analysis_names2),1:num_reps))
@@ -154,6 +144,15 @@ if(group == "Global"){
   scenario.results[[group]][[curr_scn]][,,curr_rep] <-  cbind(rbind(smryLoci,smryPop),hw_results.all)
 
   }
+
+
+ ############## ONCE ERIC fixes multidna stuffs, DO THIS!!!!  ###################
+ if(class(params@analysis.result)=="multidna"){
+
+ }
+
+   # check location of this!
+ params@analysis.results <- scenario.results
 
 
 } else if(x == "Pairwise"){
