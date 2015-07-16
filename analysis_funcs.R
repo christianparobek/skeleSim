@@ -36,26 +36,39 @@ if(group == "Global"){
   #initialize arrays
   if (class(params@analysis.result)=="multidna"){
 
-   # analyses <- names(overall_stats(results_gtype))
-    # num_analyses <- length(analyses)
+    num_loci <- getNumLoci(params@analysis.result[[2]])
 
-    genes <- params@analysis.result[[2]]
+  # Convert the list of DNAbin objects to gtypes
+    genes <- params@analysis.result[[2]] #the multidna object
     names(genes@dna) <- paste("gene", 1:length(genes@dna))
     id <- genes@labels
-    df <- data.frame(id = id, strata = params@analysis.result[[1]], hap = id)
-    results_gtype<-df2gtypes(df, 1, sequences = genes)
+    df <- data.frame(id = id, strata = params@analysis.result[[1]])
+    gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+    colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+    df <- cbind(df, gene.labels)
+    results_gtype <- df2gtypes(df, 1, sequences = genes)
 
-################ IS THIS WHERE IT GOES?!?!?!  ########################
 
-##### Will need to finish these analyses, get the names and length from the analyses and then put them into the cube once Eric fixes naming the multi genes
+    #put overall analysis in first row using overall_stats()
+    # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
+    #run by locus analysis
+    mat <- t(sapply(locNames(results_gtype), function (l){
+      gtypes_this_loc<-subset(results_gtype, loci=l)
+      overall_stats(gtypes_this_loc)
+    }))
+    analyses <- colnames(mat)
+    num_analyses <- length(analyses)
+
 
 if(is.null(scenario.results[[group]][[curr_scn]])){
   scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
                                                    dimnames = list(1:num_loci,analyses,1:num_reps))
 }
 
-################################### once Eric fixes naming the loci, start here for multidna objects global for each gene ###########
+# We are printing by gene, not overall gene analysis. This differs from the genind code below.
+scenario.results[[group]][[curr_scn]][,,curr_rep] <- mat
 
+params@analysis.results <- scenario.results
 
 
     } else if(class(params@analysis.result)=="genind"){
