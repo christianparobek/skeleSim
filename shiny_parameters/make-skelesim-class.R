@@ -8,7 +8,7 @@
 scenario.observe <- observe({     
     ##### test for nulls in the reactives
     anynull <- FALSE
-    browser()
+#    browser()
     if (is.null(input$scenarioNumber)&(!anynull)) anynull <- TRUE
     if (is.null(input$numpops)&(!anynull)) anynull <- TRUE
     if (is.null(input$numloci)&(!anynull)) anynull <- TRUE
@@ -16,7 +16,7 @@ scenario.observe <- observe({
     if (is.null(input$migModel)&(!anynull)) anynull <- TRUE
     if (is.null(input$migRate)&(!anynull)) anynull <- TRUE
 
-    print (paste("anynull",anynull))
+#    print (paste("anynull",anynull))
     
 if (!anynull)
     {
@@ -29,11 +29,11 @@ if (!anynull)
         locscen <- ssClass@scenarios
         print(paste("len locscen",length(locscen)))
 
-        print(input$numpops)
+#        print(input$numpops)
 ####here is the situation where there is a new scenario added
         if (sn<=length(locscen))
             {
-                print("enter cond true")
+                print("scenario number greater than the total number of scenarios to this point")
                 locscen[[sn]]@num.pops <- input$numpops
                 locscen[[sn]]@migration <- list(inmat())
                 locscen[[sn]]@mig.helper <- list(mig.model = input$migModel,
@@ -48,8 +48,9 @@ if (!anynull)
                 locscen[[sn]]@num.loci <- input$numloci
                 locscen[[sn]]@mut.rate <- input$mut.rate
             } else  {
-                print(paste("sn2",sn))
-                print(paste("length locscen2",length(locscen)))
+                print ("scenario number in the range of existing scenarios")
+                print(paste("scenario number in the scenario.observe observer:",sn))
+#                print(paste("length locscen2",length(locscen)))
                 oldlen <- length(locscen)
                 locscen <- c(locscen,locscen[rep(1,(sn-length(locscen)))])
                 for (s in (oldlen+1):sn)
@@ -59,7 +60,7 @@ if (!anynull)
             }
                                         # browser(length(locscen)>0)           
         ssClass@scenarios<<-locscen
-        print("scenarios")
+        print("scenarios:")
         print(str(ssClass@scenarios))
     }
 }, priority=100)

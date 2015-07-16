@@ -122,34 +122,36 @@ output$migmodelUI <- renderUI({
 output$migrateUI <- renderUI(
     {
         val <- 1
-        if (input$scenarioNumber<=length(ssClass@scenarios))
-            if (!is.null(ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.rate))
+    if ((scenario.exists()) && (!is.null(ssClass@scenarios[[input$scenarioNumber]])))
+        if (!is.null(ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.rate))
                 {val <- ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.rate}
-        
-        numericInput("migRate", "Migration rate",1)
+        numericInput("migRate", "Migration rate",value=val)
     }
     )
                                         #
 output$rows <- renderUI({
-    if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))
-        {
-            numericInput("rows", "Rows in a grid-shaped landscape",2)
-        }
+    if (!is.null(input$migModel))
+        if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))
+            {
+                numericInput("rows", "Rows in a grid-shaped landscape",2)
+            }
 })
 
 output$cols <- renderUI({
-    if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))
-        {
-            numericInput("cols", "Cols in a grid-shaped landscape",2)
-        }
+    if (!is.null(input$migModel))
+        if (input$migModel%in%c("twoD","twoDwDiagonal","distance"))
+            {
+                numericInput("cols", "Cols in a grid-shaped landscape",2)
+            }
 })
 
 
 output$distanceFun <- renderUI({
-    if (input$migModel%in%c("distance"))
-        {
-            textInput("distfun", "Distance function (must be an R function)","dexp")
-        }
+    if (!is.null(input$migModel))
+        if (input$migModel%in%c("distance"))
+            {
+                textInput("distfun", "Distance function (must be an R function)","dexp")
+            }
 })
 
 

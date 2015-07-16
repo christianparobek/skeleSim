@@ -18,4 +18,6 @@ lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click
 # coalParams <- new
 ssClass <<- new("skeleSim.params")
-fnameLabel <- NULL # combination of ssClass@label and timestamp for labelling filenames
+objLabel <- NULL # syntactically valid name from 'title' slot of parameter object
+fnameLabel <- NULL # combination of objLabel and timestamp for labelling filenames
+
