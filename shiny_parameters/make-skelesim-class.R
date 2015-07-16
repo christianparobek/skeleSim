@@ -1,11 +1,11 @@
 #
-# expressions to create a skelesim object from input$xxxx variables 
+# expressions to create a skelesim object from input$xxxx variables
 #
 # maintain and build a list of scenarios
 # list of scenarios is appended if the scenario number
 # is incremented
 
-scenario.observe <- observe({     
+scenario.observe <- observe({
     ##### test for nulls in the reactives
     anynull <- FALSE
 #    browser()
@@ -17,7 +17,7 @@ scenario.observe <- observe({
     if (is.null(input$migRate)&(!anynull)) anynull <- TRUE
 
 #    print (paste("anynull",anynull))
-    
+
 if (!anynull)
     {
         sn <- input$scenarioNumber
@@ -58,7 +58,7 @@ if (!anynull)
                         locscen[[s]] <- locscen[[1]]
                     }
             }
-                                        # browser(length(locscen)>0)           
+                                        # browser(length(locscen)>0)
         ssClass@scenarios<<-locscen
         print("scenarios:")
         print(str(ssClass@scenarios))
@@ -70,7 +70,7 @@ scenario.return <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
 ####################################
 ### use shiny input to modify skelesim class (global ssClass)
 observe({
-    
+
 ssClass@title <<- input$title
 ssClass@date <<- as.POSIXct(Sys.time())
 ssClass@quiet <<- input$quiet
@@ -86,10 +86,9 @@ if (!is.null(input$coalescent))
                 ssClass@simulator.type <<- "f"
                 ssClass@sim.func <<- rms.run
             }
-    }        
+    }
 ssClass@simulator <<- "fsc"   #this is hard-coded but might need some work
 ssClass@num.reps <<- input$reps
-ssClass@timing <<- input$timing
 ssClass@wd <<- input$wd
 #print(ssClass)
 })

@@ -53,7 +53,6 @@ shinyUI(
                  uiOutput("quietUI"),
                  uiOutput("coalescentUI"),
                  uiOutput("repsUI"),
-                 uiOutput("timing"),
                  uiOutput("wdUI")
                ),
                mainPanel()
