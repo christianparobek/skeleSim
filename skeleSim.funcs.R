@@ -216,7 +216,7 @@ plot.all.stats<-function(params){
  }
 
 #function to calculate Garza Williamson M ratio (bottleneck) statistic, per pop, per loc
-calc.gw <- function(gen.data, p, l, one.pop=T) {
+calc.mratio <- function(gen.data, p, l, one.pop=T) {
   #first subset the genind object for population p and locus l
   if (one.pop==T) this.pop<-gen.data[,loc=l]
   else this.pop<-gen.data[pop=p,loc=l]

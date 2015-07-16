@@ -35,7 +35,7 @@ if (!anynull)
             {
                 print("scenario number greater than the total number of scenarios to this point")
                 locscen[[sn]]@num.pops <- input$numpops
-                locscen[[sn]]@migration <- list(inmat())
+                locscen[[sn]]@migration <- list(ssClass.scenario.mig())
                 locscen[[sn]]@mig.helper <- list(mig.model = input$migModel,
                                                  mig.rate  = input$migRate,
                                                  landrows  = input$rows,
@@ -65,7 +65,7 @@ if (!anynull)
     }
 })
 
-scenario.return <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
+ssClass.update <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
 
 ####################################
 ### use shiny input to modify skelesim class (global ssClass)
@@ -91,6 +91,7 @@ ssClass@simulator <<- "fsc"   #this is hard-coded but might need some work
 ssClass@num.reps <<- input$reps
 ssClass@wd <<- input$wd
 #print(ssClass)
+ssClass
 })
 
 
