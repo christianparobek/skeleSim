@@ -73,6 +73,8 @@ function(params){
 
         } else if(class(params@analysis.result)=="genind"){
 
+          #Global
+
           results_genind<-params@rep.result
           #convert genind to gtypes
           results_gtype<-genind2gtypes(results_genind)
@@ -122,9 +124,12 @@ function(params){
           colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
 
+
+
           #mratio on genind object, function needs genetic data as a genind, the population names, the locus names
 
           ##### Junk in here to get rid of!!!!
+
           pop.locus.df <- as.matrix(expand.grid(pop = levels(results_genind@pop), locus = levels(results_genind@loc.fac)))
 
           #  pop.locus.df <- as.matrix(expand.grid(pop = levels(nancycats@pop), locus = levels(nancycats@loc.fac)))
@@ -139,6 +144,11 @@ function(params){
           mratio <- apply(pop.locus.df,1, function(x){
             calc.mratio(results_genind, x[1], x[2])
           })
+
+
+
+          ############### #mratio.p.val
+
 
 
           #convert genind to gtypes for remaining analyses
@@ -167,8 +177,6 @@ function(params){
           smryPop <- cbind(smryPop, as.vector(t(by.loc)))
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
 
-
-          ############### #mratio.p.val
 
           ################ #allelic.diversity
 
