@@ -12,7 +12,7 @@ source("../skeleSim.classes.R")
 source("../fastsimcoal/fsc.run.R")
 source("../rmetasim/rms.run.R")
 
-
+ssUserEnv <- new.env() # environment for holding session-persistent user objects
 histry <- NULL     #saves a simcoal history
 lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click

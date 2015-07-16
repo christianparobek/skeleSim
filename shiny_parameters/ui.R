@@ -14,9 +14,8 @@ shinyUI(
                  "Save parameters",
                  #  !!!! GET 'label' FROM ssClass@label
                  textInput("txtTitle", label = h4("Title"), value = ssClass@title),
-                 h4("Label"),
-                 textOutput("txtObjLabel"),
-                 br(), actionButton("btnSaveParams", "Save parameters"),
+                 h4("Save parameter file"),
+                 uiOutput("uiBtnSaveParams"),
                  textOutput("txtSaveStatus")
                )
              )
