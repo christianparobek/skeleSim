@@ -65,7 +65,7 @@ if (!anynull)
     }
 })
 
-scenario.return <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
+ssClass.update <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
 
 ####################################
 ### use shiny input to modify skelesim class (global ssClass)
@@ -91,6 +91,7 @@ ssClass@simulator <<- "fsc"   #this is hard-coded but might need some work
 ssClass@num.reps <<- input$reps
 ssClass@wd <<- input$wd
 #print(ssClass)
+ssClass
 })
 
 
