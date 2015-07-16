@@ -9,10 +9,13 @@ source("utils.R")
 source("mig.matrix.R")
 source("simcoal-history.R")
 source("../skeleSim.classes.R")
+source("../fastsimcoal/fsc.run.R")
+source("../rmetasim/rms.run.R")
+
 
 histry <- NULL     #saves a simcoal history
 lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click
 # coalParams <- new
-#ssClass <<- new("skeleSim.params")
+ssClass <<- new("skeleSim.params")
 fnameLabel <- NULL # combination of ssClass@label and timestamp for labelling filenames
