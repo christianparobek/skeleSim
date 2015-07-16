@@ -180,6 +180,21 @@ function(params){
 
           ################ #allelic.diversity
 
+          ################### #Convert from genind to loci (package pegas))
+          results_loci<-genind2loci(results_genind)
+          #for loci
+          FSTloci<-Fst(results_loci)
+          Fisloci <- FSTloci[ , c("Fis")]
+          Fitloci <- FSTloci[ , c("Fit")]
+          Fstloci <- FSTloci[ , c("Fst")]
+          #for pops
+          FSTpop<-Fst(results_loci, pop = #column with pop information#)
+                        Fispop <- FSTpop[ , c("Fis")]
+                      Fitpop <- FSTpop[ , c("Fit")]
+                      Fstpop <- FSTpop[ , c("Fst")]
+
+
+
          locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all)
          analysis_names <- colnames(locus.final)
 
