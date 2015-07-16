@@ -4,6 +4,8 @@ source("setup.R")
 #coalParams <<- new
 
 shinyServer(function(input, output,session) {
+  ##################### parameter loading and saving
+  source("loadParams.R", local = TRUE)
 
   ##################### parameter loading and saving
   source("saveParams.R", local = TRUE)

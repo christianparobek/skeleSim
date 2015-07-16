@@ -8,7 +8,9 @@ shinyUI(
              navlistPanel(
                tabPanel(
                  "Load parameters",
-                 actionButton("btnLoadParams", "Load")
+                 fileInput("fileParams", "Choose .Rdata File"),
+                 h4("Selected Object"),
+                 uiOutput("uiSelectParamObj")
                ),
                tabPanel(
                  "Save parameters",
