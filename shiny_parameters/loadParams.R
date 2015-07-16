@@ -15,10 +15,14 @@ output$uiSelectParamObj <- renderUI({
         label = h5("Select parameter object"),
         choices = obj.list
       )
-    } else h5("<EMPTY>")
-  } else h5("<EMPTY>")
+    } else h5("<No skeleSim parameter objects found>")
+  } else NULL
 })
 
-# observe({
-#   ssClass <- get(input$slctParams)
-# })
+observe({
+  if(!is.null(input$slctParams)) {
+    ssClass <<- get(input$slctParams, envir = ssUserEnv)
+    print(ssClass@title)
+  }
+})
+
