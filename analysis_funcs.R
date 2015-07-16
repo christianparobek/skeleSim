@@ -15,7 +15,6 @@ function(params){
 
     scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
-
     # creates a list of length scenarios for each requested groups of analyses
     for(group in names(which(params@analyses.requested)))
       scenario.results[[group]] <- vector('list', length(params@scenarios))
@@ -24,15 +23,14 @@ function(params){
 
     for(group in names(which(params@analyses.requested))){
 
-
       # group will cycle through selected among Global, Locus, and Pairwise
       # in each iteration of the for loop, group will have only one value
 
       if(group == "Global"){
 
-        # TO DO check the data type and do conversions for what is needed ####@$@#$@#$#@
-
+        # TO DO check the data type and do conversions for what is needed 
         # For multidna class objects we convert to a gtypes and use strataG for analysis
+        
         #initialize arrays
         if (class(params@analysis.result)=="multidna"){
 
@@ -52,11 +50,11 @@ function(params){
           #put overall analysis in first row using overall_stats()
           # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
           #run by locus analysis
-          mat <- t(sapply(locNames(results_gtype), function (l){
+          results.matrix <- t(sapply(locNames(results_gtype), function (l){
             gtypes_this_loc<-subset(results_gtype, loci=l)
             overall_stats(gtypes_this_loc)
           }))
-          analyses <- colnames(mat)
+          analyses <- colnames(results.matrix)
           num_analyses <- length(analyses)
 
 
@@ -66,8 +64,9 @@ function(params){
           }
 
           # We are printing by gene, not overall gene analysis. This differs from the genind code below.
-          scenario.results[[group]][[curr_scn]][,,curr_rep] <- mat
+          scenario.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
 
+          #this shouldn't happen here it should be at close of function- this is what is returned
           params@analysis.results <- scenario.results
 
 
@@ -81,8 +80,6 @@ function(params){
 
           #   analyses <- names(overall_stats(results_gtype))
           #    num_analyses <- length(analyses)
-
-
 
           #put overall analysis in first row using overall_stats()
           # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
@@ -101,10 +98,10 @@ function(params){
                                                            dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
           }
 
-
           # combining overall statistics and locus by locus matrix
           scenario.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
 
+          #this shouldn't happen here it should be at close of function- this is what is returned
           params@analysis.results <- scenario.results
 
         }
@@ -117,52 +114,26 @@ function(params){
 
           results_genind<-params@rep.result
 
-          #Hardy Weiberg test per population and overall
+          #Hardy Weiberg test per population and overall (this comes first because it needs genind)
           pops_as_list<-seppop(results_genind)
           hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
           hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results)) # warnings for unknown reason
           colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
-
-
-
-          #mratio on genind object, function needs genetic data as a genind, the population names, the locus names
-
-          ##### Junk in here to get rid of!!!!
-
-          pop.locus.df <- as.matrix(expand.grid(pop = levels(results_genind@pop), locus = levels(results_genind@loc.fac)))
-
-          #  pop.locus.df <- as.matrix(expand.grid(pop = levels(nancycats@pop), locus = levels(nancycats@loc.fac)))
-
-          mratio <- apply(pop.locus.df,1, function(x){
-            calc.mratio(nancycats, x[1], x[2])
-          })
-          gtypes.cats <- genind2gtypes(nancycats)
-          alleleFreqs(gtypes.cats, by.strata = TRUE)
-
-
-          mratio <- apply(pop.locus.df,1, function(x){
-            calc.mratio(results_genind, x[1], x[2])
-          })
-
-
-
-
-          ############### #mratio.p.val
-
-
-
           #convert genind to gtypes for remaining analyses
           results_gtype<-genind2gtypes(results_genind)
+          
+          #mratio on gtypes object, function needs genetic data as a gtype
+          mrat_results_all<-calc.mratio(results_gtype)          
 
-          #by locus
+          #by locus, all the other stats (num alleles etc) pulled from summarizeLoci
           smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))
 
           #by population
           locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
-          smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(msats, by.strata = TRUE)))
+          smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
 
-          #Number of private alleles by locus
+          #Number of private alleles by locus- this should be moved to the skelesimFuncs
           alleleFreqs <- alleleFreqs(results_gtype, by.strata = TRUE)
           by.loc <- sapply(alleleFreqs, function(loc) {
             mat <- loc[, "freq", ]
@@ -174,17 +145,13 @@ function(params){
           })
           rownames(by.loc) <- strataNames(results_gtype)
           perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
+          
           #the rows will be have the private alleles for each population by locus
           smryPop <- cbind(smryPop, as.vector(t(by.loc)))
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
 
 
-
-
-          ############### #mratio.p.val
-
-
-          ################### #Convert from genind to loci (package pegas))
+            ################# #Convert from genind to loci (package pegas))
           results_loci<-genind2loci(results_genind)
           #for loci
           FSTloci<-Fst(results_loci)
@@ -198,8 +165,8 @@ function(params){
                       Fstpop <- FSTpop[ , c("Fst")]
 
 
-
-         locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all)
+          #all the analyses get bound here
+         locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all,mrat_results_all)
          analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
@@ -216,10 +183,15 @@ function(params){
 
         ############## ONCE ERIC fixes multidna stuffs, DO THIS!!!!  ###################
         if(class(params@analysis.result)=="multidna"){
+          
+          overallTest
+          
+          
+          
 
         }
 
-        # check location of this!
+        # check location of this! this should probbaly be at end
         params@analysis.results <- scenario.results
 
 
