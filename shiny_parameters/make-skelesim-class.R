@@ -63,7 +63,7 @@ if (!anynull)
         print("scenarios:")
         print(str(ssClass@scenarios))
     }
-}, priority=100)
+})
 
 scenario.return <- reactive( {ssClass@scenarios[[input$scenarioNumber]]} )
 

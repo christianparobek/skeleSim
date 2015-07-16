@@ -31,7 +31,7 @@ inmat <- reactive({
 #    print(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]])
 #},priority=10)
 
-####the intent here is for every change to a mig mat to be written to the ssClass object
+####the intent here is for every change to a mig mat to be written to the global ssClass object
 update.ssClass.mig <- observe({  
     if (scenario.exists())
         {
@@ -45,34 +45,35 @@ update.ssClass.mig <- observe({
                 |(input$migModel!=ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.model))
                 {
                     print("writing matrix")
-                    ssClass@scenarios[[input$scenarioNumber]]@migration[[1]] <- mig.mat()
+                    ssClass@scenarios[[input$scenarioNumber]]@migration[[1]] <<- mig.mat()
                 } else {
                     print ("matrix not altered")
                 }
             print("this is the current state of the matrix")
             print(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]])
-
         }
 })
 
 
 htmlmat <- reactive({
-#        input$migModel
-    if (!is.null(input$numpops))
-        {
-            mat <- ssClass@scenarios[[input$scenarioNumber]]@migration[[1]]
-            retmat <- matrix("",dim(mat)[1],dim(mat)[2])
-            for (row in 1:input$numpops)
-                for (col in 1:input$numpops)
-                {
-                    intxt <- paste0("<input id='r",row,"c",col,"' class='input-tiny' type='number' value='",mat[row,col],"'>")
-                    retmat[row,col] <-intxt
-                }
-            colnames(retmat) <- 1:input$numpops
-            rownames(retmat) <- 1:input$numpops
-            as.data.frame(retmat)
-        }
-})
+        input$migModel
+        if (!is.null(input$numpops))
+            {
+                mat <- ssClass@scenarios[[input$scenarioNumber]]@migration[[1]]
+                print("inside of htmlmat")
+                print(mat)
+                retmat <- matrix("",dim(mat)[1],dim(mat)[2])
+                for (row in 1:input$numpops)
+                    for (col in 1:input$numpops)
+                        {
+                            intxt <- paste0("<input id='r",row,"c",col,"' class='input-tiny' type='number' value='",mat[row,col],"'>")
+                            retmat[row,col] <-intxt
+                        }
+                colnames(retmat) <- 1:input$numpops
+                rownames(retmat) <- 1:input$numpops
+                as.data.frame(retmat)
+            }
+    })
 
 output$migmat <-renderTable({
     htmlmat()
