@@ -147,6 +147,7 @@ function(params){
 
 
 
+
           ############### #mratio.p.val
 
 
@@ -178,7 +179,10 @@ function(params){
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
 
 
-          ################ #allelic.diversity
+
+
+          ############### #mratio.p.val
+
 
           ################### #Convert from genind to loci (package pegas))
           results_loci<-genind2loci(results_genind)
