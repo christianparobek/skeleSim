@@ -89,51 +89,7 @@ gen.scenario.check <-function(params) {
 }
 
 
-tic <- function(gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self"), off = FALSE) {
-  if(off) {
-    assign(".type", NULL, envir = baseenv())
-    assign(".tic", NULL, envir = baseenv())
-    invisible(NULL)
-  }
-  type <- match.arg(type)
-  assign(".type", type, envir = baseenv())
-  if(gcFirst) gc(FALSE)
-  tic <- proc.time()[type]
-  assign(".tic", tic, envir = baseenv())
-  invisible(tic)
-}
-
-
-toc <- function(show = FALSE) {
-  type <- get(".type", envir = baseenv())
-  if(is.null(type)) invisible(NULL)
-  toc <- proc.time()[type]
-  tic <- get(".tic", envir = baseenv())
-  if(is.null(tic)) invisible(NULL)
-  elapsed <- toc - tic
-  if(show) print(elapsed)
-  invisible(elapsed)
-}
-
-
-stopRunning <- function(i, n, elapsed) {
-  pct.complete <- round(100 * i / n, 1)
-  seconds.left <- (n - i) * elapsed / i
-  eta <- Sys.time() + as.difftime(seconds.left, units = "secs")
-  time.left <- eta - Sys.time()
-
-  cat("\n--- skeleSim ---\n")
-  cat("In ", round(elapsed, 1), " seconds, the simulator is ",
-      pct.complete, "% complete: ",
-      i, "/", n, " iterations.\n", sep = "")
-  cat("At this rate it is estimated to complete in:",
-      round(time.left, 2), units(time.left), "\n")
-  cont <- readline("Press 'n' to stop or any other key to continue: ")
-  tolower(cont == "n")
-}
-
-
-runSim <- function(params) {
+runSim <- function(params, num.secs = NULL) {
   # check parameters
   params<-overall.check(params)
   if(!all(params@other.checks, params@sim.scen.checks)) {
@@ -153,7 +109,7 @@ runSim <- function(params) {
   dir.create(params@wd)
   wd <- setwd(params@wd)
 
-  params@start.time <- Sys.time()
+  results <- list(timing = list())
   params@analysis.results <- NULL
   tryCatch({
     num.sc <- length(params@scenarios)
@@ -161,10 +117,10 @@ runSim <- function(params) {
     sc.vec <- rep(1:num.sc, num.reps)
     rep.vec <- rep(1:num.reps, each = num.sc)
     params@scenario.reps <- cbind(scenario = sc.vec, replicate = rep.vec)
-    if(!is.null(params@timing)) tic()
     quit <- FALSE
     # loop through replicates for scenarios
     num.iter <- nrow(params@scenario.reps)
+    results$timing$start.time <- Sys.time()
     for(i in 1:num.iter) {
       if(quit) break # leave replicate for loop if user has decided to quit
       params@current.scenario <- params@scenario.reps[i, "scenario"]
@@ -179,28 +135,35 @@ runSim <- function(params) {
       if(!dir.exists(label)) dir.create(label)
       save(params, file = file.path(label, file))
       # check timing
-      if(!is.null(params@timing)) {
-        elapsed <- toc()
-        if(!is.null(elapsed) & elapsed > params@timing) {
-          params@timing <- NULL
-          tic(off = TRUE)
-          if(stopRunning(i, num.iter, elapsed)) {
-            quit <- TRUE
-            break
+      results$timing$end.time <- Sys.time()
+      if(!is.null(num.secs)) {
+        elapsed <- results$timing$end.time - results$timing$start.time
+        units(elapsed) <- "secs"
+        if(elapsed > num.secs) break
+      }
+    }
+
+    elapsed <- results$timing$end.time - results$timing$start.time
+    units(elapsed) <- "secs"
+    completion <- num.iter * elapsed / i
+    if(completion > 60) {
+      units(completion) <- "mins"
+      if(completion > 60) {
+        units(completion) <- "hours"
+        if(completion > 24) {
+          units(completion) <- "days"
+          if(completion > 7) {
+            units(completion) <- "weeks"
           }
         }
       }
     }
+    results$timing$completion.time <- completion
+    results$timing$pct.complete <- round(100 * i / num.iter, 1)
+    results$params <- params
   }, finally = setwd(wd))
 
-  # display run timing
-  params@end.time <- Sys.time()
-  cat("\n--- skeleSim ---\n")
-  cat("Start:", format(params@start.time), "\n")
-  cat("End:", format(params@end.time), "\n")
-  elapsed <- round(params@end.time - params@start.time, 2)
-  cat("Elapsed:", elapsed, units(elapsed), "\n")
-  params
+  results
 }
 
 

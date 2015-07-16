@@ -26,7 +26,6 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot start.time a POSIXct representation of the starting time of the simulation.
 #' @slot end.time a POSIXct representation of the end time of the simulation.
 #' @slot num.reps number of replicates to run.
-#' @slot timing number of seconds to run to estimate time to completion.
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
 #' @slot last.sample result of last call to \code{sim.func}.
@@ -51,8 +50,8 @@ setClass(
   slots = c(title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
             question = "charOrNULL", simulator.type = "charOrNULL",
             simulator = "charOrNULL", wd = "charOrNULL",
-            scenarios = "listOrNULL", start.time = "posixOrNULL", end.time = "posixOrNULL",
-            num.reps = "intOrNum", timing = "intOrNum", sim.func = "funcOrNULL",
+            scenarios = "listOrNULL",
+            num.reps = "intOrNum", sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "ANY",
@@ -62,8 +61,8 @@ setClass(
             analyses.requested = "logOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
-                simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL, start.time = NULL,
-                end.time = NULL, num.reps = NULL, timing = NULL, sim.func = NULL,
+                simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
+                num.reps = NULL, sim.func = NULL,
                 current.scenario = 1, current.replicate = NULL,
                 rep.sample = NULL, rep.analysis.func = NULL, rep.result = NULL,
                 analysis.results = NULL, sim.summary.func = NULL,
@@ -88,7 +87,7 @@ setClass(
 #'   migration rates between each population.
 #' @slot mig.helper a list of flags that are needed for te shiny interface but are not needed for the simulation
 #'   itself.  Makes it easier to keep track of different ways to specify migration matrices for different scenarios.
-#'   List elements will include migration model, rows and columns of landscape and distance function.  
+#'   List elements will include migration model, rows and columns of landscape and distance function.
 #' @slot simulator.params an object storing simulator-specific parameters. Can
 #'   be a list or a simulator-specific class.
 #'

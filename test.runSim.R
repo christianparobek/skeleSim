@@ -76,7 +76,8 @@ ssClass <- test.params
 save.image("test.ssClass.rdata")
 
 # ---- Run replicates ---- (includes error checking)
-test.params <- runSim(test.params)
+timing.result <- runSim(test.params, 2)
+full.result <- runSim(test.params)
 
 
 # ---- Summarize analysis results ----
