@@ -3,6 +3,7 @@ output$uiBtnSaveParams <- renderUI({
   objLabel <<- if(is.null(input$txtTitle) | input$txtTitle == "") {
     NULL
   } else {
+    ssClass@title <<- input$txtTitle
     make.names(input$txtTitle)
   }
 
@@ -38,3 +39,4 @@ observeEvent(input$btnSaveParams, {
     })
   }
 })
+

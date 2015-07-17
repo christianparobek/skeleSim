@@ -4,23 +4,28 @@ shinyUI(
   navbarPage(
     "skelesim",
 
-    tabPanel("File",
-             navlistPanel(
-               tabPanel(
-                 "Load parameters",
-                 fileInput("fileParams", "Choose .Rdata File"),
-                 h4("Selected Object"),
-                 uiOutput("uiSelectParamObj")
-               ),
-               tabPanel(
-                 "Save parameters",
-                 #  !!!! GET 'label' FROM ssClass@label
-                 textInput("txtTitle", label = h4("Title"), value = ssClass@title),
-                 h4("Save parameter file"),
-                 uiOutput("uiBtnSaveParams"),
-                 textOutput("txtSaveStatus")
-               )
-             )
+    tabPanel(
+      "File",
+      navlistPanel(
+        tabPanel(
+          "Load parameters",
+          fileInput("fileParams", h4("Choose .Rdata File")),
+          uiOutput("uiSelectParamObj"),
+          textOutput("txtSelectedTitle")
+        ),
+        tabPanel(
+          "Save parameters",
+          textInput("txtTitle", label = h4("Project Title"), value = ssClass@title),
+          h4("Save parameter file"),
+          uiOutput("uiBtnSaveParams"),
+          textOutput("txtSaveStatus")
+        ),
+        tabPanel(
+          "Run Simulator",
+          uiOutput("btnRun"),
+          textOutput("txtRunStatus")
+        )
+      )
     ),
 
     tabPanel("Intro questions",
@@ -108,12 +113,6 @@ shinyUI(
                    )
                  )
                ))
-    ),
-
-    tabPanel(
-      "Run Simulator",
-      uiOutput("btnRun"),
-      textOutput("txtRunStatus")
     )
   )
 )
