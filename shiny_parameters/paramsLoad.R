@@ -27,6 +27,5 @@ observe({
     ""
   }
   updateTextInput(session, "txtTitle", value = currentTitle)
-  print(currentTitle)
 })
 

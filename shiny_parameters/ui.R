@@ -19,6 +19,11 @@ shinyUI(
           h4("Save parameter file"),
           uiOutput("uiBtnSaveParams"),
           textOutput("txtSaveStatus")
+        ),
+        tabPanel(
+          "Run Simulator",
+          uiOutput("btnRun"),
+          textOutput("txtRunStatus")
         )
       )
     ),
@@ -108,12 +113,6 @@ shinyUI(
                    )
                  )
                ))
-    ),
-
-    tabPanel(
-      "Run Simulator",
-      uiOutput("btnRun"),
-      textOutput("txtRunStatus")
     )
   )
 )

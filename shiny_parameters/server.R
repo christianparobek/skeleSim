@@ -4,11 +4,14 @@ source("setup.R")
 #coalParams <<- new
 
 shinyServer(function(input, output,session) {
-  ##################### parameter loading and saving
-  source("loadParams.R", local = TRUE)
+  ##################### parameter loading
+  source("paramsLoad.R", local = TRUE)
 
-  ##################### parameter loading and saving
-  source("saveParams.R", local = TRUE)
+  ##################### parameter saving
+  source("paramsSave.R", local = TRUE)
+
+  ##################### running simulator
+  source("simRun.R", local = TRUE)
 
   ##################### include the server code for Christians implemntation of
   ##################### the initial skelesim questions
@@ -32,9 +35,6 @@ shinyServer(function(input, output,session) {
 
   ######################## skeleSim class setup
   source("make-skelesim-class.R",local=T)
-
-  ##################### parameter loading and saving
-  source("runSim.R", local = TRUE)
 
   #############debugging
   output$tbl <- renderTable({
