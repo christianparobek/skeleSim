@@ -216,7 +216,7 @@ plot.all.stats<-function(params){
  }
 
 #function to calculate Garza Williamson M ratio (bottleneck) statistic, per pop, per loc
-calc.gw <- function(gen.data.gtype) {
+calc.mratio <- function(gen.data.gtype) {
   pop.locus.df <- as.matrix(expand.grid(pop = 1:length(unique(gen.data.gtype@strata)), 
                                         locus = 1:length(gen.data.gtype@loci)))
   
