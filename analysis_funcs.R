@@ -160,7 +160,7 @@ function(params){
 
           #by population
           locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
-          smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(msats, by.strata = TRUE)))
+          smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
 
           #Number of private alleles by locus
           alleleFreqs <- alleleFreqs(results_gtype, by.strata = TRUE)
@@ -222,13 +222,19 @@ function(params){
         # check location of this!
         params@analysis.results <- scenario.results
 
-
+###########################  Pairwise  ###########################
       } else if(x == "Pairwise"){
+
+        ##### no difference between pws and genotype data pws
+        #Pairwise Chi2, D, F..., G...
+        pws <- pairwiseTest(results_gtype, nrep = 5,stat.list = list(statGst), quietly = TRUE)
+        pws[1]$result[,-c(2:5)] # assuming the 2nd through 5th column remain strata.1, strata.2, n.1, and n.2
+
         #Genotype data
-        pws <- pairwiseTest(params@rep.result, nrep = 5, stat.list = list(statGst, quietly = TRUE))
-        pws.out <- pws$result[-c(1:5)]
-        rownames(pws.out) <- as.matrix(pws[[1]][1])
-        sA <- sharedAlleles(params@rep.result)[,-c(1:2)]
+        pws <- pairwiseTest(results_gtype, nrep = 5, stat.list = list(statGst, quietly = TRUE))
+        pws.out <- pws$result[-c(2:5)]
+        # rownames(pws.out) <- as.matrix(pws[[1]][1])  # could turn into row names at the end.. but they'll be repeated
+        sA <- sharedAlleles(results_gtype)[,-c(1:2)]
         nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
         names(sA) <- nsharedAlleles
         pws.out <- cbind(pws.out, sA)

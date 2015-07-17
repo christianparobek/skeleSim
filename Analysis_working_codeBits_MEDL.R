@@ -96,6 +96,7 @@ names <-  c("overall", 1:npop)
 # for loci
 names <- c("overall", 1:nloc)
 #####################################################################
+## to install from github: install_github("jgx65/hierfstat")  Jerome's
 
 # testing ones
 analyses <- c("allel","Freq","prop")
