@@ -28,9 +28,9 @@ function(params){
 
       if(group == "Global"){
 
-        # TO DO check the data type and do conversions for what is needed 
+        # TO DO check the data type and do conversions for what is needed
         # For multidna class objects we convert to a gtypes and use strataG for analysis
-        
+
         #initialize arrays
         if (class(params@analysis.result)=="multidna"){
 
@@ -122,9 +122,9 @@ function(params){
 
           #convert genind to gtypes for remaining analyses
           results_gtype<-genind2gtypes(results_genind)
-          
+
           #mratio on gtypes object, function needs genetic data as a gtype
-          mrat_results_all<-calc.mratio(results_gtype)          
+          mrat_results_all<-calc.mratio(results_gtype)
 
           #by locus, all the other stats (num alleles etc) pulled from summarizeLoci
           smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))
@@ -145,7 +145,7 @@ function(params){
           })
           rownames(by.loc) <- strataNames(results_gtype)
           perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
-          
+
           #the rows will be have the private alleles for each population by locus
           smryPop <- cbind(smryPop, as.vector(t(by.loc)))
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
@@ -184,11 +184,11 @@ function(params){
 
         ############## ONCE ERIC fixes multidna stuffs, DO THIS!!!!  ###################
         if(class(params@analysis.result)=="multidna"){
-          
+
           overallTest
-          
-          
-          
+
+
+
 
         }
 
@@ -211,7 +211,7 @@ function(params){
         nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
         names(sA) <- nsharedAlleles
         pws.out <- cbind(pws.out, sA)
-        scenario.results[[params@current.scenario]] <- pws.out
+        scenario.results[[params@current.scenario]] <- pws.outS
       }
 
       #Data.frame of summary data into simulation replicate

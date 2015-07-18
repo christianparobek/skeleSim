@@ -16,10 +16,53 @@ library(poppr)
 ##### Testing with strataG.devel
 # library(strataG.devel)
 
+#################################  format rep.results from multidna to gtypes #########
+class(rep.result)
 
-setwd("C:/Users/deprengm/Dropbox/Hackathon/Datasets")
-df <- read.fasta("name_checked_acanigror_CyB_JD.fasta")
-str(df)
+class(rep.result[[2]])
+
+genes <- rep.result[[2]]#the multidna object
+names(genes@dna) <- paste("gene", 1:length(genes@dna))
+id <- genes@labels
+df <- data.frame(id = id, strata = rep.result[[1]])
+gene.labels <- matrix(id, nrow = length(id), ncol = getNumLoci(rep.result[[2]]))
+colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+df <- cbind(df, gene.labels)
+test.g <- df2gtypes(df, 1, sequences = genes)
+summary(test.g)
+
+nLoc(test.g)
+locNames(test.g)
+
+length(genes)
+rep.result
+length(rep.result$dna.seqs@dna)
+
+length(seq.names)
+
+params@analysis.result <- rep.result
+num_loci <- getNumLoci(rep.result[[2]])
+
+# msats <- dolph.msats
+alleleFreqs <- alleleFreqs(msats, by.strata = TRUE)
+by.loc <- sapply(alleleFreqs, function(loc) {
+  mat <- loc[, "freq", ]
+  rowSums(apply(mat, 1, function(r) {
+    result <- rep(FALSE, length(r))
+    if(sum(r > 0) == 1) result[r > 0] <- TRUE
+    result
+  }))
+})
+rownames(by.loc) <- strataNames(msats)
+perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
+t(by.loc) #the rows will be have the private alleles for each population by locus
+
+
+
+
+#setwd("C:/Users/deprengm/Dropbox/Hackathon/Datasets")
+#df <- read.fasta("name_checked_acanigror_CyB_JD.fasta")
+#str(df)
 
 class(df)
 
