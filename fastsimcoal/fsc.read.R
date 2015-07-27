@@ -1,8 +1,7 @@
 # read a .arp file written by fastsimcoal
 # to be called after simulation has been run but before analysis is to be run
-fsc.read <- function(file, params) {
-  stopifnot(require(adegenet))
-  stopifnot(require(ape))
+fsc.read <- function(file, sc) {
+  stopifnot(require(adegenet) & require(apex))
   f <- readLines(file)
 
   # get start and end points of data blocks
@@ -24,19 +23,27 @@ fsc.read <- function(file, params) {
 
   # return genetic data
   if(is.seq) { # if sequence data, return list with stratification and DNAbin sequences
-    # replace sequence with all A's if there are no variable sites
-    seq.len <- currentScenario(params)@sequence.length
-    if(pop.data[1, 3] == "?") {
-      full.seq <- paste(rep("A", seq.len), collapse = "")
-      pop.data[, 3] <- rep(full.seq, nrow(pop.data))
-    } else { # otherwise add A's to pad out to full sequence length
-      partial.seq <- paste(rep("A", seq.len - nchar(pop.data[1, 3])), collapse = "")
-      pop.data[, 3] <- sapply(pop.data[, 3], function(x) paste(x, partial.seq, sep = "", collapse = ""))
-    }
-    # format sequences to be converted to DNAbin
-    dna.seq <- lapply(strsplit(pop.data[, 3], ""), tolower)
-    names(dna.seq) <- pop.data[, 2]
-    list(strata = data.frame(strata = pop.data[, 1]), dna.seq = as.DNAbin(dna.seq))
+    # get sequence length markers
+    poly.pos.lines <- grep("polymorphic positions on chromosome", f, value = T)
+    num.poly <- as.numeric(sapply(strsplit(poly.pos.lines, " "), function(x) x[2]))
+    end <- cumsum(num.poly)
+    start <- c(1, end[1:(length(end) - 1)] + 1)
+
+    seq.len <- sc@sequence.length
+    dna.seqs <- lapply(1:length(seq.len), function(i) {
+      seq.i <- if(num.poly[i] == 0) {
+        full.seq <- paste(rep("A", seq.len[i]), collapse = "")
+        rep(full.seq, nrow(pop.data))
+      } else { # otherwise add A's to pad out to full sequence length
+        padding <- paste(rep("A", seq.len[i] - num.poly[i]), collapse = "")
+        seq.i <- substr(pop.data[, 3], start[i], end[i])
+        sapply(seq.i, function(x) paste(x, padding, sep = "", collapse = ""))
+      }
+      names(seq.i) <- pop.data[, 2]
+      as.DNAbin(strsplit(tolower(seq.i), ""))
+    })
+    dna.seqs <- new("multidna", dna.seqs)
+    list(strata = pop.data[, 1], dna.seqs = dna.seqs)
   } else { # if diploid data, return genind object
     n.loc <- ncol(pop.data) - 2
     # get population data

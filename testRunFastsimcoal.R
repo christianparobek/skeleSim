@@ -29,13 +29,12 @@ base.scenario@migration <- list(matrix(
   nrow = base.scenario@num.pops
 ))
 base.scenario@locus.type <- "sequence"
-base.scenario@num.loci <- 1
-base.scenario@sequence.length <- 400
-base.scenario@mut.rate <- 1e-4
+base.scenario@num.loci <- 2
+base.scenario@sequence.length <- c(400, 1000)
+base.scenario@mut.rate <- c(1e-6, 1e-3)
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
-fsc.params@fastsimcoal.exec <- if(.Platform$OS.type == "windows") "fsc252.exe" else "fsc252"
 # to change the executable, either explicitly set the @fastsimcoal.exec slot or
 # initialize with:
 #   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
@@ -69,16 +68,5 @@ test.params@rep.analysis.func <- function(params) {
   params
 }
 
-# --- Set parameter check function for specific simulator---
-test.params@sim.check.func <- fsc.scenarioCheck
-
-ssClass <- test.params
-save.image("test.ssClass.rdata")
-
-# ---- Run replicates ---- (includes error checking)
-timing.result <- runSim(test.params, 2)
-full.result <- runSim(test.params)
-
-
-# ---- Summarize analysis results ----
-#test.params <- summ.stats.table(test.params)
+# ---- Run replicates ----
+test.params <- runSim(test.params)

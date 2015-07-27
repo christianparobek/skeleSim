@@ -37,13 +37,6 @@ fsc.run <- function(params) {
   }
 
   arp.file <- file.path(label, paste(label, "_1_1.arp", sep = ""))
-  params@rep.sample <- fsc.read(arp.file, params)
+  params@rep.sample <- fsc.read(arp.file, sc)
   params
-}
-
-
-# check that parameters are ready to be run
-fsc.paramCheck <- function(params) {
-
-  return(params)
 }
