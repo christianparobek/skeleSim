@@ -31,27 +31,24 @@ inmat <- reactive({
 #    print(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]])
 #},priority=10)
 
+repopulate <- eventReactive(input$repopulateMig,{TRUE})
+
 ####the intent here is for every change to a mig mat to be written to the global ssClass object
-update.ssClass.mig <- observe({  
+ssClass.scenario.mig <- reactive({  
     if (scenario.exists())
         {
-#            mat <- mig.mat()
             print("theres a scenario")
             print(paste("scenario number ",input$scenarioNumber))
-            print(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]])
-            print(input$migModel)
-            print(ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.model)
-            if ((sum(is.na(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]]))>0)
-                |(input$migModel!=ssClass@scenarios[[input$scenarioNumber]]@mig.helper$mig.model))
+            mat <- inmat()
+            if ((sum(is.na(mat))>0)|(repopulate()))
                 {
-                    print("writing matrix")
-                    ssClass@scenarios[[input$scenarioNumber]]@migration[[1]] <<- mig.mat()
+                    print("matrix being updated")
+                    mat <- mig.mat()
                 } else {
-                    print ("matrix not altered")
+                    
                 }
-            print("this is the current state of the matrix")
-            print(ssClass@scenarios[[input$scenarioNumber]]@migration[[1]])
-        }
+        } else mat <- mig.mat()
+    mat
 })
 
 
@@ -59,7 +56,7 @@ htmlmat <- reactive({
         input$migModel
         if (!is.null(input$numpops))
             {
-                mat <- ssClass@scenarios[[input$scenarioNumber]]@migration[[1]]
+                mat <- ssClass.scenario.mig()
                 print("inside of htmlmat")
                 print(mat)
                 retmat <- matrix("",dim(mat)[1],dim(mat)[2])
