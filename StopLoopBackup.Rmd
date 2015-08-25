@@ -1,0 +1,142 @@
+---
+title: "StopLoopBackup"
+author: "Michelle DePrenger-Levin"
+date: "Monday, June 01, 2015"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+---
+title: "Methods to stop simulation runs after a specified time"
+author: "Michelle DePrenger-Levin"
+date: "Monday, April 06, 2015"
+output:
+  html_document:
+    keep_md: true
+---
+
+Want the ability to stop a simulation   
+Will use RMetaSim to test
+
+```{r}
+library(rmetasim)
+```
+
+## Based on Time elapsed
+Stop the repeat after the elapsed time exceeds a certain amount. Set to 1 but does not match 1 second...      
+Using repeat{}
+
+```{r}
+# repeat and proc.time() ###
+runs <- 1
+ptm <- proc.time()
+  repeat {
+      exampleland <- landscape.new.example()
+  is.landscape(exampleland)
+  simex <- landscape.simulate(exampleland, 4)
+  obshet <- landscape.obs.het(simex)
+   # print(obshet)
+  runs <- runs + 1
+ newptm <- proc.time() - ptm
+ # print(newptm)
+if(newptm[3] >= 1) break()
+  }
+proc.time()
+runs
+```
+
+Learning a shiny to slide the time allowed would be nice. 
+
+### This seems to measure actual time elapsed  
+using repeat{} and break()
+
+```{r}
+start <- Sys.time()
+repeat{
+  exampleland <- landscape.new.example()
+  is.landscape(exampleland)
+  simex <- landscape.simulate(exampleland, 4)
+  obshet <- landscape.obs.het(simex)
+   # print(obshet)
+  runs <- runs + 1
+  end <- Sys.time()
+  #Time elapsed
+  timel <- as.numeric(end-start)
+ 
+if(timel >= 2) break()
+  }
+proc.time()
+runs
+```
+
+
+### Try using while() loop
+
+```{r}
+runs <- 1
+ptm <- proc.time()
+while(newptm[3] < 5) {
+  exampleland <- landscape.new.example()
+  is.landscape(exampleland)
+  simex <- landscape.simulate(exampleland, 4)
+  obshet <- landscape.obs.het(simex)
+   # print(obshet)
+  runs <- runs + 1
+ newptm <- proc.time() - ptm
+}
+runs
+```
+
+
+
+### Stackoverflow 'tic/toc' like MATLAB   
+But I can't get it to work. 
+
+
+```{r}
+tic <- function(gcFirst = TRUE, type=c("elapsed", "user.self", "sys.self"))
+{
+   type <- match.arg(type)
+   assign(".type", type, envir=baseenv())
+   if(gcFirst) gc(FALSE)
+   tic <- proc.time()[type]         
+   assign(".tic", tic, envir=baseenv())
+   invisible(tic)
+}
+
+toc <- function()
+{
+   type <- get(".type", envir=baseenv())
+   toc <- proc.time()[type]
+   tic <- get(".tic", envir=baseenv())
+   print(toc - tic)
+   invisible(toc)
+}
+
+runs <- 1
+eltime <- 0
+ tic()
+while(toc() < 5){
+exampleland <- landscape.new.example()
+  is.landscape(exampleland)
+  simex <- landscape.simulate(exampleland, 4)
+  obshet <- landscape.obs.het(simex)
+  runs <- runs + 1
+}
+runs
+```

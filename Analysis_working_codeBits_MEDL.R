@@ -4,9 +4,27 @@
 ##HAPLOID SEQUENCE DATA
 #########################################################################################
 require(ape)
-require(adegenet)
-require(strataG)
+# require(adegenet)
+# adegenet from Thibaut's github
+library(devtools)
+install_github("thibautjombart/adegenet")
+library("adegenet")
+
+# Eric's strataGdevel
+ibrary(devtools)
+install_github("ericarcher/swfscMisc/swfscMisc")
+install_github("ericarcher/strataG.devel/strataG.devel")
+
+library(strataGdevel)
+
+# require(strataG)
 library(poppr)
+library(MASS)
+
+# Need Thibaut's apex from repository
+library(devtools)
+install_github("thibautjombart/apex")
+library(apex)
 
 ##Empirical and simulated data ('x') should be in DNAbin format, and a metadata df should
 ##also be created (i.e. 'strata' three columns: id.col(indivID), strata.col(pops), locus.col(haps))
@@ -16,9 +34,14 @@ library(poppr)
 ##### Testing with strataG.devel
 # library(strataG.devel)
 
+# Do we need an empty params object?
+#params <- list()
+
 #################################  format rep.results from multidna to gtypes #########
+# load test multidna.rdata into global environment
 class(rep.result)
 
+# multidna, from apex
 class(rep.result[[2]])
 
 genes <- rep.result[[2]]#the multidna object
@@ -38,10 +61,19 @@ length(genes)
 rep.result
 length(rep.result$dna.seqs@dna)
 
-length(seq.names)
+# where does this come from?
+#length(seq.names)
 
-params@analysis.result <- rep.result
+# Where do I get params from?
+#params@analysis.result <- rep.result
 num_loci <- getNumLoci(rep.result[[2]])
+
+
+## will get a gtypes object
+data(dolph.msats)
+data(dolph.strata)
+msats.merge <- merge(dolph.strata[, c("ids", "fine")], dolph.msats, all.y = TRUE)
+msats <- df2gtypes(msats.merge, ploidy = 2)
 
 # msats <- dolph.msats
 alleleFreqs <- alleleFreqs(msats, by.strata = TRUE)
@@ -95,11 +127,6 @@ class(df)
 #   runs for simulation   <- from load params when you tell it number of pops
 
 
-## will get a gtypes object
-data(dolph.msats)
-data(dolph.strata)
-msats.merge <- merge(dolph.strata[, c("ids", "fine")], dolph.msats, all.y = TRUE)
-msats <- df2gtypes(msats.merge, ploidy = 2)
 
 pairwiseTest.out <- pairwiseTest(msats)
 pairwiseTest.out$result
@@ -145,9 +172,12 @@ names <- c("overall", 1:nloc)
 analyses <- c("allel","Freq","prop")
 nrep <- 5
 
+params <- list()
+params@num.reps <- 1
+
 ## Make the array from the load params info
 # nanalyze <- the number of analyses we'll do
-# npop <- the number of rows, pops or pairwise or loci plus overall
+npop <- 3 # npop <- the number of rows, pops or pairwise or loci plus overall
 # nrep <- the number of replicates
 # dimension names will come from the choice of pairwise, by
 #   by population, by loci
@@ -175,6 +205,7 @@ for(x in names(which(an.req)))
 # example rep.result
 rep.result
 class(rep.result)
+# A multidna with two genes
 length(rep.result$dna.seqs@dna)
 
 data(woodmouse)
@@ -192,8 +223,15 @@ str(locNames(msats))
 str(msats)
 length(msats@loci)
 
+#Subset is removed from strataG, instead use gtype[id, locus, strata] to subset
+#lapply(locNames(msats), function(x){
+#  gtypes_1 <- subset(msats, loci = x)
+#  ovl <- overallTest(gtypes_1, nrep = 5, quietly = TRUE)
+#})
+
+
 lapply(locNames(msats), function(x){
-  gtypes_1 <- subset(msats, loci = x)
+  gtypes_1 <- msats[,x,]  #[individuals, loci, strata]
   ovl <- overallTest(gtypes_1, nrep = 5, quietly = TRUE)
 })
 
@@ -202,23 +240,38 @@ overall_stats(msats)
 # for loop with returning container - the last line of the function, lapply always returns a list, sapply will simplify by end value
 
 mat <- t(sapply(locNames(msats), function (l){
-  gtypes_this_loc<-subset(msats, loci=l)
+  gtypes_this_loc<-msats[,l,]
   overall_stats(gtypes_this_loc)
 }))
 ###############################
+scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
+
+#num_loci is known from the parameters gathered earlier
+
+num_loci <- nLoc(msats)
+num_reps <- 5
+analyses <- names(mat[2,])
+num_analyses <- length(analyses)
+
+scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                               dimnames = list(1:num_loci,analyses,1:num_reps))
 
 scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+15,14,100))
 
 
 which(locNames(msats) == locNames(msats)[2])
-mat[2,] <- 1:14
+#mat[2,] <- 1:14
 
 # example to test
 genes <- rep.result[[2]]
+#genes is a list
+class(genes)
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
 df <- data.frame(id = id, strata = rep.result[[1]], hap = id)
-test.g <- df2gtypes(df, 1, sequences = genes)
+class(df)
+# Why errors?!
+test.g <- df2gtypes(df, 1) #, sequences = genes
 class(test.g) # multiDNA to gtypes
 
 
@@ -234,10 +287,11 @@ as.vector(t(ovl$result)) # by row to a vector
 
 
 pnam <- c()
-for(i in 1:7){
+for(i in 1:length(rownames(ovl$result))){
     pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
 }
-global.wide <- c(ovl$result[1,],ovl$result[2,])
+#global.wide <- c(ovl$result[1,],ovl$result[2,])
+global.wide <- c(global[1,],global[2,])
 names(global.wide) <- c(rownames(ovl$result),pnam)
 
 ovl <- overallTest(test.g, nrep = 5, stat.list = statList("chi2"), quetly = TRUE)

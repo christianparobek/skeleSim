@@ -34,7 +34,7 @@ function(params){
         #initialize arrays
         if (class(params@analysis.result)=="multidna"){
 
-          num_loci <- getNumLoci(params@analysis.result[[2]])
+          num_loci <- nLoc(params@analysis.result[[2]])
 
           # Convert the list of DNAbin objects to gtypes
           genes <- params@analysis.result[[2]] #the multidna object
@@ -44,14 +44,14 @@ function(params){
           gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
           colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
           df <- cbind(df, gene.labels)
-          results_gtype <- df2gtypes(df, 1, sequences = genes)
+          results_gtype <- df2gtypes(df, 1)
 
 
           #put overall analysis in first row using overall_stats()
           # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
           #run by locus analysis
           results.matrix <- t(sapply(locNames(results_gtype), function (l){
-            gtypes_this_loc<-subset(results_gtype, loci=l)
+            gtypes_this_loc<-results_gtype[,l,]
             overall_stats(gtypes_this_loc)
           }))
           analyses <- colnames(results.matrix)
@@ -85,7 +85,7 @@ function(params){
           # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
           #run by locus analysis
           mat <- t(sapply(locNames(results_gtype), function (l){
-            gtypes_this_loc<-subset(results_gtype, loci=l)
+            gtypes_this_loc<-results_gtype[,l,]
             overall_stats(gtypes_this_loc)
           }))
           analyses <- colnames(mat)
@@ -251,7 +251,7 @@ if(class(params@rep.sample) == "multidna"){
   names(genes@dna) <- paste("gene", 1:length(genes@dna))
   id <- genes@labels
   df <- data.frame(id = id, strata = rep.sample[[1]], hap = id)
-  rep.sample.gtypes <- df2gtypes(df, 1, sequences = genes)
+  rep.sample.gtypes <- df2gtypes(df, 1)
 
 }
 
