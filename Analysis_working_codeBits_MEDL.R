@@ -270,7 +270,7 @@ names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
 df <- data.frame(id = id, strata = rep.result[[1]], hap = id)
 class(df)
-# Why errors?!
+# errors now with designating sequences = genes
 test.g <- df2gtypes(df, 1) #, sequences = genes
 class(test.g) # multiDNA to gtypes
 
@@ -337,6 +337,28 @@ colnames(smry.wide) <- paste(melt.smry[,1],melt.smry[,2],sep="")
 
 
 smry <- summarizeLoci(test.g, by.strata = TRUE)
+colnames(summarizeLoci(msats))
+
+########################################################################################
+########################################################################################
+########################################################################################
+## Need to add if genes > 1 then {
+# Pull analyses names from ...
+smry.multi <- t(sapply(locNames(msats), function(n) {
+  unname(summarizeLoci(msats[, n, ]))
+}))
+
+# Can't remember now, I want a row per individual and a long vector of resutls... right?
+dimnames(smry.multi)[[2]] <- colnames(summarizeLoci(msats))
+
+# Why unname??
+n <- locNames(msats)[1]
+smry.multi <- sapply(locNames(msats), function(n) {
+  summarizeLoci(msats[, n, ])
+})
+
+
+####
 melt.smry <- melt(smry[[1]])
 smry.wide <- t(melt.smry[,3])
 colnames(smry.wide) <- paste(melt.smry[,1],melt.smry[,2],sep="")
