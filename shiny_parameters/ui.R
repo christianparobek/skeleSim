@@ -1,129 +1,118 @@
-library(shiny)
-require(shinyIncubator)
-                                        #library(shinysky)
+source("setup.R")
 
-shinyUI(fluidPage(
+shinyUI(
+  navbarPage(
+    "skelesim",
 
-  titlePanel("Skelesim Configure"),
-
-  sidebarLayout(
-      sidebarPanel(
-          radioButtons("modify","Edit the following parameters:",
-                       c("Everything is good" = "dontModify",
-                         "Simulation-level" = "paramModify",
-                         "Scenario-level" = "scenarioModify",
-                         "Simulator-specific" = "simulationModify")),
-
-          br(), ##a little space 
-
-          #panels for params = T
-          conditionalPanel(
-            condition = "input.modify == 'paramModify'",
-              textInput("title", "Title",
-                        value = "Simulation Title")
-              ),
-          conditionalPanel(
-            condition = "input.modify == 'paramModify'",
-              textInput("date", "Date",
-                        value = Sys.time())
-              ),
-         conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              checkboxInput("quiet", "Quiet",
-                            value = FALSE)
-              ),
-         conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              checkboxInput("coalescent", "Coalescent Simulator?",
-                            value = TRUE)
-              ),
-
-          conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              numericInput("reps", "Number of simulation reps",
-                            value = 1)
-              ),
-
-          conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              numericInput("timing", "Timing",
-                            value = 2)
-              ),
-
-          conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              textInput("simfunc", "Simulation Function",
-                            value = "fsc.run")
-              ),
-
-          conditionalPanel( 
-            condition = "input.modify == 'paramModify'",
-              textInput("wd", "Simulation working directory",
-                            value = "test.wd")
-              ),
-
-
-          
-
-          #panels for scenario = T
-          conditionalPanel(
-            condition = "input.modify == 'scenarioModify'",
-              numericInput("numpops", "Number of populations",
-                        value = 3)
-              ),
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              numericInput("numloci", "Number of loci",
-                           value = 1)
-              ),
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              numericInput("mut.rate", "Mutation Rate",
-                           value = 1e-4)
-              ),
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              selectInput("migModel", "Migration Model",
-                           c("island","stepping.stone.linear",
-                             "stepping.stone.circular"))
-              ),
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              checkboxInput("repopulateMig", "start new matrix", TRUE)
-              ),
-          
-
-          ##simulation specific parameters, dual tests sim edit and coalescent or not
-          ## first set up the fastsimcoal parameters by checking if input.coalescent ==T
-          conditionalPanel(
-              condition = "input.modify=='simulationModify' & input.coalescent==true",
-              checkboxInput("infSiteModel", "Infinite site model",
-                            value = FALSE)
-              )        
-          ),
-
-      mainPanel(
-          textOutput("txt"),
-
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              h3("Migration matrix")
-              ),
-
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              tableOutput("migmat")
-              ),
-
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              h3("Graphical representation")
-              ),
-          conditionalPanel(
-              condition = "input.modify == 'scenarioModify'",
-              plotOutput("networkPlot")
-              )
+    tabPanel(
+      "File",
+      navlistPanel(
+        tabPanel(
+          "Load parameters",
+          fileInput("fileParams", h4("Choose .Rdata File")),
+          uiOutput("uiSelectParamObj"),
+          textOutput("txtSelectedTitle")
+        ),
+        tabPanel(
+          "Save parameters",
+          textInput("txtTitle", label = h4("Project Title"), value = ssClass@title),
+          h4("Save parameter file"),
+          uiOutput("uiBtnSaveParams"),
+          textOutput("txtSaveStatus")
+        ),
+        tabPanel(
+          "Run Simulator",
+          uiOutput("btnRun"),
+          textOutput("txtRunStatus")
         )
       )
-    ))
+    ),
 
+    tabPanel("Intro questions",
+             sidebarLayout(
+               sidebarPanel(
+                 #                 textInput("simname", "Simulation Name:", "Sim Parameters #1"),
+                 checkboxInput("snps", label = "Do you have SNP data?", value = FALSE),
+                 checkboxInput("non.diploid", label = "Is your data other than diploid?", value = FALSE),
+                 checkboxInput("marker.num", label = "Do you want to simulate many markers?", value = FALSE),
+                 checkboxInput("pop.size", label = "Do you have large population sizes?", value = FALSE),
+                 checkboxInput("complex.hist", label = "Do you have a complex history to simulate?", value=FALSE),
+                 checkboxInput("deep.time", label = "Are you looking at deep time frames", value = FALSE),
+                 checkboxInput("demography", label = "Do you want to include demography?", value = FALSE),
+                 checkboxInput("management", label = "Does your question involve management decisions?", value = FALSE),
+                 checkboxInput("completion.time", label = "Do you need a short completion time", value = FALSE),
+                 checkboxInput("computer", label = "Do you have large computer capacity?", value = FALSE),
+                 # for the file uploader
+                 fileInput("file", label = h3("OR choose file to upload"))
+               ),
+
+               mainPanel(
+                 includeMarkdown("helpfiles/help-questions.md"),
+                 h3(textOutput("simname", container = span)),
+                 tableOutput("values")
+               )
+             )),
+
+    tabPanel("General Config.",
+             sidebarLayout(
+               sidebarPanel(
+                 uiOutput("titleUI"),
+                 uiOutput("quietUI"),
+                 uiOutput("coalescentUI"),
+                 uiOutput("repsUI"),
+                 uiOutput("wdUI")
+               ),
+               mainPanel()
+             )),
+
+    tabPanel("Scenario Config.",
+             sidebarLayout(
+               sidebarPanel(
+                 uiOutput("scenarioNumberUI"),
+                 uiOutput("numpopsUI"),
+                 uiOutput("numlociUI"),
+                 uiOutput("mutrateUI"),
+                 br(),
+                 actionButton("repopulateMig","Rewrite migration matrix"),
+                 uiOutput("migmodelUI"),
+                 uiOutput("migrateUI"),
+                 uiOutput("rows"),
+                 uiOutput("cols"),
+                 uiOutput("distanceFun")
+               ),
+               mainPanel(
+                 tabsetPanel(
+                   tabPanel("Migration matrix",
+                            includeMarkdown("helpfiles/help-migration.md"),
+                            tableOutput("migmat")),
+                   tabPanel("Migration graph",
+                            plotOutput("networkPlot"))
+                   #                                        ,
+                   #                                        tabPanel("debug",
+                   #                                                 textOutput("scenDebug"))
+                 ))
+             )),
+
+    tabPanel("Specific simulation config.",
+             sidebarLayout(
+               sidebarPanel(
+                 uiOutput("infsitesUI"),
+                 uiOutput("simhistUI")
+               ),
+
+               mainPanel(
+                 conditionalPanel(
+                   condition = "input.coalescent == true",
+                   tabsetPanel(
+                     tabPanel("Simcoal history specification",tableOutput("simhistTbl")),
+                     tabPanel("Graphical view",
+                              includeMarkdown("helpfiles/help-history.md"),
+                              plotOutput("simhistPlot",
+                                         click= "histplotClick",
+                                         dblclick = "histplotDblclick"))
+                   )
+                 )
+               ))
+    )
+  )
+)

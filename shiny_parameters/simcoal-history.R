@@ -36,14 +36,14 @@ create.new.history <- function(npop=3,
 
 
 
-history.plot <- function(history
+simcoal.history.plot <- function(history
                          )
     {
         npop <- max(c(history$source,history$sink))+1
         pops <- 0:(npop-1)
 
         plot(1~1,type="n",
-             ylim=c(0,max(history$time)*1.1),
+             ylim=c(0,max(history$time)*1.2),
              xlim=c(-1,npop),axes=F,xlab="population",ylab="time")
         axis(1,labels=pops,at=0:(npop-1))
         axis(2)
@@ -61,34 +61,40 @@ history.plot <- function(history
                         arrows(x.source,y,x.sink,y)
                     }
             }
-        ###now deal with the sink-only situations (should be one at most)
+        ###now deal with the sink-only situations (should be one)
         spops <- unique(history$sink[!history$sink%in%history$source])
         for (i in spops)
             {
-                arrows(i,0,i,max(history$time)*1.1)
+                arrows(i,0,i,max(history$time)*1.2)
             }
     }
 
-history.change <- function(history,
+simcoal.history.change <- function(history,
                            click,
                            dblclick
                            )
 {
-    oldhist <- history
-    src <- round(click$x)
-    if (src %in% c(history$source,history$sink))
+    if ((!is.null(click)) & (!is.null(dblclick)))
         {
-            history <- history[history$source!=src,]
-            history <- history[c(1:dim(history)[1],1),]
-            row <- dim(history)[1]
-            history[row,] <- c(round(dblclick$y),
-                               src,
-                               round(dblclick$x),
-                               1,
-                               1,
-                               0,
-                               0)
-            history
+            oldhist <- history
+            src <- round(click$x)
+            if (src %in% c(history$source,history$sink))
+                {
+                    history <- history[history$source!=src,]
+                    history <- history[c(1:dim(history)[1],1),]
+                    row <- dim(history)[1]
+                    history[row,] <- c(abs(round(dblclick$y)),
+                                       abs(src),
+                                       abs(round(dblclick$x)),
+                                       1,
+                                       1,
+                                       0,
+                                       0)
+        #            history
+                }
+            #check and make sure that the oldest sink does not sink into another deme
+            history <- history[order(-history$time),]
+            if (history[1,3] %in% history[,2]) {history <- history[-1,]}
         }
     if (is.history(history)) history else oldhist
 }
@@ -103,6 +109,8 @@ is.history <- function(history)
         if (prod(c("time", "source", "sink", "migrants", "new.size", "growth.rate", "migr.matrix")%in%names(history))!=1) err <- T
         if (err) msg <- c(msg,"problem with names")
 
+        ######## this code is essentially worthless, but the problem
+        ######## needs solving
         ##check to make sure that everybody coalesces
         ##first run through the sources
         last.sink <- history$sink[history$time==max(history$time)]
@@ -114,7 +122,7 @@ is.history <- function(history)
         last.sink <- last.sink[1]
         
         history$coal <- FALSE
-        for  (s in 1:dim(history))
+        for  (s in 1:dim(history)[1])
             {
                 snk <- history[s,"sink"]
                 

@@ -1,76 +1,48 @@
-source("mig.matrix.R")
-options(shiny.trace = F)  # cahnge to T for trace
-require(shiny)
-require(igraph)
+source("setup.R")
+
+## !!!! CHECK IF coalParams CAN BE DELETED !!!!
+#coalParams <<- new
 
 shinyServer(function(input, output,session) {
+  ##################### parameter loading
+  source("paramsLoad.R", local = TRUE)
 
-                mig.mat <- reactive({
-                    mat <- scenario.mig.matrix(
-                        h=input$numpops,
-                        mig.model=input$migModel
-                        )
-                    mat$R.int                        
-                })
+  ##################### parameter saving
+  source("paramsSave.R", local = TRUE)
 
-                inmat <- reactive({
+  ##################### running simulator
+  source("simRun.R", local = TRUE)
 
-                    mat <- matrix(0,input$numpops,input$numpops)
-                    for (row in 1:input$numpops)
-                        for (col in 1:input$numpops)
-                            {
-                                strng <- paste0("r",row,"c",col)
-                                print(input[[strng]])
-                                mat[row,col] <- input[[strng]]
-                            }
-                    mat
-                })
+  ##################### include the server code for Christians implemntation of
+  ##################### the initial skelesim questions
+  source("intro-questions-server.R",local=T)
 
-                observe({
-                    if (input$repopulateMig == 0) 
-                        return()
-                    isolate({
-                        output$migmat <-renderTable({
-                            mat <- mig.mat()
-                            retmat <- matrix("",dim(mat)[1],dim(mat)[2])
-                            for (row in 1:input$numpops)
-                                for (col in 1:input$numpops)
-                                    {
-#                                        intxt <- paste0("<input id='r",row,"c",col,"' class='shiny-bound-input' type='number' value='",mat[row,col],"'>")
-                                        intxt <- paste0("<input id='r",row,"c",col,"' class='input-tiny' type='number' value='",mat[row,col],"'>")
-#                                        print(intxt)
-                                        retmat[row,col] <-intxt
-                                }
-                            colnames(retmat) <- 1:input$numpops
-                            rownames(retmat) <- 1:input$numpops
-                            as.data.frame(retmat)
-                        }, sanitize.text.function = function(x) {x})
-                    })
-                })
-                
-                output$tbl <- renderTable({
-                    inmat()
-                    
-                })
-                
-                output$txt <- renderText({
-                                        #    names(input)
-                                        #    c(input$coalescent,input[["coalescent"]])
-                })
+  ##################### server-side user interface specifcations
+  #####################  are in the file renderUI.R
+  source("renderUI.R",local=T)
 
-                
-                output$distPlot <- renderPlot({
-                    hist(rnorm(as.numeric(1000)))
-                })
+  ##################### scenario helpers
+  #################### stored in scenarios.R
+  source("scenarios.R",local=T)
 
-                output$networkPlot <- renderPlot({
-                    mat <- as.matrix(inmat())
-                    print(mat)
-                    grph <-graph.adjacency(t(mat),weighted=T)
-#                    autocurve.edges(grph)
-                    plot(grph,
-                         edge.label=round(E(grph)$weight, 2),
-                         edge.curved=T)
-                    
-                })
+  ##################### simcoal helpers
+  #################### stored in simcoal-server.R
+  ########################################
+  source("simcoal-server.R",local=T)
+
+  ############## plotting
+  source("serverplots.R",local=T)
+
+  ######################## skeleSim class setup
+  source("make-skelesim-class.R",local=T)
+
+  #############debugging
+  output$tbl <- renderTable({
+    inmat()
+  })
+  output$txt <- renderText({
+    #    names(input)
+    #    c(input$coalescent,input[["coalescent"]])
+  })
+
 })

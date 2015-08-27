@@ -11,6 +11,9 @@ rms.run<-function(params){
       init.pop.sizes = sc@simulator.params@init.pop.sizes, 
       num.alleles = sc@simulator.params@num.alleles, allele.freqs = sc@simulator.params@allele.freqs)
   
+  #check is landscape ok
+  if (!is.landscape(skeleland)) stop("landscape not cool")
+  
   #run a number of generations
   skeleland<-landscape.simulate(skeleland, sc@simulator.params@num.gen)
 

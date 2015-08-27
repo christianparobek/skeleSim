@@ -48,7 +48,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
   }
 
   write("//Number of independent loci [chromosome]", file, append = T)
-  write(paste(num.chrom, "0"), file, append = T)
+  write(paste(num.chrom, "1"), file, append = T)
   for(i in 1:num.chrom) {
     write("//Per chromosome: Number of linkage blocks", file, append = T)
     write("1", file, append = T)
