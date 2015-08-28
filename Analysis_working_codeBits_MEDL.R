@@ -4,17 +4,17 @@
 ##HAPLOID SEQUENCE DATA
 #########################################################################################
 require(ape)
+
 # require(adegenet)
 # adegenet from Thibaut's github
-library(devtools)
-install_github("thibautjombart/adegenet")
+  # library(devtools)
+  #install_github("thibautjombart/adegenet")
 library("adegenet")
 
 # Eric's strataGdevel
-ibrary(devtools)
-install_github("ericarcher/swfscMisc/swfscMisc")
-install_github("ericarcher/strataG.devel/strataG.devel")
-
+  # library(devtools)
+  # install_github("ericarcher/swfscMisc/swfscMisc")
+  # install_github("ericarcher/strataG.devel/strataG.devel")
 library(strataGdevel)
 
 # require(strataG)
@@ -22,8 +22,8 @@ library(poppr)
 library(MASS)
 
 # Need Thibaut's apex from repository
-library(devtools)
-install_github("thibautjombart/apex")
+  # library(devtools)
+  # install_github("thibautjombart/apex")
 library(apex)
 
 ##Empirical and simulated data ('x') should be in DNAbin format, and a metadata df should
@@ -172,8 +172,9 @@ names <- c("overall", 1:nloc)
 analyses <- c("allel","Freq","prop")
 nrep <- 5
 
-params <- list()
-params@num.reps <- 1
+
+params
+#params@num.reps <- 1
 
 ## Make the array from the load params info
 # nanalyze <- the number of analyses we'll do
@@ -244,6 +245,7 @@ mat <- t(sapply(locNames(msats), function (l){
   overall_stats(gtypes_this_loc)
 }))
 ###############################
+
 scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
 #num_loci is known from the parameters gathered earlier
@@ -285,7 +287,40 @@ t(ovl$result)
 global <- t(ovl$result)
 as.vector(t(ovl$result)) # by row to a vector
 
+# Eric's example
+data(woodmouse)
+genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
+x <- new("multidna", genes)
+x.g <- sequence2gtypes(x)
+strata(x.g) <- c("A", "B")
 
+# for a multiDNA object, need to add row for results of second gene
+  ovl.multi <- sapply(locNames(x.g), function(n) {
+    ovl.raw <- overallTest(x.g[,n,], nrep=5, stat.list=statList("chi2"), quietly = TRUE)
+    ovl.raw$result
+  })
+
+#
+ovl.multi <- sapply(locNames(x.g), function(n) {
+  ovl.raw <- overallTest(x.g[,n,], nrep=5, stat.list=statList("chi2"), quietly = TRUE)
+  ovl.raw$result
+})
+
+
+
+# vs.
+ovl.2 <- overallTest(x.g[,"gene1",], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)
+t(ovl.2$result)
+# need new columns with p-value for each
+global <- t(ovl.2$result)
+
+
+rownames(ovl.multi)
+rownames(ovl.2$result)
+
+ovl.2$result[which(rownames(ovl.2$result),"Chi2"),]
+
+#
 pnam <- c()
 for(i in 1:length(rownames(ovl$result))){
     pnam <- c(pnam,rownames(ovl$result)[i],paste(rownames(ovl$result)[i],"pval", sep = ""))
@@ -327,7 +362,7 @@ for(i in 1:length(alfre))
 ## remove chi2 but keep the p value
 #  no.alleles, allelic.richness, obs.He, exp.He, theta, unique.alleles
 smry <- summarizeLoci(msats, by.strata = TRUE)
-sapply(smry, function(x)  simplify = "array")
+
 
 library(reshape2)
 melt.smry <- melt(smry[[1]])

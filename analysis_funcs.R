@@ -31,6 +31,8 @@ function(params){
         # TO DO check the data type and do conversions for what is needed
         # For multidna class objects we convert to a gtypes and use strataG for analysis
 
+        # if genes > 1 do different formatting
+
         #initialize arrays
         if (class(params@analysis.result)=="multidna"){
 
