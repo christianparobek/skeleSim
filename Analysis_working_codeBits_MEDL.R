@@ -383,6 +383,18 @@ smry.multi <- t(sapply(locNames(msats), function(n) {
   unname(summarizeLoci(msats[, n, ]))
 }))
 
+# extract column names and reformat multigene... wouldn't have without multiple loci...
+multi.locus <- sapply(locNames(x.g), function(n) {
+  summarizeLoci(x.g[,n,])
+})
+
+l.nam <- locNames(x.g)
+c.nam <- colnames(summarizeLoci(x.g[,l.nam[1],]))
+
+# formatting works but doesn't make sense to summarizeLoci over a sequence....
+multi.t.locus <- t(multi.locus)
+dimnames(multi.t.locus)[[2]] <- c.nam
+
 # Can't remember now, I want a row per individual and a long vector of resutls... right?
 dimnames(smry.multi)[[2]] <- colnames(summarizeLoci(msats))
 
@@ -391,6 +403,7 @@ n <- locNames(msats)[1]
 smry.multi <- sapply(locNames(msats), function(n) {
   summarizeLoci(msats[, n, ])
 })
+
 
 
 ####
@@ -406,6 +419,7 @@ ovl <- overall
 
 ### pairwise, haplotypes
 # test data are: test.g and smsat
+# x.g from multigene sapply example
 # want as wide as there are alleles
 # fairly slow:
 pws <- pairwiseTest(msats, nrep = 5, stat.list = list(statGst, quietly = TRUE))
@@ -420,6 +434,36 @@ pws.out <- pws$result[-c(1:5)]
 rownames(pws.out) <- as.matrix(pws[[1]][1])
 pws.out
 
+#multigene
+pws.multi <- sapply(locNames(x.g), function(n) {
+  pairwiseTest(x.g[, n, ], nrep = 5, stat.list = list(statGst, quietly = TRUE))
+})
+
+pws.multi.out <- pws.multi[[1]][-c(1:5)]
+rownames(pws.multi.out) <- as.matrix(pws.multi[[1]][1])
+
+# What happens to an example with one gene
+data(woodmouse)
+genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
+x <- new("multidna", genes)
+wood.g <- sequence2gtypes(x)
+strata(wood.g) <- sample(c("A", "B"), nInd(wood.g), rep = TRUE)
+wood.g
+gene1 <- wood.g[, "gene1", ]
+gene1.dnabin <- getSequences(sequences(gene1))
+class(gene1.dnabin)
+
+
+
+pws.multi <- sapply(locNames(msats), function(n) {
+  pairwiseTest(x.g[, n, ], nrep = 5, stat.list = list(statGst, quietly = TRUE))
+})
+
+pws.multi.out <- pws.multi[[1]][-c(1:5)]
+rownames(pws.multi.out) <- as.matrix(pws.multi[[1]][1])
+
+
+#
 sA <- sharedAlleles(msats)[,-c(1:2)]
 sA <- sharedAlleles()
 names(sA)
