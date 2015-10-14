@@ -202,8 +202,20 @@ function(params){
 
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
-        pws <- pairwiseTest(results_gtype, nrep = 5,stat.list = list(statGst), quietly = TRUE)
-        pws[1]$result[,-c(2:5)] # assuming the 2nd through 5th column remain strata.1, strata.2, n.1, and n.2
+
+        #dA, mean.pct.between
+
+
+        ###Should be able to remove these two lines for the next block to deal with any possible multiDNA objects
+        #pws <- pairwiseTest(results_gtype, nrep = 5,stat.list = list(statGst), quietly = TRUE)
+        #pws[1]$result[,-c(2:5)] # assuming the 2nd through 5th column remain strata.1, strata.2, n.1, and n.2
+
+        #Pairwise Chi2, Fst, PHIst
+        pws.multi <- sapply(locNames(results_gtype), function(g){
+          gene_gtype <- results_gtype[,g,]
+          pairwiseTest(gene_gtype, nrep =5, keep.null=TRUE)
+        })
+        pws.mulit[1]$result[,-c(2:5)] #removing strata.1, strata.2, n.1, n.2
 
         #Genotype data
         pws <- pairwiseTest(results_gtype, nrep = 5, stat.list = list(statGst, quietly = TRUE))

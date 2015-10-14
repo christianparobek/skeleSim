@@ -5,18 +5,25 @@
 #########################################################################################
 require(ape)
 
+
+# Check that Rtools can be used
+Sys.getenv("PATH")
+
+
 # require(adegenet)
 # adegenet from Thibaut's github
   # library(devtools)
-  #install_github("thibautjombart/adegenet")
+install_github("thibautjombart/adegenet")
 library("adegenet")
 
 # Eric's strataGdevel
-  # library(devtools)
+library(devtools)
   # install_github("ericarcher/swfscMisc/swfscMisc")
   # install_github("ericarcher/strataG.devel/strataG.devel")
-library(strataGdevel)
+    #library(strataGdevel)
 
+library(strataG)
+library(swfscMisc)
 # require(strataG)
 library(poppr)
 library(MASS)
@@ -36,6 +43,29 @@ library(apex)
 
 # Do we need an empty params object?
 #params <- list()
+
+#In test.runSim: error
+          #Error in params@sim.func(params) : fastsimcoal exited with error 127
+          #In addition: Warning message:
+          #running command 'fsc252.exe -i testRun.1.1.par -n 1  ' had status 127
+# Can't find in my PATH system variable - where is it?! it's in the path, i swear!
+# I did change the name, maybe it doesn't match?
+# Had to add the path to the fastsimcoal folder
+
+#testRunFastsimcoal.R error:
+
+# ---- Run replicates ----
+> test.params <- runSim(test.params)
+title.not.null at.least.1.rep
+TRUE           TRUE
+title.not.null at.least.1.rep
+TRUE           TRUE
+Show Traceback
+
+Rerun with Debug
+Error in rbind(params@sim.check.func(params), gen.scenario.check(params)) :
+  attempt to apply non-function
+
 
 #################################  format rep.results from multidna to gtypes #########
 # load test multidna.rdata into global environment
@@ -127,7 +157,7 @@ class(df)
 #   runs for simulation   <- from load params when you tell it number of pops
 
 
-
+# Very slow
 pairwiseTest.out <- pairwiseTest(msats)
 pairwiseTest.out$result
 
@@ -307,6 +337,8 @@ genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
 x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
+#which is population and which are genes for strata? So pairwise should be done between
+# gene.A and gene.B or for the two seperately among populations?
 
 # for a multiDNA object, need to add row for results of second gene
   ovl.multi <- sapply(locNames(x.g), function(n) {
@@ -440,12 +472,28 @@ ovl <- overall
 # fairly slow:
 pws <- pairwiseTest(msats, nrep = 5, stat.list = list(statGst, quietly = TRUE))
 pws
+pws[1]
 test.y <- pws[[1]][-c(1:5)]
 pws[[2]][-c(1:5)]
 nrow(test.y)
 length(pws[[1]][1])
 rownames(test.y) <- as.matrix(pws[[1]][1])
 
+#If a multigene example
+#subset gtype with [ ,locus, ]
+str(x.g)
+locNames(x.g)
+pws.multi <- sapply(locNames(x.g), function(g){
+  gene_gtype <- x.g[,g,]
+  pairwiseTest(gene_gtype, nrep =5, keep.null=TRUE)
+})
+#FST,PHIst
+pws.multi[1]
+pws.multi[2][[1]]$Chi2
+str(pws.multi)
+pws.multi$pair.mat
+
+#
 pws.out <- pws$result[-c(1:5)]
 rownames(pws.out) <- as.matrix(pws[[1]][1])
 pws.out
@@ -470,6 +518,9 @@ gene1.dnabin <- getSequences(sequences(gene1))
 class(gene1.dnabin)
 
 
+#which is population and which are genes for strata? So pairwise should be done between
+# gene.A and gene.B or for the two seperately among populations?
+
 
 pws.multi <- sapply(locNames(msats), function(n) {
   pairwiseTest(x.g[, n, ], nrep = 5, stat.list = list(statGst, quietly = TRUE))
@@ -490,6 +541,40 @@ pws.out <- cbind(pws.out, sA)
 
 sharedAlleles(msats)
 sharedAlleles(test.g)
+
+#
+test.msats.sa <- sharedAlleles(msats)
+
+shared.haps <- sapply(locNames(x.g), function(g){
+  gene <- x.g[,g,]
+  sharedAlleles(gene)
+})
+
+
+sharedAlleles(x.g[,"gene2",])
+str(shared.haps)
+
+data(dolph.msats)
+data(dolph.strata)
+msats.merge <- merge(dolph.strata[, c("ids", "fine")], dolph.msats, all.y = TRUE)
+msats <- df2gtypes(msats.merge, ploidy = 2)
+
+propSharedLoci(msats)
+
+sharedAlleles(msats)
+
+shared.haps <- sapply(locNames(x.g), function(g){
+  gene <- x.g[,g,]
+  gene.sh <- propSharedLoci(gene,type="ids")
+  list(gene.sh,gene.sh)
+})
+
+shared.haps[1]$results
+shared.haps[2]
+
+str(shared.haps)
+shared.haps[6]
+
 # http://www.genetics.org/content/197/2/769.full.pdf
 # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3352520/
 # http://www.genetics.org/content/197/2/769.full.pdf
