@@ -231,10 +231,24 @@ length(msats@loci)
 #})
 
 
-lapply(locNames(msats), function(x){
+########### HERE ######### Need to collapse/concatenate lists
+ovl.loc <- lapply(locNames(msats), function(x){
   gtypes_1 <- msats[,x,]  #[individuals, loci, strata]
   ovl <- overallTest(gtypes_1, nrep = 5, quietly = TRUE)
+  ovl$result
 })
+
+
+ovl.out <- do.call(cbind, ovl.loc)
+
+pnam <- c()
+for(i in 1:length(colnames(global))){
+  pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
+}
+global.wide <- c(global[1,],global[2,])
+names(global.wide) <- c(colnames(global),pnam)
+
+
 
 overall_stats(msats)
 ################################
@@ -299,6 +313,8 @@ strata(x.g) <- c("A", "B")
     ovl.raw <- overallTest(x.g[,n,], nrep=5, stat.list=statList("chi2"), quietly = TRUE)
     ovl.raw$result
   })
+
+t(ovl.multi)
 
 #
 ovl.multi <- sapply(locNames(x.g), function(n) {
