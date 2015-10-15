@@ -29,7 +29,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot timing number of seconds to run for timing estimates
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
-#' @slot last.sample result of last call to \code{sim.func}.
+#' @slot rep.sample replicate sample data - result of last call to \code{sim.func}.
 #' @slot rep.analysis.func a function that analyzes the results of one
 #'   simulation replicate.
 #' @slot rep.result result from last call to \code{rep.analysis.func}.
