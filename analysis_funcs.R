@@ -78,8 +78,6 @@ function(params){
           params@analysis.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
 
 
-
-
         } else if(class(params@analysis.result)=="genind"){
 
           #Global
