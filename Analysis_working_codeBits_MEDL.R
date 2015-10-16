@@ -4,6 +4,7 @@
 ##HAPLOID SEQUENCE DATA
 #########################################################################################
 require(ape)
+library(ape)
 
 
 # Check that Rtools can be used
@@ -12,18 +13,20 @@ Sys.getenv("PATH")
 
 # require(adegenet)
 # adegenet from Thibaut's github
-  # library(devtools)
+library(devtools)
 install_github("thibautjombart/adegenet")
 library("adegenet")
 
 # Eric's strataGdevel
-library(devtools)
   # install_github("ericarcher/swfscMisc/swfscMisc")
-  # install_github("ericarcher/strataG.devel/strataG.devel")
-    #library(strataGdevel)
+  #install_github("ericarcher/strataG.devel/strataG.devel")
+if (!require('devtools')) install.packages('devtools')
+devtools::install_github('ericarcher/strataG/strataG')
 
+#Restart R
 library(strataG)
 library(swfscMisc)
+
 # require(strataG)
 library(poppr)
 library(MASS)
@@ -122,17 +125,19 @@ t(by.loc) #the rows will be have the private alleles for each population by locu
 
 
 
-#setwd("C:/Users/deprengm/Dropbox/Hackathon/Datasets")
-#df <- read.fasta("name_checked_acanigror_CyB_JD.fasta")
-#str(df)
+setwd("C:/Users/deprengm/Dropbox/Hackathon/Datasets")
+df <- read.fasta("name_checked_acanigror_CyB_JD.fasta")
+str(df)
 
+#DNAbin
 class(df)
 
-#if(class(df) == "DNAbin"){
-#  df.genind <- multidna2genind(df)
-#  class(df.genind)
-#  df.gt <- genind2gtypes(df)
-#}
+#Error: unable to find an inherited method for function 'concatenate' for 'DNAbin'
+if(class(df) == "DNAbin"){
+  df.genind <- multidna2genind(df)
+  class(df.genind)
+  df.gt <- genind2gtypes(df)
+}
 
 ### July 13, 2015  ###########################################################
 ### sequence data, vector of pop assignments and DNAbin objects,
@@ -157,7 +162,7 @@ class(df)
 #   runs for simulation   <- from load params when you tell it number of pops
 
 
-# Very slow
+# Very slow - minutes!
 pairwiseTest.out <- pairwiseTest(msats)
 pairwiseTest.out$result
 
@@ -197,11 +202,12 @@ names <-  c("overall", 1:npop)
 names <- c("overall", 1:nloc)
 #####################################################################
 ## to install from github: install_github("jgx65/hierfstat")  Jerome's
+library(hierfstat)
 
 # testing ones
 analyses <- c("allel","Freq","prop")
 nrep <- 5
-
+scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
 params
 #params@num.reps <- 1
@@ -337,8 +343,13 @@ genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
 x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
+
+
 #which is population and which are genes for strata? So pairwise should be done between
 # gene.A and gene.B or for the two seperately among populations?
+
+foo <- overallTest(msats, nrep = 5, statList("chi2"), quietly = TRUE)
+(foo$result)
 
 # for a multiDNA object, need to add row for results of second gene
   ovl.multi <- sapply(locNames(x.g), function(n) {
@@ -517,11 +528,14 @@ gene1 <- wood.g[, "gene1", ]
 gene1.dnabin <- getSequences(sequences(gene1))
 class(gene1.dnabin)
 
+#genind create
+#rep$sample will either be a list or a genind
+
 
 #which is population and which are genes for strata? So pairwise should be done between
 # gene.A and gene.B or for the two seperately among populations?
 
-
+#switch to lapply
 pws.multi <- sapply(locNames(msats), function(n) {
   pairwiseTest(x.g[, n, ], nrep = 5, stat.list = list(statGst, quietly = TRUE))
 })
@@ -648,11 +662,118 @@ for(i in 1:nrep){
 
 
 
+################################### from analysis_funcs. October 16, 2015
+
+curr_scn <- 3
+
+for(group in names(which(params@analyses.requested))){
+
+  # group will cycle through selected among Global, Locus, and Pairwise
+  # in each iteration of the for loop, group will have only one value
+
+  if(group == "Global"){
+
+    # TO DO check the data type and do conversions for what is needed
+    # For multidna class objects we convert to a gtypes and use strataG for analysis
+
+    # if genes > 1 do different formatting
+
+    #initialize arrays
+    if (class(params@analysis.results)=="multidna"){
+
+  # create the gytpes object earlier so this is DNA sequences, we'd have a list with 1st element strata and the second is the DNA sequences
+      # as a multiDNA objects, creats a gtypes if it is a set of sequences, needs to be made
+      # earlier
+  #   use $strata and $dnaseq - instead of [[2]]
+      # allelic:genind and use genind2gtypes vs. sequence: multidna to gtypes
+      #test with inherits()
+      #if inherits rep.sample genind... inherits(rep.sample, "multidna")
+      # class returns value in class slot, we might have something of multiple classes
+      # ex. lm() object is an lm and a list, inherits will look through multiple
+  # Eric added an m ratio that sean wrote - in strataG
+      # mRatio
+  #need to add FIS - statFis
+      # privateAlleles
+
+      num_loci <- nLoc(params@rep.sample[[2]])
+
+      # Convert the list of DNAbin objects to gtypes
+      genes <- params@analysis.result[[2]] #the multidna object
+      names(genes@dna) <- paste("gene", 1:length(genes@dna))
+      id <- genes@labels
+      df <- data.frame(id = id, strata = params@analysis.result[[1]])
+      gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+      colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+      df <- cbind(df, gene.labels)
+      results_gtype <- df2gtypes(df, 1)
+
+
+      #put overall analysis in first row using overall_stats()
+      # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
+      #run by locus analysis
+      results.matrix <- t(sapply(locNames(results_gtype), function (l){
+        gtypes_this_loc<-results_gtype[,l,]
+        overall_stats(gtypes_this_loc)
+      }))
+      analyses <- colnames(results.matrix)
+      num_analyses <- length(analyses)
 
 
 
 
+      if(is.null(scenario.results[[group]][[curr_scn]])){
+        scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                                       dimnames = list(1:num_loci,analyses,1:num_reps))
+      }
 
+      # We are printing by gene, not overall gene analysis. This differs from the genind code below.
+      scenario.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
+
+      #this shouldn't happen here it should be at close of function- this is what is returned
+      # We assigned scenario.results a group list item and a curr_scn and [,,curr_rep] slot in our cube
+      # but really these need to be assigned for analysis.results, the scenario.results is remade each loop
+      params@analysis.results <- scenario.results
+
+
+    } else if(class(params@analysis.result)=="genind"){
+
+      #Global
+
+      results_genind<-params@rep.result
+      #convert genind to gtypes
+      results_gtype<-genind2gtypes(results_genind)
+
+      #   analyses <- names(overall_stats(results_gtype))
+      #    num_analyses <- length(analyses)
+
+      #put overall analysis in first row using overall_stats()
+      # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
+      #run by locus analysis
+      mat <- t(sapply(locNames(results_gtype), function (l){
+        gtypes_this_loc<-results_gtype[,l,]
+        overall_stats(gtypes_this_loc)
+      }))
+      analyses <- colnames(mat)
+      num_analyses <- length(analyses)
+
+      # The first row will hold summary statistics over all loci regardless of population structure.
+      # The remaining rows will hold summary statistics per locus
+      if(is.null(scenario.results[[group]][[curr_scn]])){
+        scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
+                                                       dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
+      }
+
+      # combining overall statistics and locus by locus matrix
+      scenario.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
+
+      #this shouldn't happen here it should be at close of function- this is what is returned
+      params@analysis.results <- scenario.results
+
+    }
+
+
+
+################################################## October 2015 - end
 
 
 

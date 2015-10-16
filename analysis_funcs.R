@@ -1,6 +1,14 @@
 #####################################################################
 
 
+# TO DO: remove the scenario.results and assign the framework for repetitions to params@analysis.results
+# analyse param@sample which is the
+
+# To Do: not all the assignments to params@analysis.results are to the correct spot in the list, need to check
+
+# To Do: once the if/else statements are changed to just if statements should remove an extra list creation
+# for params@analysis.results... I think there are extra.
+
 function(params){
 
   # saving global variables
@@ -10,16 +18,19 @@ function(params){
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
 
+  #repsample data - create a gtype then just switch to genind when need to
+
   # If analysis results is empty, the first analysis done creates the list to hold the data
   if(is.null(params@analysis.results)){
 
-    scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
+    params@analysis.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
     # creates a list of length scenarios for each requested groups of analyses
     for(group in names(which(params@analyses.requested)))
-      scenario.results[[group]] <- vector('list', length(params@scenarios))
+      params@analysis.results[[group]] <- vector('list', length(params@scenarios))
 
-  } else {
+# TO DO: get rid of this else.
+} else {
 
     for(group in names(which(params@analyses.requested))){
 
@@ -34,9 +45,9 @@ function(params){
         # if genes > 1 do different formatting
 
         #initialize arrays
-        if (class(params@analysis.result)=="multidna"){
+        if (class(params@analysis.results)=="multidna"){
 
-          num_loci <- nLoc(params@analysis.result[[2]])
+          num_loci <- nLoc(params@rep.sample[[2]])
 
           # Convert the list of DNAbin objects to gtypes
           genes <- params@analysis.result[[2]] #the multidna object
@@ -49,9 +60,6 @@ function(params){
           results_gtype <- df2gtypes(df, 1)
 
 
-          #put overall analysis in first row using overall_stats()
-          # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
-          #run by locus analysis
           results.matrix <- t(sapply(locNames(results_gtype), function (l){
             gtypes_this_loc<-results_gtype[,l,]
             overall_stats(gtypes_this_loc)
@@ -60,16 +68,16 @@ function(params){
           num_analyses <- length(analyses)
 
 
-          if(is.null(scenario.results[[group]][[curr_scn]])){
-            scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+          if(is.null(params@analysis.results[[group]][[curr_scn]])){
+            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
                                                            dimnames = list(1:num_loci,analyses,1:num_reps))
           }
 
-          # We are printing by gene, not overall gene analysis. This differs from the genind code below.
-          scenario.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
-
           #this shouldn't happen here it should be at close of function- this is what is returned
-          params@analysis.results <- scenario.results
+          # We are printing by gene, not overall gene analysis. This differs from the genind code below.
+          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
+
+
 
 
         } else if(class(params@analysis.result)=="genind"){
@@ -95,16 +103,16 @@ function(params){
 
           # The first row will hold summary statistics over all loci regardless of population structure.
           # The remaining rows will hold summary statistics per locus
-          if(is.null(scenario.results[[group]][[curr_scn]])){
-            scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
+          if(is.null(params@analysis.results[[group]][[curr_scn]])){
+            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
                                                            dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
           }
 
-          # combining overall statistics and locus by locus matrix
-          scenario.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
-
           #this shouldn't happen here it should be at close of function- this is what is returned
-          params@analysis.results <- scenario.results
+          # combining overall statistics and locus by locus matrix
+          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
+
+
 
         }
 
@@ -173,13 +181,13 @@ function(params){
          analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
-          if(is.null(scenario.results[[group]][[curr_scn]])){
-            scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names),num_reps),
+          if(is.null(params@analysis.results[[group]][[curr_scn]])){
+            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names),num_reps),
                                                            dimnames = list(1:(num_loci*(num_pops+1)),analysis_names,1:num_reps))
 
           }
 
-          scenario.results[[group]][[curr_scn]][,,curr_rep] <-  locus.final
+          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <-  locus.final
 
         }
 
@@ -194,8 +202,6 @@ function(params){
 
         }
 
-        # check location of this! this should probbaly be at end
-        params@analysis.results <- scenario.results
 
 ###########################  Pairwise  ###########################
       } else if(x == "Pairwise"){
@@ -225,13 +231,13 @@ function(params){
         nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
         names(sA) <- nsharedAlleles
         pws.out <- cbind(pws.out, sA)
-        scenario.results[[params@current.scenario]] <- pws.outS
+        params@analysis.results[[curr_scn]] <- pws.outS
       }
 
       #Data.frame of summary data into simulation replicate
 
       # Enter array of data into the current scenario
-      scenario.results[[params@current.scenario]] <- data.cube
+      params@analysis.results[[curr_scn]] <- data.cube
 
 
     }
