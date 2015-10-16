@@ -1,8 +1,7 @@
 #####################################################################
 
 
-# TO DO: remove the scenario.results and assign the framework for repetitions to params@analysis.results
-# analyse param@sample which is the
+# TO DO: analyse param@rep.sample which is the replicate sample data - result of last call from simulation
 
 # To Do: not all the assignments to params@analysis.results are to the correct spot in the list, need to check
 
@@ -18,26 +17,24 @@ function(params){
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
 
+  # Convert the list of DNAbin objects to gtypes
+  genes <- params@analysis.result[[2]] #the multidna object
+  names(genes@dna) <- paste("gene", 1:length(genes@dna))
+  id <- genes@labels
+  df <- data.frame(id = id, strata = params@analysis.result[[1]])
+  gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+  colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+  df <- cbind(df, gene.labels)
+  results_gtype <- df2gtypes(df, 1)
+
   #repsample data - create a gtype then just switch to genind when need to
 
   # If analysis results is empty, the first analysis done creates the list to hold the data
   if(is.null(params@analysis.results)){
-
     params@analysis.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
+  }
 
-    # creates a list of length scenarios for each requested groups of analyses
-    for(group in names(which(params@analyses.requested)))
-      params@analysis.results[[group]] <- vector('list', length(params@scenarios))
-
-# TO DO: get rid of this else.
-} else {
-
-    for(group in names(which(params@analyses.requested))){
-
-      # group will cycle through selected among Global, Locus, and Pairwise
-      # in each iteration of the for loop, group will have only one value
-
-      if(group == "Global"){
+  if(params@analyses.requested["Global"]){
 
         # TO DO check the data type and do conversions for what is needed
         # For multidna class objects we convert to a gtypes and use strataG for analysis
@@ -48,17 +45,6 @@ function(params){
         if (class(params@analysis.results)=="multidna"){
 
           num_loci <- nLoc(params@rep.sample[[2]])
-
-          # Convert the list of DNAbin objects to gtypes
-          genes <- params@analysis.result[[2]] #the multidna object
-          names(genes@dna) <- paste("gene", 1:length(genes@dna))
-          id <- genes@labels
-          df <- data.frame(id = id, strata = params@analysis.result[[1]])
-          gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
-          colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
-          df <- cbind(df, gene.labels)
-          results_gtype <- df2gtypes(df, 1)
-
 
           results.matrix <- t(sapply(locNames(results_gtype), function (l){
             gtypes_this_loc<-results_gtype[,l,]

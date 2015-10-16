@@ -27,7 +27,6 @@ devtools::install_github('ericarcher/strataG/strataG')
 library(strataG)
 library(swfscMisc)
 
-# require(strataG)
 library(poppr)
 library(MASS)
 
@@ -87,6 +86,8 @@ df <- cbind(df, gene.labels)
 test.g <- df2gtypes(df, 1, sequences = genes)
 summary(test.g)
 
+
+
 nLoc(test.g)
 locNames(test.g)
 
@@ -107,6 +108,8 @@ data(dolph.msats)
 data(dolph.strata)
 msats.merge <- merge(dolph.strata[, c("ids", "fine")], dolph.msats, all.y = TRUE)
 msats <- df2gtypes(msats.merge, ploidy = 2)
+
+inherits(msats,"multidan")
 
 # msats <- dolph.msats
 alleleFreqs <- alleleFreqs(msats, by.strata = TRUE)
@@ -663,15 +666,37 @@ for(i in 1:nrep){
 
 
 ################################### from analysis_funcs. October 16, 2015
+#   @slot analyses.requested vector of logicals specifying "Global", "Population",
+#   "Locus", or "Pairwise" analyses have been requested.
+# We only really want Global, Locus, and pairwise...should take out population
 
+
+# gtypes example: test.g
 curr_scn <- 3
+num_loci <- nLoc(test.g)
+num_pops <- nStrata(test.g)
+params<- new("skeleSim.params")
+params@scenarios$num.pops <- num_pops
+params@scenarios$sample.size <- 500
 
+length(params@scenarios)
+
+
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=FALSE,Remove=FALSE)
+if(params@analyses.requested["Pairwise"]){
+  print("Yay")
+}
+
+analysis.options[params@analyses.requested)]
+
+
+#To Do: take out "Population" from the analyses.requested choices and mention in creating the slot
 for(group in names(which(params@analyses.requested))){
 
   # group will cycle through selected among Global, Locus, and Pairwise
   # in each iteration of the for loop, group will have only one value
 
-  if(group == "Global"){
+  if(params@analyses.requested["Global"]){
 
     # TO DO check the data type and do conversions for what is needed
     # For multidna class objects we convert to a gtypes and use strataG for analysis
@@ -717,6 +742,18 @@ for(group in names(which(params@analyses.requested))){
       }))
       analyses <- colnames(results.matrix)
       num_analyses <- length(analyses)
+
+
+      # creates a list of length scenarios for each requested groups of analyses
+      for(group in analysis.options[which(params@analyses.requested)])
+
+
+        ####Need empty lists for each group that will hold replicates for each scenario, add a new list for
+        # each new scenario
+        params@analysis.results[[group]] <- list()
+      params@analysis.results[[group]][1] <- "stuff"
+      params@analysis.results[[group]][2] <- "next scenario stuff"
+
 
 
 
