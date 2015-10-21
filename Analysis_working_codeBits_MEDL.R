@@ -109,7 +109,10 @@ data(dolph.strata)
 msats.merge <- merge(dolph.strata[, c("ids", "fine")], dolph.msats, all.y = TRUE)
 msats <- df2gtypes(msats.merge, ploidy = 2)
 
-inherits(msats,"multidan")
+class(msats)
+inherits(msats,"multidna")
+
+inherits(msats,"gtypes")
 
 # msats <- dolph.msats
 alleleFreqs <- alleleFreqs(msats, by.strata = TRUE)
@@ -212,6 +215,8 @@ analyses <- c("allel","Freq","prop")
 nrep <- 5
 scenario.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
 
+params<- new("skeleSim.params")
+
 params
 #params@num.reps <- 1
 
@@ -245,6 +250,8 @@ for(x in names(which(an.req)))
 # example rep.result
 rep.result
 class(rep.result)
+inherits(rep.result$dna.seqs, "DNAbin")
+inherits(rep.result$dna.seqs, "multidna")
 # A multidna with two genes
 length(rep.result$dna.seqs@dna)
 
@@ -259,6 +266,9 @@ length(x@dna)
 msats
 str(locNames(msats))
 
+class(msats)
+# to test analysis_funcs
+params@rep.sample <- msats
 
 str(msats)
 length(msats@loci)
@@ -308,26 +318,59 @@ num_reps <- 5
 analyses <- names(mat[2,])
 num_analyses <- length(analyses)
 
-scenario.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+scenario.results[["Global"]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
                                                dimnames = list(1:num_loci,analyses,1:num_reps))
-
-scenario.results[[group]][[curr_scn]] <- array(0, dim=c(1+15,14,100))
 
 
 which(locNames(msats) == locNames(msats)[2])
 #mat[2,] <- 1:14
 
 # example to test
+class(rep.result$dna.seq)
+rep.result$dna.seq
 genes <- rep.result[[2]]
 #genes is a list
 class(genes)
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
-df <- data.frame(id = id, strata = rep.result[[1]], hap = id)
+df <- data.frame(id = id, strata = rep.result$strata, hap = id)
 class(df)
 # errors now with designating sequences = genes
 test.g <- df2gtypes(df, 1) #, sequences = genes
 class(test.g) # multiDNA to gtypes
+
+class(rep.result)
+inherits(rep.result, "DNAbin")
+inherits(rep.result$dna.seq, "multidna")
+inherits(rep.result, "gtypes")
+# to test analysis_funcs
+params@rep.result <- rep.result
+
+
+### after creating Global, Locus, and Pairwise
+
+
+# Why would we need this? either use the gtypes created at the start or convert to genind, right?
+#initialize arrays
+if (inherits(params@analysis.results,"multidna"))
+
+  if(params@analyses.requested["Global"]){
+
+    num_loci <- nLoc(results_gtype)
+
+    ######## START HERE: lapply not working, fix it!
+    results.matrix <- t(lapply(locNames(results_gtype), function (l){
+      gtypes_this_loc<-results_gtype[,l,]
+      overall_stats(gtypes_this_loc)
+    }))
+    analyses <- colnames(results.matrix)
+    num_analyses <- length(analyses)
+
+    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                                               dimnames = list(1:num_loci,analyses,1:num_reps))
+    }
+
 
 
 # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1894623/
@@ -342,10 +385,20 @@ as.vector(t(ovl$result)) # by row to a vector
 
 # Eric's example
 data(woodmouse)
+class(woodmouse)
 genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
 x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
+
+# to test analysis_funcs
+params@rep.sample <- x.g
+
+class(x.g)
+inherits(x.g,"genind")
+inherits(x.g,"DNAbin")
+inherits(x.g,"gtypes")
+inherits(x.g,"multidna")
 
 
 #which is population and which are genes for strata? So pairwise should be done between
@@ -683,18 +736,21 @@ length(params@scenarios)
 
 
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=FALSE,Remove=FALSE)
-if(params@analyses.requested["Pairwise"]){
+if(params@analyses.requested["Locus"]){
   print("Yay")
 }
 
-analysis.options[params@analyses.requested)]
 
 
 #To Do: take out "Population" from the analyses.requested choices and mention in creating the slot
+
+# Take out for loop, just if statements for each true selected analysis
 for(group in names(which(params@analyses.requested))){
 
   # group will cycle through selected among Global, Locus, and Pairwise
   # in each iteration of the for loop, group will have only one value
+
+
 
   if(params@analyses.requested["Global"]){
 
@@ -705,6 +761,9 @@ for(group in names(which(params@analyses.requested))){
 
     #initialize arrays
     if (class(params@analysis.results)=="multidna"){
+
+    msats$dnaseq
+      if(inherits(params@analysis.result$dna.seq, "multidna")
 
   # create the gytpes object earlier so this is DNA sequences, we'd have a list with 1st element strata and the second is the DNA sequences
       # as a multiDNA objects, creats a gtypes if it is a set of sequences, needs to be made

@@ -18,16 +18,15 @@ function(params){
   num_pops<-params@scenarios[[curr_scn]]@num.pops
 
   # Convert the list of DNAbin objects to gtypes
-  genes <- params@analysis.result[[2]] #the multidna object
+
+  genes <- params@rep.result$dna.seqs #the multidna object
   names(genes@dna) <- paste("gene", 1:length(genes@dna))
   id <- genes@labels
-  df <- data.frame(id = id, strata = params@analysis.result[[1]])
+  df <- data.frame(id = id, strata = params@rep.result$strata)
   gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
   colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
   df <- cbind(df, gene.labels)
   results_gtype <- df2gtypes(df, 1)
-
-  #repsample data - create a gtype then just switch to genind when need to
 
   # If analysis results is empty, the first analysis done creates the list to hold the data
   if(is.null(params@analysis.results)){
@@ -36,35 +35,26 @@ function(params){
 
   if(params@analyses.requested["Global"]){
 
-        # TO DO check the data type and do conversions for what is needed
-        # For multidna class objects we convert to a gtypes and use strataG for analysis
+    num_loci <- nLoc(results_gtype)
 
-        # if genes > 1 do different formatting
+    results.matrix <- t(lapply(locNames(results_gtype), function (l){
+      gtypes_this_loc<-results_gtype[,l,]
+      overall_stats(gtypes_this_loc)
+      }))
+    analyses <- colnames(results.matrix)
+    num_analyses <- length(analyses)
 
-        #initialize arrays
-        if (class(params@analysis.results)=="multidna"){
-
-          num_loci <- nLoc(params@rep.sample[[2]])
-
-          results.matrix <- t(sapply(locNames(results_gtype), function (l){
-            gtypes_this_loc<-results_gtype[,l,]
-            overall_stats(gtypes_this_loc)
-          }))
-          analyses <- colnames(results.matrix)
-          num_analyses <- length(analyses)
-
-
-          if(is.null(params@analysis.results[[group]][[curr_scn]])){
-            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
-                                                           dimnames = list(1:num_loci,analyses,1:num_reps))
-          }
+    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
+                                                               dimnames = list(1:num_loci,analyses,1:num_reps))
+    }
 
           #this shouldn't happen here it should be at close of function- this is what is returned
           # We are printing by gene, not overall gene analysis. This differs from the genind code below.
-          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <- results.matrix
+          params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
 
 
-        } else if(class(params@analysis.result)=="genind"){
+        if(inherits(params@rep.result,"genind")){
 
           #Global
 
@@ -87,24 +77,25 @@ function(params){
 
           # The first row will hold summary statistics over all loci regardless of population structure.
           # The remaining rows will hold summary statistics per locus
-          if(is.null(params@analysis.results[[group]][[curr_scn]])){
-            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
+          if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+            params@analysis.results[["Global"]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
                                                            dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
           }
 
-          #this shouldn't happen here it should be at close of function- this is what is returned
           # combining overall statistics and locus by locus matrix
-          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
+          params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
 
 
 
         }
+  }
 
 
         ################################### LOCUS ######################################
-      } else if(x == "Locus"){
 
-        if(class(params@analysis.result)=="genind"){
+  if(params@analyses.requested["Locus"]){
+
+        if(inherits(params@analysis.result,"genind")){
 
           results_genind<-params@rep.result
 
@@ -165,19 +156,19 @@ function(params){
          analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
-          if(is.null(params@analysis.results[[group]][[curr_scn]])){
-            params@analysis.results[[group]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names),num_reps),
+          if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
+            params@analysis.results[["Locus"]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names),num_reps),
                                                            dimnames = list(1:(num_loci*(num_pops+1)),analysis_names,1:num_reps))
 
           }
 
-          params@analysis.results[[group]][[curr_scn]][,,curr_rep] <-  locus.final
+          params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
 
         }
 
 
         ############## ONCE ERIC fixes multidna stuffs, DO THIS!!!!  ###################
-        if(class(params@analysis.result)=="multidna"){
+        if(inherits(params@analysis.result,"multidna")){
 
           overallTest
 
@@ -185,10 +176,12 @@ function(params){
 
 
         }
+  }
 
 
 ###########################  Pairwise  ###########################
-      } else if(x == "Pairwise"){
+
+if(params@analyses.requested["Pairwise"]){
 
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
@@ -233,6 +226,9 @@ function(params){
 }
 
 
+
+
+
 ##### Will need to be in loop
 # params@num.pops <- the number of rows, pops or pairwise or loci plus overall
 # nrep <- the number of replicates
@@ -250,8 +246,8 @@ sim.data.analysis <- array(0, dim = c(length(names), length(analyses), nrep),
 # This gets called and knows which row (so z spot) matchs the current
 #   scenario and replicate
 ########### multiDNA to gtypes
-if(class(params@rep.sample) == "multidna"){
-  genes <- rep.sample[[2]]
+if(inherits(params@rep.sample,"multidna")){
+  genes <- rep.sample$dna.seqs
   names(genes@dna) <- paste("gene", 1:length(genes@dna))
   id <- genes@labels
   df <- data.frame(id = id, strata = rep.sample[[1]], hap = id)
@@ -259,7 +255,7 @@ if(class(params@rep.sample) == "multidna"){
 
 }
 
-if(class(sim.out) == "DNAbin"
+if(inherits(rep.result,"DNAbin"))
 
    if(pairwisepop = TRUE){
 
