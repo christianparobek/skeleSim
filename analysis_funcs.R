@@ -37,7 +37,7 @@ function(params){
 
     num_loci <- nLoc(results_gtype)
 
-    results.matrix <- t(lapply(locNames(results_gtype), function (l){
+    results.matrix <- do.call(rbind,lapply(locNames(results_gtype), function (l){
       gtypes_this_loc<-results_gtype[,l,]
       overall_stats(gtypes_this_loc)
       }))
@@ -49,31 +49,29 @@ function(params){
                                                                dimnames = list(1:num_loci,analyses,1:num_reps))
     }
 
-          #this shouldn't happen here it should be at close of function- this is what is returned
-          # We are printing by gene, not overall gene analysis. This differs from the genind code below.
-          params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
+    # We are printing by gene, not overall gene analysis. This differs from the genind code below.
+    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
 
+    if(inherits(params@rep.result,"genind")){
 
-        if(inherits(params@rep.result,"genind")){
+      #Global
+      results_genind<-params@rep.result
+      #convert genind to gtypes
+      results_gtype<-genind2gtypes(results_genind)
 
-          #Global
+      #   analyses <- names(overall_stats(results_gtype))
+      #    num_analyses <- length(analyses)
 
-          results_genind<-params@rep.result
-          #convert genind to gtypes
-          results_gtype<-genind2gtypes(results_genind)
+      #put overall analysis in first row using overall_stats()
+      # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
+      #run by locus analysis
 
-          #   analyses <- names(overall_stats(results_gtype))
-          #    num_analyses <- length(analyses)
-
-          #put overall analysis in first row using overall_stats()
-          # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
-          #run by locus analysis
-          mat <- t(sapply(locNames(results_gtype), function (l){
-            gtypes_this_loc<-results_gtype[,l,]
-            overall_stats(gtypes_this_loc)
-          }))
-          analyses <- colnames(mat)
-          num_analyses <- length(analyses)
+      mat <- t(sapply(locNames(results_gtype), function (l){
+        gtypes_this_loc<-results_gtype[,l,]
+        overall_stats(gtypes_this_loc)
+        }))
+      analyses <- colnames(mat)
+      num_analyses <- length(analyses)
 
           # The first row will hold summary statistics over all loci regardless of population structure.
           # The remaining rows will hold summary statistics per locus
