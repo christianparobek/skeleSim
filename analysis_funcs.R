@@ -1,8 +1,3 @@
-#####################################################################
-
-
-# TO DO: analyse param@rep.sample which is the replicate sample data - result of last call from simulation
-
 # To Do: not all the assignments to params@analysis.results are to the correct spot in the list, need to check
 
 # To Do: once the if/else statements are changed to just if statements should remove an extra list creation
@@ -17,31 +12,50 @@ function(params){
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
 
-  # Convert the list of DNAbin objects to gtypes
-
-  genes <- params@rep.result$dna.seqs #the multidna object
-  names(genes@dna) <- paste("gene", 1:length(genes@dna))
-  id <- genes@labels
-  df <- data.frame(id = id, strata = params@rep.result$strata)
-  gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
-  colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
-  df <- cbind(df, gene.labels)
-  results_gtype <- df2gtypes(df, 1)
+  #params@rep.result is either a genind or a list of DNAbin objects
+  if(inherits(params@rep.result, "genind")){
+    results_genind2gtype<-genind2gtypes(params@rep.result)
+    } else {
+      # Convert the list of DNAbin objects to gtypes
+      genes <- params@rep.result$dna.seqs #the multidna object
+      names(genes@dna) <- paste("gene", 1:length(genes@dna))
+      id <- genes@labels
+      df <- data.frame(id = id, strata = params@rep.result$strata)
+      gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+      colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+      df <- cbind(df, gene.labels)
+      results_gtype <- df2gtypes(df, 1)
+    }
 
   # If analysis results is empty, the first analysis done creates the list to hold the data
   if(is.null(params@analysis.results)){
     params@analysis.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
   }
 
+        ######################### Global ##########################
+
   if(params@analyses.requested["Global"]){
 
     num_loci <- nLoc(results_gtype)
 
-    results.matrix <- do.call(rbind,lapply(locNames(results_gtype), function (l){
+    #overall_stats() is from skeleSim.funcs.R
+    r.m <- lapply(locNames(results_gtype), function (l){
       gtypes_this_loc<-results_gtype[,l,]
       overall_stats(gtypes_this_loc)
-      }))
+      })
+    results.matrix <- do.call(rbind, r.m)
     analyses <- colnames(results.matrix)
+    num_analyses <- length(analyses)
+    rownames(results.matrix) <- locNames(results_gtype)
+
+
+    #run by locus analysis acorss all populations
+    mat <- lapply(locNames(results_gtype), function (l){
+      gtypes_this_loc<-results_gtype[,l,]
+      overall_stats(gtypes_this_loc)
+      })
+    mat <- do.call(rbind,mat)
+    analyses <- colnames(mat)
     num_analyses <- length(analyses)
 
     if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
@@ -52,41 +66,22 @@ function(params){
     # We are printing by gene, not overall gene analysis. This differs from the genind code below.
     params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
 
-    if(inherits(params@rep.result,"genind")){
 
-      #Global
-      results_genind<-params@rep.result
-      #convert genind to gtypes
-      results_gtype<-genind2gtypes(results_genind)
+    # The first row will hold summary statistics over all loci regardless of population structure.
+    # The remaining rows will hold summary statistics per locus
+    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(length(loci((results_gtype))+num_loci,
+                                                                       num_analyses,
+                                                                       num_reps),
+                                                               dimnames = list(c("Across_loci",1:num_loci),
+                                                                               analyses,
+                                                                               1:num_reps))
+    }
 
-      #   analyses <- names(overall_stats(results_gtype))
-      #    num_analyses <- length(analyses)
-
-      #put overall analysis in first row using overall_stats()
-      # params@current.replicate tells us how deep to put each new run in which list (@current.scenario)
-      #run by locus analysis
-
-      mat <- t(sapply(locNames(results_gtype), function (l){
-        gtypes_this_loc<-results_gtype[,l,]
-        overall_stats(gtypes_this_loc)
-        }))
-      analyses <- colnames(mat)
-      num_analyses <- length(analyses)
-
-          # The first row will hold summary statistics over all loci regardless of population structure.
-          # The remaining rows will hold summary statistics per locus
-          if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-            params@analysis.results[["Global"]][[curr_scn]] <- array(0, dim=c(1+num_loci,num_analyses,num_reps),
-                                                           dimnames = list(c("Across_loci",1:num_loci),analyses,1:num_reps))
-          }
-
-          # combining overall statistics and locus by locus matrix
-          params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
-
-
-
-        }
+    # combining overall statistics and locus by locus matrix
+    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
   }
+}
 
 
         ################################### LOCUS ######################################

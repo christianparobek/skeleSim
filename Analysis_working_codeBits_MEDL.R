@@ -3,25 +3,25 @@
 #########################################################################################
 ##HAPLOID SEQUENCE DATA
 #########################################################################################
-require(ape)
+#require(ape)
 library(ape)
 
-
 # Check that Rtools can be used
-Sys.getenv("PATH")
+# Sys.getenv("PATH")
 
-
+# install.packages("sp")
 # require(adegenet)
 # adegenet from Thibaut's github
+# find_rtools()
 library(devtools)
-install_github("thibautjombart/adegenet")
+# install_github("thibautjombart/adegenet")
 library("adegenet")
 
 # Eric's strataGdevel
   # install_github("ericarcher/swfscMisc/swfscMisc")
   #install_github("ericarcher/strataG.devel/strataG.devel")
-if (!require('devtools')) install.packages('devtools')
-devtools::install_github('ericarcher/strataG/strataG')
+# if (!require('devtools')) install.packages('devtools')
+# devtools::install_github('ericarcher/strataG/strataG')
 
 #Restart R
 library(strataG)
@@ -39,12 +39,6 @@ library(apex)
 ##also be created (i.e. 'strata' three columns: id.col(indivID), strata.col(pops), locus.col(haps))
 ##depending on required summary stats, these files will be coverted to either strataG gtype and/or
 ###adegenet genind and then to hierfstat format
-
-##### Testing with strataG.devel
-# library(strataG.devel)
-
-# Do we need an empty params object?
-#params <- list()
 
 #In test.runSim: error
           #Error in params@sim.func(params) : fastsimcoal exited with error 127
@@ -75,8 +69,11 @@ class(rep.result)
 
 # multidna, from apex
 class(rep.result[[2]])
+class(rep.result$dna.seqs)
 
-genes <- rep.result[[2]]#the multidna object
+
+
+genes <- rep.result$dna.seqs#the multidna object
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
 df <- data.frame(id = id, strata = rep.result[[1]])
@@ -86,6 +83,19 @@ df <- cbind(df, gene.labels)
 test.g <- df2gtypes(df, 1, sequences = genes)
 summary(test.g)
 
+
+
+#multidna object
+# Run skeleSim.classes.R and skeleSim.funcs.R first
+### multiDNA example
+params<- new("skeleSim.params")
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+params@rep.result <- rep.result
+curr_scn<-1
+curr_rep<-1
+num_loci <- getNumLoci(rep.result$dna.seqs)
+num_reps <- 5
+num_pops <- nStrata(test.g)
 
 
 nLoc(test.g)
@@ -278,6 +288,21 @@ length(msats@loci)
 #  gtypes_1 <- subset(msats, loci = x)
 #  ovl <- overallTest(gtypes_1, nrep = 5, quietly = TRUE)
 #})
+
+# Run skeleSim.classes.R and skeleSim.funcs.R first
+### genind example
+params<- new("skeleSim.params")
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+data(nancycats)
+params@rep.result <- nancycats
+curr_scn<-1
+curr_rep<-1
+num_loci <- nLoc(nancycats)
+num_reps <- 5
+num_pops <- nPop(nancycats)
+
+nancycats.gtypes <- genind2gtypes(nancycats)
+overallTest(nancycats.gtypes, quietly = TRUE)
 
 
 ########### HERE ######### Need to collapse/concatenate lists
@@ -723,6 +748,7 @@ for(i in 1:nrep){
 #   "Locus", or "Pairwise" analyses have been requested.
 # We only really want Global, Locus, and pairwise...should take out population
 
+## Create a skeleSim params object
 
 # gtypes example: test.g
 curr_scn <- 3
@@ -735,7 +761,7 @@ params@scenarios$sample.size <- 500
 length(params@scenarios)
 
 
-params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=FALSE,Remove=FALSE)
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
 if(params@analyses.requested["Locus"]){
   print("Yay")
 }
