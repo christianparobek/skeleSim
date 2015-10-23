@@ -5,6 +5,9 @@
 
 function(params){
 
+  stopifnot(require(strataG))
+  stopifnot(require(pegas))
+
   # saving global variables
   curr_scn<-params@current.scenario
   curr_rep<-params@current.replicate
@@ -14,7 +17,7 @@ function(params){
 
   #params@rep.result is either a genind or a list of DNAbin objects
   if(inherits(params@rep.result, "genind")){
-    results_genind2gtype<-genind2gtypes(params@rep.result)
+    results_gtype<-genind2gtypes(params@rep.result)
     } else {
       # Convert the list of DNAbin objects to gtypes
       genes <- params@rep.result$dna.seqs #the multidna object
@@ -34,12 +37,16 @@ function(params){
 
         ######################### Global ##########################
 
+  # TO DO: Need an across all loci row if a genind object in addition to each loci Will need a different
+  # analysis.results format
+
   if(params@analyses.requested["Global"]){
 
     #Don't need this, it's a global variable
     # num_loci <- nLoc(results_gtype)
 
     #overall_stats() is from skeleSim.funcs.R
+    #run by locus analysis across all populations
     r.m <- lapply(locNames(results_gtype), function (l){
       gtypes_this_loc<-results_gtype[,l,]
       overall_stats(gtypes_this_loc)
@@ -49,38 +56,19 @@ function(params){
     num_analyses <- length(analyses)
     rownames(results.matrix) <- locNames(results_gtype)
 
-
-    #run by locus analysis across all populations
-    mat <- lapply(locNames(results_gtype), function (l){
-      gtypes_this_loc<-results_gtype[,l,]
-      overall_stats(gtypes_this_loc)
-      })
-    mat <- do.call(rbind,mat)
-    analyses <- colnames(mat)
-    num_analyses <- length(analyses)
-
-    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-      params@analysis.results[["Global"]][[curr_scn]] <- array(0, dim=c(num_loci,num_analyses,num_reps),
-                                                               dimnames = list(1:num_loci,analyses,1:num_reps))
-    }
-
     # We are printing by gene, not overall gene analysis. This differs from the genind code below.
-    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
-
-
     # The first row will hold summary statistics over all loci regardless of population structure.
     # The remaining rows will hold summary statistics per locus
     if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(length(loci(results_gtype))+num_loci,
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci,
                                                                        num_analyses,
                                                                        num_reps),
-                                                               dimnames = list(c("Across_loci",1:num_loci),
+                                                               dimnames = list(c(1:num_loci),
                                                                                analyses,
                                                                                1:num_reps))
     }
 
-    # combining overall statistics and locus by locus matrix
-    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <-   rbind(overall_stats(results_gtype),mat)
+    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
   }
 }
 
@@ -89,14 +77,15 @@ function(params){
 
   if(params@analyses.requested["Locus"]){
 
-        if(inherits(params@analysis.result,"genind")){
+# genind
+        if(inherits(params@rep.result,"genind")){
 
           results_genind<-params@rep.result
 
           #Hardy Weiberg test per population and overall (this comes first because it needs genind)
           pops_as_list<-seppop(results_genind)
           hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
-          hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results)) # warnings for unknown reason
+          hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
           colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
           #convert genind to gtypes for remaining analyses
@@ -130,7 +119,7 @@ function(params){
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
 
 
-            ################# #Convert from genind to loci (package pegas))
+          ################# Convert from genind to loci (package pegas))
           #Allan, Sean and I decided that a workable alternative to Fis estimation below is to use:   Fis = 1-(Ho/He) since we already have obs.He and exp.He is the results
           results_loci<-genind2loci(results_genind)
           #for loci
@@ -140,34 +129,36 @@ function(params){
           Fstloci <- FSTloci[ , c("Fst")]
           #for pops
           FSTpop<-Fst(results_loci, pop = results_loci$population) #column with pop information#)
-                        Fispop <- FSTpop[ , c("Fis")]
-                      Fitpop <- FSTpop[ , c("Fit")]
-                      Fstpop <- FSTpop[ , c("Fst")]
-
+          Fispop <- FSTpop[ , c("Fis")]
+          Fitpop <- FSTpop[ , c("Fit")]
+          Fstpop <- FSTpop[ , c("Fst")]
 
           #all the analyses get bound here
-         locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all,mrat_results_all)
-         analysis_names <- colnames(locus.final)
+          locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all,mrat_results_all)
+          analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
-            params@analysis.results[["Locus"]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),length(analysis_names),num_reps),
-                                                           dimnames = list(1:(num_loci*(num_pops+1)),analysis_names,1:num_reps))
-
+            params@analysis.results[["Locus"]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),
+                                                                             length(analysis_names),
+                                                                             num_reps),
+                                                                    dimnames = list(1:(num_loci*(num_pops+1)),
+                                                                                    analysis_names,
+                                                                                    1:num_reps))
           }
 
           params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
 
         }
 
+# multiDNA
+        if(inherits(params@rep.result,"multidna")){
 
-        ############## ONCE ERIC fixes multidna stuffs, DO THIS!!!!  ###################
-        if(inherits(params@analysis.result,"multidna")){
-
-          overallTest
-
-
-
+          r.m <- lapply(locNames(results_gtype), function(l){
+            nd_this_gene<-nucleotideDiversity(results_gtype[,l,]@sequences)
+          })
+          results.matrix <- do.call(rbind,r.m)   #Not equal length, won't do no call rbind!!!
+          analyses <- colnames(results.matrix)
 
         }
   }

@@ -14,12 +14,14 @@ library(ape)
 # adegenet from Thibaut's github
 # find_rtools()
 library(devtools)
-# install_github("thibautjombart/adegenet")
-library("adegenet")
+install_github("thibautjombart/adegenet")
+library(adegenet)
+
+# install.packages("stringi")
 
 # Eric's strataGdevel
   # install_github("ericarcher/swfscMisc/swfscMisc")
-  #install_github("ericarcher/strataG.devel/strataG.devel")
+
 # if (!require('devtools')) install.packages('devtools')
 # devtools::install_github('ericarcher/strataG/strataG')
 
@@ -71,8 +73,49 @@ class(rep.result)
 class(rep.result[[2]])
 class(rep.result$dna.seqs)
 
+data(dolph.seqs)
+strata <- dolph.strata$fine
+names(strata) <- dolph.strata$ids
+dloop <- sequence2gtypes(dolph.seqs, strata, seq.names = "dLoop")
+dloop[,1,] #not list of DNAbins... only one locus
 
+# sequence gtype example
+params<- new("skeleSim.params")
+params@rep.result <- dloop
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+curr_scn<-1
+curr_rep<-1
+num_loci <- 1
+num_reps <- 5
+num_pops <- nStrata(dloop)
 
+# multidna sequence example
+data(woodmouse)
+genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
+x <- new("multidna", genes)
+x
+names(x@dna)
+x@labels
+strata <- rep(1:3,5)
+df <- data.frame(x@labels, strata)
+gene.labels <- matrix(x@labels, nrow = length(x@labels), ncol = 2)
+colnames(gene.labels) <- names(x@dna)
+df <- cbind(df, gene.labels)
+wood_gtype <- df2gtypes(df, 1, sequences = genes)
+inherits(wood_gtype
+
+params<- new("skeleSim.params")
+params@rep.result <- x  # error in params@rep.result$dna.seqs $operator not defined for this S4 class
+results_gtype <- wood_gtype
+
+params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+curr_scn<-1
+curr_rep<-1
+num_loci <- 1
+num_reps <- 5
+num_pops <- nStrata(wood_gtype)
+
+##############################################################
 genes <- rep.result$dna.seqs#the multidna object
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
@@ -83,7 +126,8 @@ df <- cbind(df, gene.labels)
 test.g <- df2gtypes(df, 1, sequences = genes)
 summary(test.g)
 
-
+# to test in skeleSim.funcs overall_stats
+test.one <- results_gtype[,"gene_1",]
 
 #multidna object
 # Run skeleSim.classes.R and skeleSim.funcs.R first
@@ -96,6 +140,7 @@ curr_rep<-1
 num_loci <- getNumLoci(rep.result$dna.seqs)
 num_reps <- 5
 num_pops <- nStrata(test.g)
+
 
 #### Test the multiDNA example in analysis_funcs
 
@@ -140,7 +185,7 @@ rownames(by.loc) <- strataNames(msats)
 perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
 t(by.loc) #the rows will be have the private alleles for each population by locus
 
-
+nucleotideDiversity(msats)
 
 
 setwd("C:/Users/deprengm/Dropbox/Hackathon/Datasets")
@@ -303,8 +348,21 @@ num_loci <- nLoc(nancycats)
 num_reps <- 5
 num_pops <- nPop(nancycats)
 
+
+
+###################### troubleshooting
+nancycats
+g <- genind2gtypes(nancycats)
+summary(g)
+
+overallTest(g, nrep=10, num.cores=2)
+
 nancycats.gtypes <- genind2gtypes(nancycats)
-overallTest(nancycats.gtypes, quietly = TRUE)
+ovl.foo <- overallTest(nancycats.gtypes, stats="chi2", quietly = TRUE)
+# pws.foo <- pairwiseTest(nancycats.gtypes)
+pws.foo.chi <- pairwiseTest(nancycats.gtypes, stats="chi2")
+overall.foo.fst <- overallTest(nancycats.gtypes, stats="fst", quietly = TRUE)
+overall.foo.fst <- pairwiseTest(nancycats.gtypes, stats="fst", quietly = TRUE)
 
 
 ########### HERE ######### Need to collapse/concatenate lists
