@@ -97,6 +97,8 @@ num_loci <- getNumLoci(rep.result$dna.seqs)
 num_reps <- 5
 num_pops <- nStrata(test.g)
 
+#### Test the multiDNA example in analysis_funcs
+
 
 nLoc(test.g)
 locNames(test.g)

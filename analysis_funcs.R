@@ -36,7 +36,8 @@ function(params){
 
   if(params@analyses.requested["Global"]){
 
-    num_loci <- nLoc(results_gtype)
+    #Don't need this, it's a global variable
+    # num_loci <- nLoc(results_gtype)
 
     #overall_stats() is from skeleSim.funcs.R
     r.m <- lapply(locNames(results_gtype), function (l){
@@ -49,7 +50,7 @@ function(params){
     rownames(results.matrix) <- locNames(results_gtype)
 
 
-    #run by locus analysis acorss all populations
+    #run by locus analysis across all populations
     mat <- lapply(locNames(results_gtype), function (l){
       gtypes_this_loc<-results_gtype[,l,]
       overall_stats(gtypes_this_loc)
@@ -70,7 +71,7 @@ function(params){
     # The first row will hold summary statistics over all loci regardless of population structure.
     # The remaining rows will hold summary statistics per locus
     if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(length(loci((results_gtype))+num_loci,
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(length(loci(results_gtype))+num_loci,
                                                                        num_analyses,
                                                                        num_reps),
                                                                dimnames = list(c("Across_loci",1:num_loci),
