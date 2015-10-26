@@ -18,6 +18,8 @@ function(params){
   #params@rep.result is either a genind or a list of DNAbin objects
   if(inherits(params@rep.result, "genind")){
     results_gtype<-genind2gtypes(params@rep.result)
+    } else if (inherits(params@rep.result, "gtypes")){
+      results_gtype <- params@rep.result
     } else {
       # Convert the list of DNAbin objects to gtypes
       genes <- params@rep.result$dna.seqs #the multidna object
@@ -88,9 +90,6 @@ function(params){
           hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
           colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
-          #convert genind to gtypes for remaining analyses
-          results_gtype<-genind2gtypes(results_genind)
-
           #mratio on gtypes object, function needs genetic data as a gtype
           mrat_results_all<-calc.mratio(results_gtype)
 
@@ -151,17 +150,75 @@ function(params){
 
         }
 
-# multiDNA
+        # multiDNA
         if(inherits(params@rep.result,"multidna")){
 
           r.m <- lapply(locNames(results_gtype), function(l){
-            nd_this_gene<-nucleotideDiversity(results_gtype[,l,]@sequences)
+            nucleotideDiversity(results_gtype[,l,]@sequences)
+            })
+          results.list.names <- Map(function(gene,names) paste(gene, names(names), sep="_"),
+                                    locNames(results_gtype),
+                                    r.m)
+          results <- do.call(c,r.m)
+          names(results) <- do.call(c,results.list.names)
+
+          #fusFs
+          ### ERRORS
+          fu.fs <- lapply(locNames(results_gtype), function(l){
+            fusFs(results_gtype[,l,])
           })
-          results.matrix <- do.call(rbind,r.m)   #Not equal length, won't do no call rbind!!!
-          analyses <- colnames(results.matrix)
+
+          # Tajimas D
+          t.d <- lapply(locNames(results_gtype), function(l){
+            tajimasD(results_gtype[,l,])
+          })
+          names <- lapply(t.d, function(x){
+            paste(row.names(x),colnames(x),sep="_")
+          })
+          names1 <- do.call(c,names)
+          t.d.results <- do.call(c,t.d)
+          names(t.d.results) <- names1
+
+          # Summary for loci and populations
+          smryLoci <- summary(results_gtype) # Not sure what results should be added
+          smryPop <- lapply(locNames(results_gtype), function(l){
+            summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
+          })
+
+
+          ############ START HERE ######################
+          # Nucleotide and percent within strata divergence
+          dA <- nucleotideDivergence(results_gtype)
+          names.dA <- lapply(dA,function(x){
+            expand.grid(row.names(x$within),colnames(x$within))
+          })
+          dA.names <- lapply(names.dA,function(x){
+            apply(x, 1, function(y) paste(y, collapse = "."))
+          })
+
+          unlist(dA.names)
+
+
+
+
+          results <- c(results,do.call(c,fu.fs),t.d.results)
+          analyses_names <- colnames(results)
+
+          # Create the data array first time through
+          if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
+            params@analysis.results[["Locus"]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),
+                                                                             length(analysis_names),
+                                                                             num_reps),
+                                                                    dimnames = list(1:(num_loci*(num_pops+1)),
+                                                                                    analysis_names,
+                                                                                    1:num_reps))
+          }
+
+          params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
+
+
 
         }
-  }
 
 
 ###########################  Pairwise  ###########################

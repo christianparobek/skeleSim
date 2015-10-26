@@ -72,6 +72,7 @@ class(rep.result)
 # multidna, from apex
 class(rep.result[[2]])
 class(rep.result$dna.seqs)
+inherits(rep.result, "multidna")
 
 data(dolph.seqs)
 strata <- dolph.strata$fine
@@ -93,27 +94,20 @@ num_pops <- nStrata(dloop)
 data(woodmouse)
 genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
 x <- new("multidna", genes)
-x
-names(x@dna)
-x@labels
-strata <- rep(1:3,5)
-df <- data.frame(x@labels, strata)
-gene.labels <- matrix(x@labels, nrow = length(x@labels), ncol = 2)
-colnames(gene.labels) <- names(x@dna)
-df <- cbind(df, gene.labels)
-wood_gtype <- df2gtypes(df, 1, sequences = genes)
-inherits(wood_gtype
+x.g <- sequence2gtypes(x)
+strata(x.g) <- c("A", "B")
+inherits(x.g, "gtypes")
 
 params<- new("skeleSim.params")
-params@rep.result <- x  # error in params@rep.result$dna.seqs $operator not defined for this S4 class
-results_gtype <- wood_gtype
-
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+params@rep.result <- x.g
 curr_scn<-1
 curr_rep<-1
-num_loci <- 1
+num_loci <- nLoc(x.g)
 num_reps <- 5
-num_pops <- nStrata(wood_gtype)
+num_pops <- nStrata(x.g)
+
+
 
 ##############################################################
 genes <- rep.result$dna.seqs#the multidna object
@@ -185,6 +179,43 @@ rownames(by.loc) <- strataNames(msats)
 perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
 t(by.loc) #the rows will be have the private alleles for each population by locus
 
+ls.1 <- 1:300
+names(ls.1) <- 1:300
+ls.2 <- 3:100
+names(ls.2) <- 3:100
+foo.1 <- list(ls.1,ls.2)
+names(foo.1[[1]])
+foo.2 <- c("gene1","gene2")
+lapply(foo.2, function(x){
+  lapply(foo.1, function(y){
+    paste(x,names(y))
+  })
+})   #Ooops, want just first and first and second and second, not all combinations...
+
+Map(function(x,y) paste(x, names(y)),
+    foo.2,
+    foo.1)
+
+########### Locus testing
+
+# multiDNA
+if(inherits(params@rep.result,"multidna")){
+
+  r.m <- lapply(locNames(results_gtype), function(l){
+    nd_this_gene<-nucleotideDiversity(results_gtype[,l,]@sequences)
+  })
+  results.list.names <- Map(function(gene,names) paste(gene, names(names), sep="_"),
+                        locNames(results_gtype),
+                        r.m)
+  results <- do.call(c,r.m)
+  names(results) <- do.call(c,results.list.names)
+  names(results) <- results.list.names
+  analyses <- length(results)
+}
+
+
+
+nucleotideDiversity(results_gtype[,locNames(results_gtype)[1],])
 nucleotideDiversity(msats)
 
 
