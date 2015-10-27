@@ -92,6 +92,7 @@ num_pops <- nStrata(dloop)
 
 # multidna sequence example
 data(woodmouse)
+inherits(woodmouse, "DNAbin")
 genes <- list(gene1=woodmouse[,1:500], gene2=woodmouse[,501:965])
 x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
@@ -122,6 +123,8 @@ summary(test.g)
 
 # to test in skeleSim.funcs overall_stats
 test.one <- results_gtype[,"gene_1",]
+
+inherits(rep.result, "DNAbin")
 
 #multidna object
 # Run skeleSim.classes.R and skeleSim.funcs.R first
@@ -379,7 +382,12 @@ num_loci <- nLoc(nancycats)
 num_reps <- 5
 num_pops <- nPop(nancycats)
 
-
+#After genind2gtypes for results_gtype
+nLoc(results_gtype)
+nStrata(results_gtype)
+nInd(results_gtype)
+ploidy(results_gtype)
+results_gtype[,"fca8",]
 
 ###################### troubleshooting
 nancycats
@@ -387,6 +395,7 @@ g <- genind2gtypes(nancycats)
 summary(g)
 
 overallTest(g, nrep=10, num.cores=2)
+overallTest(g[,"fca45",], nrep=10, num.cores=2)
 
 nancycats.gtypes <- genind2gtypes(nancycats)
 ovl.foo <- overallTest(nancycats.gtypes, stats="chi2", quietly = TRUE)

@@ -1,8 +1,3 @@
-# To Do: not all the assignments to params@analysis.results are to the correct spot in the list, need to check
-
-# To Do: once the if/else statements are changed to just if statements should remove an extra list creation
-# for params@analysis.results... I think there are extra.
-
 function(params){
 
   stopifnot(require(strataG))
@@ -18,7 +13,7 @@ function(params){
   #params@rep.result is either a genind or a list of DNAbin objects
   if(inherits(params@rep.result, "genind")){
     results_gtype<-genind2gtypes(params@rep.result)
-    } else if (inherits(params@rep.result, "gtypes")){
+    } else if (inherits(params@rep.result, "gtypes")){  #should -> "DNAbin"? and first do new("multidna", list(sequences)) and sequence2gtypes(new("multidna"...))
       results_gtype <- params@rep.result
     } else {
       # Convert the list of DNAbin objects to gtypes
@@ -151,7 +146,7 @@ function(params){
         }
 
         # multiDNA
-        if(inherits(params@rep.result,"multidna")){
+        if(inherits(params@rep.result,c("multidna","gtypes")){ # what would woodmouse be? why isn't x.g "DNAbin"?
 
           r.m <- lapply(locNames(results_gtype), function(l){
             nucleotideDiversity(results_gtype[,l,]@sequences)
