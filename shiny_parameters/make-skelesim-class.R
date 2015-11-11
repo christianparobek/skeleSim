@@ -45,10 +45,11 @@ observeEvent(input$scenarioNumber,
              })
 
 
-observeEvent(input$numpops,
+observeEvent(input$numpopsTxt,
              {
-                 print("mod numpops")
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- input$numpops
+                 numpop <- suppressWarnings(as.numeric(input$numpopsTxt))
+                 if (!is.na(numpop)) 
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
                  mig.mat()
              })
 observeEvent(input$numloci,
@@ -63,7 +64,6 @@ observeEvent(input$mutrate,
 
 observeEvent(input$migModel,
              {
-                 print("mod migmodel")
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- input$migModel
                  mig.mat()
              })
@@ -129,7 +129,7 @@ observeEvent(rValues$ssClass,{
 ##scenarios #respect the scenarioNumber!
     
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
-        updateNumericInput(session,"numpops",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
+        updateTextInput(session,"numpopsTxt",value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
 
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
         updateNumericInput(session,"numloci",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
@@ -165,7 +165,6 @@ observeEvent(rValues$scenarioNumber,
              {
                  if (!scenario.exists()) 
                      {
-                         print("adding a new scenario")
                          rValues$ssClass@scenarios <- c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
                      }                 
 
@@ -180,7 +179,7 @@ observeEvent(rValues$scenarioNumber,
                          if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                              {
                                  print ("maybe should rewrite history?")
-                                # rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+                                rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
                              } else {
                                    rValues$history <- NULL
                              }
@@ -199,7 +198,6 @@ observeEvent(rValues$scenarioNumber,
 ###this observeEvent makes sure that the migration matrix stored in the reactive class is updated continuously
 ###very important!!!
 observeEvent(input$migmat,{
-    print("modified migmat")
     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- input$migmat
 })
 

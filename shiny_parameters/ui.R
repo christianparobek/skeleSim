@@ -50,26 +50,29 @@ shinyUI(
                sidebarLayout(
                    sidebarPanel(
                        numericInput("scenarioNumber", "Which scenario",value=1),
-                       numericInput("numpops", "Populations",
-                                    value = 1),
+                       textInput("numpopsTxt", "Number of Populations",
+                                    value = "1"),
                        numericInput("numloci", "Number of loci",
                                     value = 1),
                        numericInput("mutrate", "Mutation Rate",
                                     value = 1e-4),
                        br(),
+                       numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
                        selectInput("migModel", "Migration Model",
                                    choices=c("island","stepping.stone.linear",
                                        "stepping.stone.circular","twoD","twoDwDiagonal","distance","user"),
                                    selected=1),
-                       numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
-                       numericInput("rows", "Rows in a grid-shaped landscape",1),
-                       numericInput("cols", "Cols in a grid-shaped landscape",1),
-                       selectInput("distfun", "Distance function (must be an R function)",c("dexp"))
+                       conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("rows", "Rows in a grid-shaped landscape",1)),
+                       conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",1)),
+                       conditionalPanel(condition = "input.migModel == 'distance'",
+                                        selectInput("distfun", "Distance function (must be an R function)",c("dexp")))
                        )
                    , #don't forget comma
                    mainPanel(
                        tabsetPanel(
                            tabPanel("Migration matrix",
+                                    textOutput("msg"), #potential error messages
+                                    br(),
                                     includeMarkdown("helpfiles/help-migration.md"),
                                     uiOutput("migmat"),
                                     plotOutput("networkPlot"))

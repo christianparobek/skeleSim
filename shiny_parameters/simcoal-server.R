@@ -10,14 +10,16 @@ hst <- reactive({
     if (!is.null(rValues$history))
         {
             plist <- unique(c(rValues$history[,2],rValues$history[,3]))
-            if (length(plist)!=input$numpops) {
+#            if (length(plist)!=input$numpops) {
+            if (length(plist)!=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops) {
                 rValues$history <- NULL
             }
         }
     
     if (is.null(rValues$history))
         {
-            if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
+#            if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
+            pops <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops
             rValues$history <-create.new.history(npop=pops)
         }  else  {
             h <- rValues$history

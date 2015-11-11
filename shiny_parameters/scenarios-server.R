@@ -24,6 +24,14 @@ mig.mat <- function(){
     ##equal to "user"
 
 ###set up some params (basically make short local names from long reactive object names)
+    if (is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper))
+        { #add in reasonable values for mig.helper
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper <-
+                list(migModel="user",
+                     rows=1,
+                     cols=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops,
+                     distfun="dexp")
+        }
     mmod <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel
     rws <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows
     cls <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols
@@ -45,27 +53,32 @@ mig.mat <- function(){
         } else { #don't use a "user" migration model
             if  ((rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)>1)
                 {
-                    mat <- scenario.mig.matrix(
-                        h=numpop,
-                        h.dim=c(rws,cls),
-                        mig.model=mmod,
-                        distance.fun=dfun
-                        )
-                    ret <- mat$R.int * rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate
+                    if ((mmod %in% c("distance","twoD","twoDwDiagonal"))&(numpop!=rws*cls))
+                        {
+                            rValues$msg <- "Spatial model with non-rectangular extent: make sure rows*columns equals the number of pops"
+                            ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]]
+                        } else {
+                            rValues$msg <- NULL
+                            mat <- scenario.mig.matrix(
+                                h=numpop,
+                                h.dim=c(rws,cls),
+                                mig.model=mmod,
+                                distance.fun=dfun
+                                )
+                            ret <- mat$R.int * rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate
+                        }
                 } else #when 1 pop, migration rate does not mean much
                     {
                         ret <- matrix(0,1,1)
                     }
         }
-    print ("new ret")
-    print(ret)
     print("about to return from mig.mat")
     ret
 }
 
 
 output$migmat <- renderUI({
-    matrixInput("migmat","Migration Matrix (please don't use buttons at right [temporary])",
+    matrixInput("migmat","Migration Matrix (please don't use +/- buttons at right [temporary])",
                 as.data.frame(mig.mat()))
 #                as.data.frame(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
 })

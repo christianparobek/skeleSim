@@ -18,8 +18,6 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios[[1]]@mut.rate <- 10e-5
     ssClass@scenarios[[1]]@simulator.params <- new("fastsimcoal.params") #this will be changed if necessary reactively
 
-#    print(ssClass@scenarios)
-    
     ssClass
 }
 
@@ -28,7 +26,8 @@ shinyServer(function(input, output,session) {
     rValues <- reactiveValues(ssClass=ssClassInit(),
                               scenarioNumber=1,
                               lstScenario=1,
-                              history=NULL)
+                              history=NULL,
+                              msg=NULL)
   ##################### parameter loading and saving
 #  source("saveParams.R", local = TRUE)
 
@@ -60,11 +59,21 @@ shinyServer(function(input, output,session) {
 ######################## skeleSim class setup
 source("make-skelesim-class.R",local=T)
 
+    ####error messages.  Drop a message into rValues$msg to display to screen
+   output$msg <- renderText(if (!is.null(rValues$msg)) rValues$msg)
 
     
 #############debugging
     output$ssClass <- renderTable({data.frame(item=(capture.output(str(rValues$ssClass))))})
 ####### this needs to be replaced with Eric's loading code
-observeEvent(input$readss,{load("test.ssClass.rdata"); rValues$ssClass <- ssClass; rm(ssClass)})    
+
+    observeEvent(input$readss,{
+        load("test.ssClass.rdata")
+        rValues$ssClass <- ssClass
+        rm(ssClass)
+    })
+
+
+    
 })
 
