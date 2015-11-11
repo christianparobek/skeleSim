@@ -1,5 +1,5 @@
 output$networkPlot <- renderPlot({
-    mat <- as.matrix(input$migmat)
+    mat <- as.matrix(inmat())
     if (sum(is.na(mat))==0)
         if ((max(mat)==min(mat))&(min(mat)==0))
             {

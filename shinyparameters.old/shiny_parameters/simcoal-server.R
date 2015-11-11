@@ -3,48 +3,56 @@
 #
 
 hst <- reactive({
+    if (!exists("histry"))
+        {
+            histry <<- NULL
+        } 
 
     if (!is.null(input$histplotDblclick)) lstdblclick <<- input$histplotDblclick
     if (!is.null(input$histplotClick)) lstclick <<- input$histplotClick
 
-    if (!is.null(rValues$history))
+    if (!is.null(histry))
         {
-            plist <- unique(c(rValues$history[,2],rValues$history[,3]))
+            plist <- unique(c(histry[,2],histry[,3]))
             if (length(plist)!=input$numpops) {
-                rValues$history <- NULL
+#                print(plist)
+#                print(input$numpops)
+#                print ("Resetting history")
+                histry <<- NULL
             }
         }
     
-    if (is.null(rValues$history))
+
+    if (is.null(histry))
         {
             if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
-            rValues$history <-create.new.history(npop=pops)
+            histry<<-create.new.history(npop=pops)
+#            print("TEST")
         }  else  {
-            h <- rValues$history
-            rValues$history <-simcoal.history.change(rValues$history,lstclick,
-                                                     lstdblclick)
-            if (!identical(h,rValues$history))
+            h <- histry
+            histry<<-simcoal.history.change(histry,lstclick,
+                                            lstdblclick)
+            if (!identical(h,histry))
                 {
                     lstdblclick <<- NULL
                     lstclick <<- NULL
                 }
         }
-    rValues$history
+    histry
 })
 
 output$simhistPlot <- renderPlot({
             simcoal.history.plot(hst())
 })
 
-output$simhistTbl <- renderTable({
-    df <- hst()
-    rownames(df) <- 1:dim(df)[1]
-    df
-})
-
-
 output$clickinfo <- renderText({
     c(paste("clickx",input$histplotClick$x),"\n",
       paste("dblclickx",input$histplotDblclick$x),"\n",
       paste("dblclicky",input$histplotDblclick$y))
+})
+
+output$simhistTbl <- renderTable({
+    df <- hst()
+    rownames(df) <- 1:dim(df)[1]
+    df
 })

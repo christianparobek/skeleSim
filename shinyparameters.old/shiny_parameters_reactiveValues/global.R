@@ -1,9 +1,8 @@
 # load some packages
 # source some files
 #
-options(shiny.trace = F)  # change to T for trace
+options(shiny.trace = F)  # cahnge to T for trace
 require(shiny)
-require(shinyIncubator)
 require(igraph)
 
 source("utils.R")

@@ -42,14 +42,12 @@ observeEvent(input$wd, {
 observeEvent(input$scenarioNumber,
              {
                  rValues$scenarioNumber <- input$scenarioNumber
-             })
+             },priority=1000)
 
 
 observeEvent(input$numpops,
              {
-                 print("mod numpops")
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- input$numpops
-                 mig.mat()
              })
 observeEvent(input$numloci,
              {
@@ -63,32 +61,26 @@ observeEvent(input$mutrate,
 
 observeEvent(input$migModel,
              {
-                 print("mod migmodel")
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- input$migModel
-                 mig.mat()
              })
 
 observeEvent(input$migRate,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate <- input$migRate
-                 mig.mat()
              })
 
 observeEvent(input$rows,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows <- input$rows
-                 mig.mat()
              })
 
 observeEvent(input$cols,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols <- input$cols
-                 mig.mat()
              })
 observeEvent(input$distfun,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun <- input$distfun
-                 mig.mat()
              })
 
 ####simcoal parameters
@@ -163,13 +155,23 @@ observeEvent(rValues$ssClass,{
 ###
 observeEvent(rValues$scenarioNumber,
              {
+
+################ migration
+                 mat <- inmat()
+             print(mat)
+print("this far in rv$scennum")
                  if (!scenario.exists()) 
                      {
                          print("adding a new scenario")
                          rValues$ssClass@scenarios <- c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
-                     }                 
+                     }
 
-################ migration
+#                 if (!identical(mat,rValues$ssClass@scenarios[[rValues$lstScenario]]@migration[[1]]))
+#                     {
+                         print("setting last scenario to mat")
+                         rValues$ssClass@scenarios[[rValues$lstScenario]]@migration[[1]] <- mat
+#                     }
+                 
 ###################
                  
                  if (input$coalescent) #simcoal
@@ -179,7 +181,6 @@ observeEvent(rValues$scenarioNumber,
 
                          if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                              {
-                                 print ("maybe should rewrite history?")
                                 # rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
                              } else {
                                    rValues$history <- NULL
@@ -188,7 +189,7 @@ observeEvent(rValues$scenarioNumber,
 
 
                  rValues$lstScenario <- rValues$scenarioNumber
-
+print(rValues$scenarioNumber)
                  ######## update the scenario input boxes
                  updateNumericInput(session,"scenarioNumber",value=rValues$scenarioNumber)
                  updateNumericInput(session,"specScenNumber",value=rValues$scenarioNumber)
@@ -198,14 +199,12 @@ observeEvent(rValues$scenarioNumber,
 
 ###this observeEvent makes sure that the migration matrix stored in the reactive class is updated continuously
 ###very important!!!
-observeEvent(input$migmat,{
-    print("modified migmat")
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- input$migmat
+observeEvent(inmat(),{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- inmat()
 })
 
 
 ### simcoal history updating
 observeEvent(hst(),{
-    print("hst() observEvent")
     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hst()
 })

@@ -1,4 +1,4 @@
-#source("setup.R")
+source("setup.R")
 
 ## !!!! CHECK IF coalParams CAN BE DELETED !!!!
 #coalParams <<- new
@@ -6,20 +6,7 @@
 ssClassInit <- function(){ #Just creates a skelesim class instance with one scenario
     ssClass <- new("skeleSim.params")
     ssClass@scenarios <- list(new("scenario.params"))
-
-    #default values for ssClass@scenarios  (could be set in class definition)
-    ssClass@scenarios[[1]]@num.pops <- 1
-    ssClass@scenarios[[1]]@pop.size <- 100
-    ssClass@scenarios[[1]]@sample.size <- 10
-    ssClass@scenarios[[1]]@migration <- list(matrix(0,nrow=1,ncol=1))
-    ssClass@scenarios[[1]]@mig.helper <- list(migModel="island",migRate=1,rows=1,cols=1,distfun="dexp")
-    ssClass@scenarios[[1]]@num.loci <- 1
-    ssClass@scenarios[[1]]@sequence.length <- 100
-    ssClass@scenarios[[1]]@mut.rate <- 10e-5
-    ssClass@scenarios[[1]]@simulator.params <- new("fastsimcoal.params") #this will be changed if necessary reactively
-
-#    print(ssClass@scenarios)
-    
+    ssClass@scenarios[[1]]@simulator.params <- new("fastsimcoal.params") #this will be changed if necessary reactively 
     ssClass
 }
 
@@ -55,7 +42,7 @@ shinyServer(function(input, output,session) {
 
 
   ##################### parameter loading and saving
-#source("runSim.R", local = TRUE)
+#  source("runSim.R", local = TRUE)
 
 ######################## skeleSim class setup
 source("make-skelesim-class.R",local=T)
@@ -65,6 +52,8 @@ source("make-skelesim-class.R",local=T)
 #############debugging
     output$ssClass <- renderTable({data.frame(item=(capture.output(str(rValues$ssClass))))})
 ####### this needs to be replaced with Eric's loading code
-observeEvent(input$readss,{load("test.ssClass.rdata"); rValues$ssClass <- ssClass; rm(ssClass)})    
+observeEvent(input$readss,{load("test.ssClass.rdata"); rValues$ssClass <- ssClass; rm(ssClass)})
+
+    
 })
 

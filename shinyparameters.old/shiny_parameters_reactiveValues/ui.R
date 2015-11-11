@@ -1,4 +1,4 @@
-#source("setup.R")
+source("setup.R")
 
 shinyUI(
   navbarPage(
@@ -51,27 +51,27 @@ shinyUI(
                    sidebarPanel(
                        numericInput("scenarioNumber", "Which scenario",value=1),
                        numericInput("numpops", "Populations",
-                                    value = 1),
+                                    value = 3),
                        numericInput("numloci", "Number of loci",
                                     value = 1),
                        numericInput("mutrate", "Mutation Rate",
                                     value = 1e-4),
                        br(),
                        selectInput("migModel", "Migration Model",
-                                   choices=c("island","stepping.stone.linear",
-                                       "stepping.stone.circular","twoD","twoDwDiagonal","distance","user"),
+                                   choices=c("user","island","stepping.stone.linear",
+                                       "stepping.stone.circular","twoD","twoDwDiagonal","distance"),
                                    selected=1),
-                       numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
-                       numericInput("rows", "Rows in a grid-shaped landscape",1),
-                       numericInput("cols", "Cols in a grid-shaped landscape",1),
-                       selectInput("distfun", "Distance function (must be an R function)",c("dexp"))
+                       numericInput("migRate", "Migration rate",value=1),
+                       numericInput("rows", "Rows in a grid-shaped landscape",2),
+                       numericInput("cols", "Cols in a grid-shaped landscape",2),
+                       textInput("distfun", "Distance function (must be an R function)","dexp")
                        )
                    , #don't forget comma
                    mainPanel(
                        tabsetPanel(
                            tabPanel("Migration matrix",
                                     includeMarkdown("helpfiles/help-migration.md"),
-                                    uiOutput("migmat"),
+                                    tableOutput("migmat"),
                                     plotOutput("networkPlot"))
                            ))
                    ))
@@ -93,24 +93,23 @@ shinyUI(
                        conditionalPanel(
                            condition = "input.coalescent == true",
                            tabsetPanel(
-#                               tabPanel("Simcoal history specification",tableOutput("simhistTbl")),
-                               tabPanel("Simcoal History",
+                               tabPanel("Simcoal history specification",tableOutput("simhistTbl")),
+                               tabPanel("Graphical view",
                                         includeMarkdown("helpfiles/help-history.md"),
                                         plotOutput("simhistPlot",
                                                    click= "histplotClick",
-                                                   dblclick = "histplotDblclick"),
-                                        tableOutput("simhistTbl")
+                                                   dblclick = "histplotDblclick"))
                                )
                            )
                        ))
-               ))
-      , #don't forget the comma
-
-    tabPanel(
-      "Run Simulator",
-      uiOutput("btnRun"),
-      textOutput("txtRunStatus")
-    )
+               )
+#      ,
+#
+#    tabPanel(
+#      "Run Simulator",
+#      uiOutput("btnRun"),
+#      textOutput("txtRunStatus")
+#    )
       ,
 
     tabPanel(
