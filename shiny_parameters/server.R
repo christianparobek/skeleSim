@@ -54,7 +54,7 @@ shinyServer(function(input, output,session) {
 
 
   ##################### parameter loading and saving
-#source("runSim.R", local = TRUE)
+source("runSim.R", local = TRUE)
 
 ######################## skeleSim class setup
 source("make-skelesim-class.R",local=T)

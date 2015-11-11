@@ -205,5 +205,6 @@ observeEvent(input$migmat,{
 ### simcoal history updating
 observeEvent(hst(),{
     print("hst() observEvent")
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hst()
+    if (rValues$ssClass@simulator.type=="c")
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hst()
 })
