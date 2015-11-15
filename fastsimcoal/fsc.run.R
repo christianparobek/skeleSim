@@ -18,7 +18,7 @@ fsc.run <- function(params) {
     growth.rate = sc@simulator.params@growth.rate,
     mig.rates = sc@migration,
     num.chrom = sc@num.loci,
-    hist.ev = sc@simulator.params@hist.ev,
+    hist.ev = as.matrix(sc@simulator.params@hist.ev),
     locus.params = sc@simulator.params@locus.params,
     label = label
   )

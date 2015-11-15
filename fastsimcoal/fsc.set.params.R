@@ -60,8 +60,9 @@ fsc.locusParamsMat <- function(sc) {
 }
 
 fsc.histEvCheck <- function(hist.ev, num.pops, num.mig.mats = NULL) {
-  if(!is.numeric(hist.ev) & !is.matrix(hist.ev)) {
-    cat("'hist.ev' must be a numerical matrix.\n")
+                                                                     
+  if ((!is.numeric(as.matrix(hist.ev))) & (!(is.matrix(hist.ev)|is.data.frame(hist.ev)))) {
+    cat("'hist.ev' must be a numerical matrix or numerical dataframe.\n")
     return(FALSE)
   }
   if(ncol(hist.ev) != 7) {

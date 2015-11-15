@@ -51,7 +51,7 @@ setClass(
             question = "charOrNULL", simulator.type = "charOrNULL",
             simulator = "charOrNULL", wd = "charOrNULL",
             scenarios = "listOrNULL",
-            num.reps = "intOrNum", sim.func = "funcOrNULL",
+            num.reps = "intOrNum",  sim.func = "funcOrNULL",
             current.scenario = "intOrNum", current.replicate = "intOrNum",
             rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
             rep.result = "intOrNum", analysis.results = "ANY",
@@ -72,7 +72,6 @@ setClass(
                                        Pairwise = TRUE)
   )
 )
-
 
 #' @title Scenario Parameters Class
 #' @description An S4 class storing parameters for each simulation scenario

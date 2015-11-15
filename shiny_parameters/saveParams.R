@@ -1,32 +1,39 @@
+
+
 output$txtObjLabel <- renderText({
-  objLabel <<- if(is.null(input$txtTitle) | input$txtTitle == "") {
+  supportValues$objLabel <- if(is.null(rValues$ssClass@title) | rValues$ssClass@title == "") {
     NULL
   } else {
-    make.names(input$txtTitle)
+    make.names(rValues$ssClass@title)
   }
-  if(is.null(objLabel)) "<EMPTY>" else objLabel
+  if(is.null(supportValues$objLabel)) ret <- "<NONE>" else ret <- supportValues$objLabel
+  paste("Current title of skelesim object:",ret)
 })
 
 observeEvent(input$btnSaveParams, {
-  # uses global variables 'objLabel' and 'fnameLabel' defined in 'global.R'
-  if(!is.null(objLabel)) {
-    # create 'fnameLabel' and parameter filename (paramsFname)
-    fnameLabel <<- paste(objLabel, format(Sys.time(), "%Y%m%d.%H%M"), sep = ".")
-    paramsFname <- paste(fnameLabel, "params.rdata", sep = ".")
-    # create parameter object based on user-defined 'objLabel' and save to file
-    assign(objLabel, ssClass)
-    save(list = objLabel, file = paramsFname)
 
-    output$txtSaveStatus <- renderText({
-      if(file.exists(paramsFname)) {
-        paste("Wrote skeleSim parameter file: '", paramsFname, "'", sep = "")
-      } else {
-        "Error writing files."
-      }
-    })
+    if(!is.null(supportValues$objLabel)) {
+        ## create 'fnameLabel' and parameter filename (paramsFname)
+        supportValues$fnameLabel <- paste(supportValues$objLabel, format(Sys.time(), "%Y%m%d.%H%M"), sep = ".")
+        paramsFname <- paste(supportValues$fnameLabel, "params.rdata", sep = ".")
+        paramsFname <- paste0("../",paramsFname)
+        print(paramsFname)
+        ## create parameter object based on user-defined 'objLabel' and save to file
 
-    output$btnRun <- renderUI({
-      actionButton("btnRunSim", paste("Run", fnameLabel))
-    })
-  }
+        assign("ssClass", rValues$ssClass)
+        save(list = "ssClass" , file = paramsFname) #this needs updating to be resiliant
+
+        
+        output$txtSaveStatus <- renderText({
+            if(file.exists(paramsFname)) {
+                paste("Wrote skeleSim parameter file: '", paramsFname, "'", sep = "")
+            } else {
+                "Error writing files."
+            }
+        })
+
+        output$btnRun <- renderUI({
+            actionButton("btnRunSim", paste("Run", supportValues$fnameLabel))
+        })
+    }
 })

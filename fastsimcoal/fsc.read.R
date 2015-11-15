@@ -1,7 +1,7 @@
 # read a .arp file written by fastsimcoal
 # to be called after simulation has been run but before analysis is to be run
 fsc.read <- function(file, sc) {
-  stopifnot(require(adegenet) & require(apex))
+  stopifnot(require(adegenet)&require(apex))
   f <- readLines(file)
 
   # get start and end points of data blocks

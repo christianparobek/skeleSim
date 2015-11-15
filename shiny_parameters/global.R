@@ -12,8 +12,10 @@ source("simcoal-history.R")
 source("../skeleSim.classes.R")
 source("../fastsimcoal/fsc.run.R")
 source("../fastsimcoal/fsc.classes.R")
+source("../fastsimcoal/fsc.scenarioCheck.R")
 source("../rmetasim/rms.run.R")
 source("../rmetasim/rms.classes.R")
+source("../rmetasim/rms.scenarioCheck.R")
 
 
 ###these two globals record a record of the last
@@ -22,6 +24,6 @@ lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click
 
 
-objLabel <- NULL # syntactically valid name from 'title' slot of parameter object
-fnameLabel <- NULL # combination of objLabel and timestamp for labelling filenames
+#objLabel <- NULL # syntactically valid name from 'title' slot of parameter object
+#fnameLabel <- NULL # combination of objLabel and timestamp for labelling filenames
 

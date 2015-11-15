@@ -2,13 +2,16 @@
 # expressions to make a skelesim object from input$xxxx variables
 #
 # in general, wait till one of the inputs is changed and then alter the ssClass component of rValues
-#general skelesim parameters
 
 
+####general skelesim parameters
 ####This section updates the ssClass reactive when inputs change
 
 observeEvent(input$title, {
     rValues$ssClass@title <- input$title
+})
+observeEvent(input$date, {
+    rValues$ssClass@date <- as.POSIXct(input$date) #do we need POSIX dates?
 })
 observeEvent(input$quiet, {
     rValues$ssClass@quiet <- input$quiet
@@ -16,6 +19,7 @@ observeEvent(input$quiet, {
              
 observeEvent(input$coalescent,{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
+    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rmw")
     for (s in 1:length(rValues$ssClass@scenarios))
         if (input$coalescent)
             {
@@ -57,9 +61,14 @@ observeEvent(input$numloci,
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- input$numloci
              })
 
-observeEvent(input$mutrate,
+observeEvent(input$loctype,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- input$mutrate
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type <- input$loctype
+             })
+
+observeEvent(input$seqlen,
+             {
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length <- input$seqlen
              })
 
 observeEvent(input$migModel,
@@ -102,30 +111,51 @@ observeEvent(input$infSiteModel,
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
              })
 
+observeEvent(input$fscexec,
+             {
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
+             })
 
+observeEvent(input$stvec,
+             {
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- input$stvec
+             })
+
+observeEvent(input$grvec,
+             {
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- input$grvec
+             })
 
 
 ##############################################################################################
 
-#### this section updates the input boxes if a ssClass updates 
+#### this section updates the input boxes if a rValues$ssClass updates 
 ####
 #######this observer is intended to run any time ssClass changes
 ####### it needs to be able to update inputs
 
-
-
 observeEvent(rValues$ssClass,{
     if (!is.null(rValues$ssClass@title))
         updateTextInput(session,"title",value=rValues$ssClass@title)
+    if (!is.null(rValues$ssClass@date))
+        updateDateInput(session,"date",value=rValues$ssClass@date)
     if (!is.null(rValues$ssClass@quiet))
         updateCheckboxInput(session,"quiet",value=rValues$ssClass@quiet)
-    if (!is.null(rValues$ssClass@simulator.type))
+    if (!is.null(rValues$ssClass@simulator.type)){##sets a bunch of downstream parameters based on simulation type
         updateCheckboxInput(session,"coalescent",value=ifelse(rValues$ssClass@simulator.type=="c",T,F))
+        output$simulator <- renderText({paste("Simulator:",rValues$ssClass@simulator)})
+        if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.func <- fsc.run else rValues$ssClass@sim.func <- rms.run
+        output$simfunc <- renderText({paste("Simulator function:",ifelse(rValues$ssClass@simulator.type=="c","fsc.run","rms.run"))})
+        if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.check.func <- fsc.scenarioCheck else rValues$ssClass@sim.check.func <- rms.scenarioCheck
+    }
     if (!is.null(rValues$ssClass@num.reps))
         updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
     if (!is.null(rValues$ssClass@wd))
+        {
             updateTextInput(session,"wd",value=rValues$ssClass@wd)
-
+            output$simpath <- renderText({paste("Path for simulations to be executed:",
+                                                paste0(normalizePath("../"),"/",rValues$ssClass@wd))})
+        }
 ##scenarios #respect the scenarioNumber!
     
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
@@ -134,9 +164,12 @@ observeEvent(rValues$ssClass,{
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
         updateNumericInput(session,"numloci",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
 
-    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))
-        updateNumericInput(session,"mutrate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
-    
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
+        updateNumericInput(session,"loctype",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type)
+
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
+        updateNumericInput(session,"seqlen",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length)
+
     ### needed for keeping track of how matrices are built in different scenarios
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
         updateSelectInput(session,"migModel",selected=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel)
@@ -151,11 +184,19 @@ observeEvent(rValues$ssClass,{
 
 ####  this is the fastsimcoal updater
     if (input$coalescent)
-        if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
-            {
-                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
-            }
-    
+        {
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
+                {
+                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
+                    updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
+                }
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec))
+                {
+                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
+                    updateTextInput(session,"fscexec",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec)
+                }
+            
+        }    
 })
 
 ###change stuff if the scenario number changes
@@ -178,7 +219,7 @@ observeEvent(rValues$scenarioNumber,
 
                          if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                              {
-                                 print ("maybe should rewrite history?")
+#                                 print ("maybe should rewrite history?")
                                 rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
                              } else {
                                    rValues$history <- NULL
@@ -201,10 +242,22 @@ observeEvent(input$migmat,{
     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- input$migmat
 })
 
+observeEvent(input$psvec,{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- input$psvec
+})
+
+observeEvent(input$ssvec,{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size <- input$ssvec
+})
+
+observeEvent(input$mutvec,{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- input$mutvec
+})
+
 
 ### simcoal history updating
 observeEvent(hst(),{
-    print("hst() observEvent")
+#    print("hst() observEvent")
     if (rValues$ssClass@simulator.type=="c")
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hst()
 })
