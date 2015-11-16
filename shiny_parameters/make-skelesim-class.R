@@ -118,12 +118,12 @@ observeEvent(input$fscexec,
 
 observeEvent(input$stvec,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- input$stvec
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(input$stvec)
              })
 
 observeEvent(input$grvec,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- input$grvec
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- c(input$grvec)
              })
 
 
@@ -147,6 +147,7 @@ observeEvent(rValues$ssClass,{
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.func <- fsc.run else rValues$ssClass@sim.func <- rms.run
         output$simfunc <- renderText({paste("Simulator function:",ifelse(rValues$ssClass@simulator.type=="c","fsc.run","rms.run"))})
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.check.func <- fsc.scenarioCheck else rValues$ssClass@sim.check.func <- rms.scenarioCheck
+        
     }
     if (!is.null(rValues$ssClass@num.reps))
         updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
@@ -243,15 +244,15 @@ observeEvent(input$migmat,{
 })
 
 observeEvent(input$psvec,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- input$psvec
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- c(input$psvec)
 })
 
 observeEvent(input$ssvec,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size <- input$ssvec
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size <- c(input$ssvec)
 })
 
 observeEvent(input$mutvec,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- input$mutvec
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec)
 })
 
 
@@ -259,5 +260,5 @@ observeEvent(input$mutvec,{
 observeEvent(hst(),{
 #    print("hst() observEvent")
     if (rValues$ssClass@simulator.type=="c")
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hst()
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
 })

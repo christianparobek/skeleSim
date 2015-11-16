@@ -101,7 +101,8 @@ runSim <- function(params, num.secs = NULL) {
 
     stop("parameters do not pass checks; see error log for details")
   }
-
+print("params checked")
+  
   # Check/setup folder structure
   if(file.exists(params@wd)) {
     unlink(params@wd, recursive = TRUE, force = TRUE)

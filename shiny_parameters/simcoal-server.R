@@ -93,22 +93,22 @@ output$growthrate <- renderUI({
 })
 
 ###########locus params (actually derived from scenario-specific information)
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],
-#             {
-#                 if (rValues$ssClass@simulator=="fsc")
-#                     {
-#                         
-#                         nl <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci
-#                         mat <- matrix("",nrow=nl,ncol=5)
-#                         for (l in 1:nl)
-#                             {
-#                                 mat[l,1] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence","DNA","MICROSAT")
-#                                 mat[l,2] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence",
-#                                                    as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length),1)
-#                                 mat[l,3] <- as.character(0)
-#                                 mat[l,4] <- as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate[l])
-#                                 mat[l,5] <- as.character(1/3)
-#                             }
-#                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params <- mat
-#                     }
-#         })
+observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
+    if (!is.null(rValues$ssClass@simulator))
+        if (rValues$ssClass@simulator=="fsc")
+            {
+                nl <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci
+                print (paste("numloci",nl))
+                mat <- matrix("",nrow=nl,ncol=5)
+                for (l in 1:nl)
+                    {
+                        mat[l,1] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence","DNA","MICROSAT")
+                        mat[l,2] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence",
+                                           as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length),1)
+                        mat[l,3] <- as.character(0)
+                        mat[l,4] <- as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate[l])
+                        mat[l,5] <- as.character(1/3)
+                    }
+                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params <- mat
+            }
+})

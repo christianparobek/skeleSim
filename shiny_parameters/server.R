@@ -2,6 +2,17 @@
 
 ssClassInit <- function(){ #Just creates a skelesim class instance with one scenario
     ssClass <- new("skeleSim.params")
+
+##### just a placeholder !!!!!!!! #######
+##### need to include actual rep analyses
+        ssClass@rep.analysis.func <-  function(params) {
+            result = rnorm(5)
+            names(result) <- paste("result", 1:5, sep = ".")
+            params@rep.result <- result
+            params
+        }
+##############################################
+    
     ssClass@scenarios <- list(new("scenario.params"))
 
     #default values for ssClass@scenarios  (could be set in class definition)

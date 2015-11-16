@@ -57,7 +57,7 @@ setClass(
             rep.result = "intOrNum", analysis.results = "ANY",
             sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
             sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
-            other.checks = "logOrNULL", scenario.reps = "intOrNum",
+            other.checks = "logOrNULL", scenario.reps = "matrOrNULL",
             analyses.requested = "logOrNULL"
   ),
   prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
