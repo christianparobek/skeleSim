@@ -14,7 +14,7 @@ test.params@question <- "n"
 test.params@simulator.type <- "f"	#input from user, choice
 test.params@simulator <- "rms"
 test.params@num.reps <- 10	#input from user, only integer allowed
-test.params@timing <- 10		#input from user (or hard code), only integer allowed
+#test.params@timing <- 10		#input from user (or hard code), only integer allowed #timing is no longer a slot (11/17/15)
 test.params@sim.func <- rms.run
 test.params@wd <- "testRun.wd"
 

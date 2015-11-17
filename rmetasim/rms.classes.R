@@ -1,6 +1,7 @@
 setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("listOrNULL", c("list","NULL"))
 setClassUnion("charOrNULL", c("character", "NULL"))
+setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))

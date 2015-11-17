@@ -3,7 +3,7 @@ setClassUnion("listOrNULL", c("list","NULL"))
 setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("intOrNum", c("integer","numeric", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
-setClassUnion("matrixOrNULL", c("matrix", "NULL"))
+setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 
 #' @title fastsimcoal Parameters Class
@@ -22,8 +22,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "fastsimcoal.params",
   slots = c(fastsimcoal.exec = "character", sample.times = "intOrNum",
-            growth.rate = "intOrNum", hist.ev = "matrixOrNULL",
-            locus.params = "matrixOrNULL", inf.site.model = "logOrNULL"
+            growth.rate = "intOrNum", hist.ev = "matrOrNULL",
+            locus.params = "matrOrNULL", inf.site.model = "logOrNULL"
   ),
   prototype = c(fastsimcoal.exec = "fsc252", sample.times = NULL,
                 growth.rate = NULL, hist.ev = NULL,
