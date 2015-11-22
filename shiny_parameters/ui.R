@@ -4,7 +4,7 @@ shinyUI(
   navbarPage(
     "skelesim",
       tabPanel(
-          "File actions",
+          "Actions",
           
           h4("Load parameters from file" ),
           includeMarkdown("helpfiles/load-params.md"),
@@ -17,7 +17,10 @@ shinyUI(
           h4("Save parameters to file"),
           includeMarkdown("helpfiles/save-params.md"),
           actionButton("btnSaveParams","Save params"),
-          textOutput("txtSaveStatus")
+          textOutput("txtSaveStatus"),
+          h4("Run simulation"),
+          uiOutput("btnRun"),
+          textOutput("txtRunStatus")
            ),
       tabPanel("Intro questions",
                sidebarLayout(
@@ -123,9 +126,10 @@ shinyUI(
                            checkboxInput("infSiteModel", "Infinite site model",
                                           value = FALSE)),
                        conditionalPanel(
-                       condition = "input.coalescent == true",
-                       textInput("fscexec", "fastsimcoal executable",
-                                 value = "fsc251"))),
+                           condition = "input.coalescent == true",
+                           uiOutput("simexec")
+                           )
+                       ),
                    mainPanel(
                        conditionalPanel(
                            condition = "input.coalescent == true",
@@ -150,13 +154,6 @@ shinyUI(
                    )
                )
       , #don't forget the comma
-
-    tabPanel(
-      "Run Simulator",
-      uiOutput("btnRun"),
-      textOutput("txtRunStatus")
-    )
-      ,
 
     tabPanel(
       "Current ssClass",

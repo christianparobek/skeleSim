@@ -92,6 +92,24 @@ output$growthrate <- renderUI({
                 as.data.frame(growth.rates()))
 })
 
+
+output$simexec <- renderUI({
+    ui <- textInput("fscexec", "No fastsimcoal executable in path: enter value", value = "")
+    if (!is.null(rValues$ssClass@simulator))
+        if (rValues$ssClass@simulator=="fsc")
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params))
+                    {
+                        sim.exec <- c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,"fsc251","fsc252","fsc251.exe","fsc252.exe")
+                        sim.exec <- sim.exec[!is.null(sim.exec)]
+                        sim.exec <- unique(sim.exec)
+                        sim.exec <- basename(Sys.which(sim.exec))
+                        sim.exec <- sim.exec[nchar(sim.exec)>0]
+                        ui <- selectInput("fscexec","Select simcoal executable",choices=sim.exec)
+                    }
+    ui
+})
+
+
 ###########locus params (actually derived from scenario-specific information)
 observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
     if (!is.null(rValues$ssClass@simulator))

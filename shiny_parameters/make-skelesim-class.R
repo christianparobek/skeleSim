@@ -191,11 +191,11 @@ observeEvent(rValues$ssClass,{
                     #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
                     updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
                 }
-            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec))
-                {
-                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
-                    updateTextInput(session,"fscexec",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec)
-                }
+#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec))
+#                {
+#                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
+#                    updateTextInput(session,"fscexec",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec)
+#                }
             
         }    
 })
