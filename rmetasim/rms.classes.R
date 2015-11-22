@@ -25,8 +25,8 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 setClass(
   Class = "rmetasim.params",
   slots = c(num.stgs = "intOrNum", selfing = "intOrNum",
-            surv.matr = "intOrNum", repr.matr = "intOrNum",
-            male.matr = "intOrNum", carrying = "intOrNum",
+            surv.matr = "matrOrNULL", repr.matr = "matrOrNULL",
+            male.matr = "matrOrNULL", carrying = "intOrNum",
             init.pop.sizes = "intOrNum", 
             num.alleles = "intOrNum", allele.freqs = "intOrNum",
             num.gen = "intOrNum"
