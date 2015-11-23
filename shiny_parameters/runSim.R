@@ -57,8 +57,8 @@ observeEvent(input$btnRun, {
             print("srcfiles")
             print(srcfiles)
             print("printed srcfiles")
-
-            write(paste0("setwd('",supportValues$simroot,"')"), file = scriptFname, append=TRUE)
+            cdcmd <- chartr("\\","/",paste0("setwd('",supportValues$simroot,"')")) #make this work on windows also
+            write(cdcmd, file = scriptFname, append=TRUE)
             write("getwd()",file = scriptFname, append=TRUE)
 
 #### end of the sourceing
@@ -73,10 +73,17 @@ observeEvent(input$btnRun, {
             
             cond <- TRUE
             print("about to run new R session")
-
-            cmd <- paste("nohup R CMD BATCH --no-restore", scriptFname)
+            print(ifelse(supportValues$OS=="unix","Unix-based system","Windows-based system"))
+            if (supportValues$OS=="unix") #
+                {
+                    cmd <- paste("nohup R CMD BATCH --no-restore", scriptFname)
+                    system(cmd, wait = FALSE)
+                    
+                } else {
+                    cmd <- paste("start R CMD BATCH --no-restore", scriptFname)
+                    shell(cmd,wait=F)
+                }
             print("about to run system")
-            system(cmd, wait = FALSE)
 
 ####            output$txtRunStatus <- renderText({
 #                if(cond) {

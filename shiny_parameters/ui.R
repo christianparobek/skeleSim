@@ -11,7 +11,7 @@ shinyUI(
           shinyFilesButton("fileParams","Read skelesim file","Select saved skelesim file", FALSE),
           uiOutput("uiSelectParamObj"),
 #          textOutput("txtSelectedTitle"),
-#          h4(textOutput("txtObjLabel")),
+          h5(textOutput("txtObjLabel")),
 #          br(),
 #          h4("Save parameters to file"),
           shinySaveButton("ssClassSave","Save skelesim parameters to file","Save parameter file",filetype=list(ssClass=c("rdata","Rdata","rda"))),

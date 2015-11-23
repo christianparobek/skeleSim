@@ -24,11 +24,20 @@ fsc.run <- function(params) {
   )
 
   # Run fastsimcoal
-  err <- system(paste(
-    sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
-    ifelse(sc@simulator.params@inf.site.model, "-I", ""),
-    ifelse(params@quiet, "-q", "")
-  ), intern = F)
+  if (.Platform$OS.type=="unix")
+      {
+          err <- system(paste(
+              sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
+              ifelse(sc@simulator.params@inf.site.model, "-I", ""),
+              ifelse(params@quiet, "-q", "")
+              ), intern = F)
+      } else {
+          err <- shell(paste(
+              sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
+              ifelse(sc@simulator.params@inf.site.model, "-I", ""),
+              ifelse(params@quiet, "-q", "")
+              ), intern = F)
+      }
 
   if(err == 0) {
     if(!params@quiet) cat("fastsimcoal exited normally\n")

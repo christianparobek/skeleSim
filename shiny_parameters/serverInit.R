@@ -15,5 +15,7 @@ rValues <- reactiveValues(ssClass=ssClassInit(),
 ####cannot use reactive due to constraints imposed by shinyFiles
 supportValues <- reactiveValues(ssLoadEnv=new.env(),  #environment to load an rdata file into
                                 objLabel=NULL,        #name of ssClass object for saving
-                                simroot = NULL
+                                simroot = NULL,
+                                OS = .Platform$OS.type, #used when setting up simulation runs
+                                simexec = c("fsc251","fsc252","fsc25221","fsc251.exe","fsc252.exe","fsc25221.exe")
                                 )
