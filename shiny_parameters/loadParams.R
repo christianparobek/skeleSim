@@ -1,22 +1,22 @@
 
 ###choose working directory using the shinyFiles package
-shinyDirChoose(input,"workFolder",session=session,roots=supportValues$roots,hidden=F)
+shinyDirChoose(input,"workFolder",session=session,roots=VolumeRoots,hidden=F)
 ###
 ####choose file to load using the shinyFiles package
 #roots <- getVolumes()
 #observe
-shinyFileChoose(input,"fileParams",filetypes=c("rdata","RData","RDATA","rData","rda"),session=session,roots=supportValues$roots)
+shinyFileChoose(input,"fileParams",filetypes=c("rdata","RData","RDATA","rData","rda"),session=session,roots=VolumeRoots)
 #done with the shinyFiles file selection code
 
 ###make sure that changing the working directory updates the supportValues$simroot slot, but not any other time
 observeEvent(input$workFolder,{
   #  if (!is.null(input$workFolder))
-        supportValues$simroot <<- normalizePath(gsub("/+","/",parseDirPath(supportValues$roots,input$workFolder)))
+        supportValues$simroot <- normalizePath(gsub("/+","/",parseDirPath(VolumeRoots,input$workFolder)))
 })
                
 output$uiSelectParamObj <- renderUI({
   if(!is.null(input$fileParams)) {
-      fileParams <- parseFilePaths(supportValues$roots,input$fileParams) #convert shinyFiles object into more familiar inputFiles format
+      fileParams <- parseFilePaths(VolumeRoots,input$fileParams) #convert shinyFiles object into more familiar inputFiles format
 #      print(fileParams$datapath)
       rm(list=ls(envir=supportValues$ssLoadEnv),envir=supportValues$ssLoadEnv)
       load(file=as.character(fileParams$datapath), envir = supportValues$ssLoadEnv)

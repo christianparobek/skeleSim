@@ -1,11 +1,11 @@
 ###shinyFiles approach to saving the current skelesim object
-shinyFileSave(input, 'ssClassSave', filetypes=c("rdata","RData","RDATA","rData","rda"), session=session, roots=supportValues$roots)
+shinyFileSave(input, 'ssClassSave', filetypes=c("rdata","RData","RDATA","rData","rda"), session=session, roots=VolumeRoots)
 ###
 
 observeEvent(input$ssClassSave,
              {
                  print("parsing")
-                 path <- as.character(parseSavePath(supportValues$roots,input$ssClassSave)$datapath)
+                 path <- as.character(parseSavePath(VolumeRoots,input$ssClassSave)$datapath)
                  print(path)
                  print(normalizePath(path))
                  print("done parsing")
@@ -14,7 +14,7 @@ observeEvent(input$ssClassSave,
              })
 
 output$txtObjLabel <- renderText({
-  supportValues$objLabel <<- if(is.null(rValues$ssClass@title) | rValues$ssClass@title == "") {
+  supportValues$objLabel <- if(is.null(rValues$ssClass@title) | rValues$ssClass@title == "") {
     NULL
   } else {
     make.names(rValues$ssClass@title)

@@ -4,7 +4,7 @@ observeEvent(input$btnRun, {
         print("past first null test")
         print("supportValues$objLabel")
         ## create 'fnameLabel' and parameter filename (paramsFname)
-        supportValues$fnameLabel <<- paste(supportValues$objLabel, format(Sys.time(), "%Y%m%d.%H%M"),round(runif(1,min=0,max=10000)), sep = ".")
+        supportValues$fnameLabel <- paste(supportValues$objLabel, format(Sys.time(), "%Y%m%d.%H%M"),round(runif(1,min=0,max=10000)), sep = ".")
         paramsFname <- paste(supportValues$fnameLabel, "params.rdata", sep = ".")
         paramsFname <- paste0(ifelse(is.null(supportValues$simroot),".",supportValues$simroot),"/",paramsFname)
         print(paramsFname)
@@ -84,7 +84,7 @@ observeEvent(input$btnRun, {
 #                    print("about to run system")
 #                    system(cmd, wait = FALSE)
 #                    "Simulation run commenced."
-#                    supportValues$fnameLabel <<- NULL
+#                    supportValues$fnameLabel <- NULL
 #                                        #                     stopApp()
 #                } else {
 #                    "Error starting simulations."

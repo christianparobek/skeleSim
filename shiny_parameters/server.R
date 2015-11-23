@@ -32,13 +32,22 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
 }
 
 shinyServer(function(input, output,session) {
+    
+    VolumeRoots = c(home="~",getVolumes()(),temp=tempdir(),wd="./")   #function from shinyFiles
 
     rValues <- reactiveValues(ssClass=ssClassInit(),
                               scenarioNumber=1,
                               lstScenario=1,
                               history=NULL,
                               msg=NULL)
-        
+
+####this reactiveValue contains values that are needed for file operations
+####cannot use reactive due to constraints imposed by shinyFiles
+supportValues <- reactiveValues(ssLoadEnv=new.env(),  #environment to load an rdata file into
+                                objLabel=NULL,        #name of ssClass object for saving
+                                simroot = NULL
+                                )
+
   ##################### parameter loading and saving
     source("saveParams.R", local = TRUE)
     source("loadParams.R", local = TRUE)
@@ -84,17 +93,18 @@ shinyServer(function(input, output,session) {
     ####error messages.  Drop a message into rValues$msg to display to screen
     output$msg <- renderText({if (!is.null(rValues$msg)) rValues$msg})
 
-    
+    observeEvent(input$quitbtn,{stopApp()})
     
 #############debugging
     output$ssClass <- renderTable({data.frame(item=(capture.output(str(rValues$ssClass))))})
-####### this needs to be replaced with Eric's loading code
 
-    observeEvent(input$readss,{
-        load("test.ssClass.rdata")
-        rValues$ssClass <- ssClass
-        rm(ssClass)
-    })
+####### this needs to be replaced with Eric's loading code
+#
+#    observeEvent(input$readss,{
+#        load("test.ssClass.rdata")
+#        rValues$ssClass <- ssClass
+#        rm(ssClass)
+#    })
 
 
     

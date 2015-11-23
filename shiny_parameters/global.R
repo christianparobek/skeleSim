@@ -24,13 +24,6 @@ source("../rmetasim/rms.scenarioCheck.R")
 lstclick <- NULL    #last click
 lstdblclick <- NULL #last double click
 
-####this global list contains values that are needed for file operations
-####cannot use reactive due to constraints imposed by shinyFiles
-supportValues <- list(ssLoadEnv=new.env(),  #environment to load an rdata file into
-                      objLabel=NULL,        #name of ssClass object for saving
-                      roots = c(getVolumes()(),home="~",temp=tempdir(),wd="./"),   #function from shinyFiles
-                      simroot = NULL
-                      )
 
 
 

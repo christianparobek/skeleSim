@@ -153,7 +153,7 @@ observeEvent(rValues$ssClass,{
         updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
     if (!is.null(rValues$ssClass@wd))
         {
-            if (is.null(supportValues$simroot)) {supportValues$simroot <<- "."}
+            if (is.null(supportValues$simroot)) {supportValues$simroot <- "."}
             output$simpath <- renderText({
                 paste("Complete path for simulations to be executed:",paste(supportValues$simroot,rValues$ssClass@wd,sep="/"))
                   })
