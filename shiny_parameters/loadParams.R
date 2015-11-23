@@ -1,8 +1,25 @@
+
+###choose working directory using the shinyFiles package
+shinyDirChoose(input,"workFolder",session=session,roots=supportValues$roots,hidden=F)
+###
+####choose file to load using the shinyFiles package
+#roots <- getVolumes()
+#observe
+shinyFileChoose(input,"fileParams",filetypes=c("rdata","RData","RDATA","rData","rda"),session=session,roots=supportValues$roots)
+#done with the shinyFiles file selection code
+
+###make sure that changing the working directory updates the supportValues$simroot slot, but not any other time
+observeEvent(input$workFolder,{
+  #  if (!is.null(input$workFolder))
+        supportValues$simroot <<- normalizePath(gsub("/+","/",parseDirPath(supportValues$roots,input$workFolder)))
+})
+               
 output$uiSelectParamObj <- renderUI({
   if(!is.null(input$fileParams)) {
-#      print(ls(supportValues$ssLoadEnv))
+      fileParams <- parseFilePaths(supportValues$roots,input$fileParams) #convert shinyFiles object into more familiar inputFiles format
+#      print(fileParams$datapath)
       rm(list=ls(envir=supportValues$ssLoadEnv),envir=supportValues$ssLoadEnv)
-      load(input$fileParams$datapath, envir = supportValues$ssLoadEnv)
+      load(file=as.character(fileParams$datapath), envir = supportValues$ssLoadEnv)
 #      print(ls(supportValues$ssLoadEnv))
       objs <- ls(envir = supportValues$ssLoadEnv)
       is.skeleSim <- sapply(objs, function(x) {

@@ -7,6 +7,7 @@ To use,
   1. make sure that the 'devtools' package is installed.
   2. make sure that the 'shiny' package is installed
   3. make sure that the 'rmetasim' package is installed
+  4. make sure that the 'shinyFiles' package is installed
 2. From github:
   1. load devtools package -- library(devtools)
   2. install_github("rstudio/shiny-incubator")

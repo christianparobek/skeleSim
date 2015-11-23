@@ -1,26 +1,30 @@
-#source("setup.R")
 
 shinyUI(
   navbarPage(
     "skelesim",
       tabPanel(
           "Actions",
-          
           h4("Load parameters from file" ),
           includeMarkdown("helpfiles/load-params.md"),
           br(),
-          fileInput("fileParams", h4("Choose .Rdata File")),
+#          fileInput("fileParams", h4("Choose .Rdata File")),
+          shinyFilesButton("fileParams","Read skelesim file","Select saved skelesim file", FALSE),
           uiOutput("uiSelectParamObj"),
           textOutput("txtSelectedTitle"),
           h4(textOutput("txtObjLabel")),
           br(),
           h4("Save parameters to file"),
-          includeMarkdown("helpfiles/save-params.md"),
-          actionButton("btnSaveParams","Save params"),
+          shinySaveButton("ssClassSave","Save skelesim parameters to file","Save parameter file",filetype=list(ssClass=c("rdata","Rdata","rda"))),
+#          includeMarkdown("helpfiles/save-params.md"),
+#          actionButton("btnSaveParams","Save params"),
           textOutput("txtSaveStatus"),
           h4("Run simulation"),
-          uiOutput("btnRun"),
-          textOutput("txtRunStatus")
+          h5("Set simulation directory"),
+          shinyDirButton("workFolder","Select Simulation Root Directory","Set Simulation Root Directory",FALSE),
+          actionButton("btnRun","Run simulation")
+          #,
+#          textOutput("txtSaveStatus")
+#          textOutput("txtRunStatus")
            ),
       tabPanel("Intro questions",
                sidebarLayout(
@@ -60,7 +64,7 @@ shinyUI(
                                    value = TRUE),
                      numericInput("reps", "Number of simulation reps",
                                   value = 1),
-                     textInput("wd", "Working directory for simulation",
+                     textInput("wd", "Subdirectory for actual simulation",
                                value = "wdTest")
                      ),
                  mainPanel(h3("Parameters automatically set:"),

@@ -38,11 +38,7 @@ shinyServer(function(input, output,session) {
                               lstScenario=1,
                               history=NULL,
                               msg=NULL)
-    
-    supportValues <- reactiveValues(ssLoadEnv=new.env(), #environment to load an rdata file into
-                                    objLabel=NULL        #name of ssClass object for saving
-                                    )
-    
+        
   ##################### parameter loading and saving
     source("saveParams.R", local = TRUE)
     source("loadParams.R", local = TRUE)
