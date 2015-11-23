@@ -31,4 +31,4 @@ To use on windows, install the latest version of R and RStudio (obviously).  The
 2. ensure that all of the R executables are in your path.
   * you can add to your path using the control panel in windows
   * alternatively you can download windows batchfiles that make this work more intuitively.  See https://code.google.com/p/batchfiles/ or http://cran.r-project.org/contrib/extra/batchfiles/ to find a copy of 'R.bat' if you put this file in your path, it handles searches for R on your windows disk.
-3. then follow the instructions above.,,
+3. then follow the instructions above...
