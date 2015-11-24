@@ -1,3 +1,4 @@
+#' @name skeleSim.classes
 setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("listOrNULL", c("list","NULL"))
 setClassUnion("charOrNULL", c("character", "NULL"))
@@ -7,11 +8,11 @@ setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("vectOrNULL", c("vector", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 
+
+#' @rdname skeleSim.classes
 #' @title skeleSim Parameters Class
 #' @description An S4 class storing generic parameters used throughout
 #'   the workflow
-#'
-#' @rdname skeleSim.classes
 #'
 #' @slot title a title for the simulation. Used in labelling of output files.
 #' @slot date datestamp for the simulation.
@@ -73,10 +74,10 @@ setClass(
   )
 )
 
+
+#' @rdname skeleSim.classes
 #' @title Scenario Parameters Class
 #' @description An S4 class storing parameters for each simulation scenario
-#'
-#' @rdname skeleSim.classes
 #'
 #' @slot num.pops number of populations.
 #' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.

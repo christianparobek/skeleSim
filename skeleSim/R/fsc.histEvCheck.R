@@ -4,9 +4,8 @@
 #' @param hist.ev a matrix describing historical events, with one row per event.
 #' @param num.pops number of populations.
 #' @param num.mig.mats number of migration matrices.
-
+#'
 fsc.histEvCheck <- function(hist.ev, num.pops, num.mig.mats = NULL) {
-
   if ((!is.numeric(as.matrix(hist.ev))) & (!(is.matrix(hist.ev)|is.data.frame(hist.ev)))) {
     cat("'hist.ev' must be a numerical matrix or numerical dataframe.\n")
     return(FALSE)

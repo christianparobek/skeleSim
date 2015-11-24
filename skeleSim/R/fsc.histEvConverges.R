@@ -1,11 +1,13 @@
 #' @title Check fastsimcoal historical events convergence
-#' @description Test that fastsimcoal historical events coalescent converges
 #'
 #' @param hist.ev a matrix describing historical events, with one row per event.
 #' @param pop.size numerical vector giving size of each population.
 #' @param growth.rate numerical vector giving growth rate of each population.
 #' @param num.mig.mats number of migration matrices.
-
+#'
+#' @return a logical stating whether convergence can be achieved given pattern of
+#'   historical events.
+#'
 fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
   if(length(growth.rate) == 1) growth.rate <- rep(growth.rate, length(pop.size))

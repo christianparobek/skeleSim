@@ -1,9 +1,10 @@
 #' @title Create fastsimcoal historical event matrices
-#' @description Create blank fastsimcoal historical event matrices that can be
-#'   filled in later
 #'
 #' @param num.events number of historical events.
-
+#'
+#' @return a blank fastsimcoal historical event matrices that can be
+#'   filled in later
+#'
 fsc.histEvMat <- function(num.events = 0) {
   # -- historical events --
   # 1) Number of generations, t, before present at which the historical event

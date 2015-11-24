@@ -1,9 +1,10 @@
 #' @title Create fastsimcoal locus parameter matrices
-#' @description Create blank fastsimcoal locus parameter matrices that can be
-#'   filled in later
 #'
 #' @param sc a \linkS4class{scenario.params} object.
-
+#'
+#' @return a blank fastsimcoal locus parameter matrices that can be
+#'   filled in later
+#'
 fsc.locusParamsMat <- function(sc) {
   locus.type <- switch(
     sc@locus.type,

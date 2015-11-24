@@ -1,9 +1,17 @@
 #' @title Read fastsimcoal output file
-#' @description Read fastsimcol output file
 #'
 #' @param file character filename
 #' @param sc a \linkS4class{scenario.params} object.
-
+#'
+#' @return genetic data from \code{file}, formatted according to locus type:
+#' \tabular{ll}{
+#'   \code{DNA} \tab list of two elements: \code{strata} - a vector of
+#'     individual stratification, and \code{dna.seqs} - a \link[apex]{multidna} object
+#'     containing sequences for each gene.
+#'   \code{MICROSAT} or \code{STANDARD} \tab a \link[adegenet]{genind} object containing
+#'     genotypes.
+#' }
+#'
 fsc.read <- function(file, sc) {
   stopifnot(require(adegenet) & require(apex))
   f <- readLines(file)

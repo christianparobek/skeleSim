@@ -1,5 +1,4 @@
-overall_stats <-
-function(results_gtype){
+overall_stats <- function(results_gtype){
   ovl <- overallTest(results_gtype, nrep = 5, quietly = TRUE)
   ovl.result <- ovl$result[complete.cases(ovl$result[,1]),]
 

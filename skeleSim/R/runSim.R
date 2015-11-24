@@ -5,7 +5,7 @@
 #' @param num.secs number of seconds to run timing checks
 #'
 #' @export
-
+#'
 runSim <- function(params, num.secs = NULL) {
   # check parameters
   params<-overall.check(params)

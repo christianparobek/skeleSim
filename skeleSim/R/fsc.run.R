@@ -1,8 +1,10 @@
 #' @title Run fastsimcoal
-#' @description Run fastsimcoal simulation
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
-
+#'
+#' @return a modified \linkS4class{skeleSim.params} object with the results of
+#'   a fastsimcoal run.
+#'
 fsc.run <- function(params) {
   label <- currentLabel(params)
   sc <- currentScenario(params)

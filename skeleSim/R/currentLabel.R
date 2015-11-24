@@ -1,8 +1,9 @@
-#' @title Current Label
-#' @description Return a character label for the current scenario and replicate
+#' @title Current label
 #'
 #' @param param a \linkS4class{skeleSim.params} object.
-
+#'
+#' @return a character label representing current scenario and replicate.
+#'
 currentLabel <- function(params) {
   label <- paste(
     params@title,

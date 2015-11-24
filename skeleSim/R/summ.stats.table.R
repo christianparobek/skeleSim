@@ -1,6 +1,9 @@
-summ.stats.table <-
-function(params){
+#' @title Create summary statistics table
+#' @description Create summary statistics table
+#'
+#' @param params a \linkS4class{skeleSim.params} object.
 
+summ.stats.table <- function(params) {
   results.datafr<-params@analysis.results
   num.sc <- length(params@scenarios)
   names.stats<-colnames(params@analysis.results)

@@ -1,9 +1,12 @@
-plot.all.stats <-
-function(params){
-  stopifnot(require("reshape2"))
-  stopifnot(require("ggplot2"))
-  stopifnot(require("gridExtra"))
+#' @title Plot all results
+#' @description Plot all results
+#'
+#' @param params a \linkS4class{skeleSim.params} object.
+#'
+#' @importFrom reshape2 melt
+#' @import ggplot
 
+plot.all.stats <- function(params) {
   results.datafr<-as.data.frame(params@analysis.results)
   num.sc <- length(params@scenarios)
   names.stats<-colnames(params@analysis.results)
