@@ -1,0 +1,12 @@
+* installing *source* package ‘skeleSim’ ...
+** R
+** inst
+** preparing package for lazy loading
+Note: the specification for class “listOrNULL” in package ‘skeleSim’ seems equivalent to one from package ‘adegenet’: not turning on duplicate class definitions for this class.
+Note: the specification for class “charOrNULL” in package ‘skeleSim’ seems equivalent to one from package ‘adegenet’: not turning on duplicate class definitions for this class.
+Note: the specification for class “intOrNum” in package ‘skeleSim’ seems equivalent to one from package ‘adegenet’: not turning on duplicate class definitions for this class.
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+* DONE (skeleSim)

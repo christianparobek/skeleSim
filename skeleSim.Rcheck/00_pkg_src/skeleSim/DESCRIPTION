@@ -1,0 +1,22 @@
+Package: skeleSim
+Type: Package
+Title: What the package does (short line)
+Version: 0.9
+Date: 2015-11-23
+Author: Who wrote it
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: SkeleSim is a tool to guide users in choosing
+    appropriate simulations, setting parameters, calculating summary genetic
+    statistics, and organizing data output, all within the R environment.
+    Skelesim is designed to be an extensible environment that can 'wrap' around
+    any simulation software to increase its accessibility and use.
+License: GNU General Public License
+LazyLoad: Yes
+LazyData: true
+Depends: R (>= 3.2.0)
+Imports: adegenet, ape, ggplot2, methods, reshape2, rmetasim, strataG
+Suggests: knitr, shiny
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
+NeedsCompilation: no
+Packaged: 2015-11-25 08:14:08 UTC; eric.archer

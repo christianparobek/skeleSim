@@ -13,3 +13,10 @@ RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
 StripTrailingWhitespace: Yes
+
+BuildType: Package
+PackageUseDevtools: Yes
+PackagePath: skeleSim
+PackageInstallArgs: --no-multiarch --with-keep.source
+PackageCheckArgs: --as-cran
+PackageRoxygenize: rd,collate,namespace,vignette
