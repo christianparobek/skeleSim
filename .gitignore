@@ -7,3 +7,4 @@ testRun.wd
 /shiny_parameters/nohup.out
 /shiny_parameters/README.md~
 skeleSim.Rcheck/
+error.log

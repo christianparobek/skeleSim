@@ -21,7 +21,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
   file <- paste(label, ".par", sep = "")
   mig.rates <- if(is.list(mig.rates)) mig.rates else list(mig.rates)
   hist.ev <- if(is.list(hist.ev)) do.call(rbind, hist.ev) else rbind(hist.ev)
-  if (dim(hist.ev)[2]!=7) {hist.ev <- t(hist.ev)}   #somehow histev is becoming transposed...
+  #if (dim(hist.ev)[2]!=7) {hist.ev <- t(hist.ev)}   #somehow histev is becoming transposed...
   locus.params <- if(is.list(locus.params)) do.call(rbind, locus.params) else rbind(locus.params)
   if(nrow(locus.params) == 1 & num.chrom > 1) {
     locus.params <- do.call(rbind, lapply(1:num.chrom, function(i) locus.params[1, ]))
