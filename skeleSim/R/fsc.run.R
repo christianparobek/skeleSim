@@ -6,6 +6,8 @@
 #' @return a modified \linkS4class{skeleSim.params} object with the results of
 #'   a fastsimcoal run.
 #'
+#' @export
+#'
 fsc.run <- function(params) {
   label <- currentLabel(params)
   sc <- currentScenario(params)

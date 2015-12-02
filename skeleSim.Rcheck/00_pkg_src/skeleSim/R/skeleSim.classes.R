@@ -1,9 +1,9 @@
 #' @name skeleSim.classes
 #' @import methods
 setClassUnion("logOrNULL", c("logical", "NULL"))
-setClassUnion("listOrNULL", c("list","NULL"))
-setClassUnion("charOrNULL", c("character", "NULL"))
-setClassUnion("intOrNum", c("integer","numeric", "NULL"))
+#setClassUnion("listOrNULL", c("list","NULL"))
+#setClassUnion("charOrNULL", c("character", "NULL"))
+#setClassUnion("intOrNum", c("integer","numeric", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("vectOrNULL", c("vector", "NULL"))

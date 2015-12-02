@@ -1,5 +1,7 @@
 currentLabel            Current label
 currentScenario         Current scenario
+fastsimcoal.params-class
+                        fastsimcoal Parameters Class
 fsc.histEvCheck         Check fastsimcoal historical events
 fsc.histEvConverges     Check fastsimcoal historical events convergence
 fsc.histEvMat           Create fastsimcoal historical event matrices
@@ -18,6 +20,7 @@ non.scenario.check      Check general simulation parameters
 overall.check           Check all simulation parameters
 overall_stats           Compute overall statistics
 plot.all.stats          Plot all results
+rmetasim.params-class   rmetasim Parameters Class
 rms.convert             Extract genetic data from landscape object
 rms.init.landscape      Initialize a landscape object
 rms.run                 Run rmetasim

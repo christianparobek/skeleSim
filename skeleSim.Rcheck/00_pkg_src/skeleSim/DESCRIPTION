@@ -19,4 +19,4 @@ Suggests: knitr, shiny
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2015-11-25 08:14:08 UTC; eric.archer
+Packaged: 2015-12-02 10:50:12 UTC; eric.archer

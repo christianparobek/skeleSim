@@ -6,6 +6,8 @@
 #' @return a blank fastsimcoal historical event matrices that can be
 #'   filled in later
 #'
+#' @export
+#'
 fsc.histEvMat <- function(num.events = 0) {
   # -- historical events --
   # 1) Number of generations, t, before present at which the historical event

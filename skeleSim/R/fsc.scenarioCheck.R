@@ -3,6 +3,8 @@
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
 #'
+#' @export
+#'
 fsc.scenarioCheck <- function(params) {
   # check that sample times and growth rates are of length number of populations, and
   #   that historical events matrix converges

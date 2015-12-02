@@ -1,8 +1,10 @@
 #' @title Check general simulation parameters
 #' @description Check general simulation parameters
 #'
-#' @param params a \linkS4class{skeleSim.params} object.
-
+#' @param params a \linkS4class{skeleSim.params} object
+#'
+#' @export
+#'
 gen.scenario.check <- function(params) {
   #check that number of populations is same as length of pop sizes
   #check that number of populations is same as length of sample sizes

@@ -6,6 +6,8 @@
 #' @return a blank fastsimcoal locus parameter matrices that can be
 #'   filled in later
 #'
+#' @export
+#'
 fsc.locusParamsMat <- function(sc) {
   locus.type <- switch(
     sc@locus.type,

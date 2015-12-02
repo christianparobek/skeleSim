@@ -1,7 +1,5 @@
 rm(list = ls())
-source("skeleSim.classes.R")
-source("fastsimcoal.skeleSim.R")
-source("skeleSim.funcs.R")
+library(skeleSim)
 
 # ---- Load parameters ---
 
@@ -59,6 +57,8 @@ scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
 # load scenarios
 test.params@scenarios <- scenario.list
 
+# set fastsimcoal check
+test.params@sim.check.func <- fsc.scenarioCheck
 
 # ---- Set analysis function ----
 test.params@rep.analysis.func <- function(params) {

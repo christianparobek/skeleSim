@@ -7,7 +7,7 @@
 gen.scenario.check(params)
 }
 \arguments{
-\item{params}{a \linkS4class{skeleSim.params} object.}
+\item{params}{a \linkS4class{skeleSim.params} object}
 }
 \description{
 Check general simulation parameters

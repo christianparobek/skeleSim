@@ -1,5 +1,6 @@
 currentLabel	currentLabel
 currentScenario	currentScenario
+fastsimcoal.params-class	fastsimcoal.classes
 fsc.histEvCheck	fsc.histEvCheck
 fsc.histEvConverges	fsc.histEvConverges
 fsc.histEvMat	fsc.histEvMat
@@ -17,6 +18,7 @@ non.scenario.check	non.scenario.check
 overall.check	overall.check
 overall_stats	overall_stats
 plot.all.stats	plot.all.stats
+rmetasim.params-class	rmetasim.classes
 rms.convert	rms.convert
 rms.init.landscape	rms.init.landscape
 rms.run	rms.run

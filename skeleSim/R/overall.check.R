@@ -2,7 +2,9 @@
 #' @description Check all simulation parameters
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
-
+#'
+#' @export
+#'
 overall.check <- function(params) {
   params@other.checks <- non.scenario.check(params)
   print(params@other.checks)
