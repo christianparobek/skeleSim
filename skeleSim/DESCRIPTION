@@ -14,7 +14,11 @@ License: GNU General Public License
 LazyLoad: Yes
 LazyData: true
 Depends:
-    R (>= 3.2.0)
+    R (>= 3.2.0),
+    shiny,
+    shinyIncubator,
+    shinyFiles,
+    igraph
 Imports:
     adegenet,
     ape,
@@ -24,7 +28,6 @@ Imports:
     rmetasim,
     strataG
 Suggests:
-    knitr,
-    shiny
+    knitr
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

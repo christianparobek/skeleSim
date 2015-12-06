@@ -44,19 +44,19 @@ observeEvent(input$btnRun, {
 #### source all the relevant files, and then change to the directory where the simulation
 ####  should be run (supportValues$simroot)
 
-            write(paste0("setwd('../')"), file = scriptFname)
+            write(paste0("library(skeleSim)"), file = scriptFname)
             write("getwd()",file = scriptFname, append=TRUE)
             
-            srcfiles <- ifelse(rValues$ssClass@simulator=="fsc",
-                               'source("fastsimcoal.skeleSim.R")',
-                               'source("rmetasim.skeleSim.R")'
-                               )
-            write('source("skeleSim.classes.R")', file = scriptFname, append = TRUE)
-            write('source("skeleSim.funcs.R")', file = scriptFname, append = TRUE)
-            write(srcfiles, file = scriptFname, append = TRUE)
-            print("srcfiles")
-            print(srcfiles)
-            print("printed srcfiles")
+#            srcfiles <- ifelse(rValues$ssClass@simulator=="fsc",
+#                               'source("fastsimcoal.skeleSim.R")',
+#                               'source("rmetasim.skeleSim.R")'
+#                               )
+#            write('source("skeleSim.classes.R")', file = scriptFname, append = TRUE)
+#            write('source("skeleSim.funcs.R")', file = scriptFname, append = TRUE)
+#            write(srcfiles, file = scriptFname, append = TRUE)
+#            print("srcfiles")
+#            print(srcfiles)
+#            print("printed srcfiles")
             cdcmd <- chartr("\\","/",paste0("setwd('",supportValues$simroot,"')")) #make this work on windows also
             write(cdcmd, file = scriptFname, append=TRUE)
             write("getwd()",file = scriptFname, append=TRUE)
