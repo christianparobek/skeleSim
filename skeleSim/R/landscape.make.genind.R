@@ -11,13 +11,6 @@ landscape.make.genind <- function(l)
   {
       tab <- 2*landscape.ind.freq(l)
       dimnames(tab) <- list(rownames=1:dim(tab)[1],colnames=landscape.freq.locnames(l))
-      if (is.null(popnames))
-          {
-              populations <- landscape.populations(l)
-          }
-      else
-          {
-              populations <- popnames
-          }
+      populations <- landscape.populations(l)
       genind(tab,pop=as.factor(populations),ploidy=2)
   }
