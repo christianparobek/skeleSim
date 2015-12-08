@@ -8,6 +8,12 @@ VolumeRoots = c(home="~",getVolumes()(),temp=tempdir(),wd="./")   #function from
 rValues <- reactiveValues(ssClass=ssClassInit(),
                           scenarioNumber=1,
                           lstScenario=1,
+                          migrationNumber=1,
+                          lstMigration = 1,
+                          localDemoNumber = 1,
+                          lstLocalDemo = 1,
+                          EpochNumber = 1,
+                          lstEpoch = 1,
                           history=NULL,
                           msg=NULL)
 
