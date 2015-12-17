@@ -98,10 +98,15 @@ x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
 inherits(x.g, "gtypes")
+inherits(x.g, "DNAbin")
 
 params<- new("skeleSim.params")
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
+#params@rep.result is either a genind <results_genind> or a list of DNAbin objects ,results_gtypes
+# Can't be x.g, that's a gtypes:  params@rep.result <- x.g
 params@rep.result <- x.g
+results_gtype <- x.g
+
 curr_scn<-1
 curr_rep<-1
 num_loci <- nLoc(x.g)

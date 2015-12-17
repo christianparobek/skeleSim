@@ -9,6 +9,7 @@ function(params){
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
+  genes <- locNames(params@rep.result) #will this work before it's converted to gtypes?
 
   #params@rep.result is either a genind or a list of DNAbin objects
   if(inherits(params@rep.result, "genind")){
@@ -146,22 +147,39 @@ function(params){
         }
 
         # multiDNA
-        if(inherits(params@rep.result,c("multidna","gtypes")){ # what would woodmouse be? why isn't x.g "DNAbin"?
+        if(inherits(params@rep.result,c("multidna","gtypes")){
 
-          r.m <- lapply(locNames(results_gtype), function(l){
-            nucleotideDiversity(results_gtype[,l,]@sequences)
+          r.m <- lapply(strataNames(results_gtype), function(s){
+            lapply(locNames(results_gtype), function(l){
+            nucleotideDiversity(results_gtype[,l,s]@sequences)
             })
-          results.list.names <- Map(function(gene,names) paste(gene, names(names), sep="_"),
-                                    locNames(results_gtype),
-                                    r.m)
-          results <- do.call(c,r.m)
-          names(results) <- do.call(c,results.list.names)
+          })
+
+          r.m.bind <- do.call(c, lapply(r.m, function(x){
+            do.call(c,x)
+          }))
+          # popA with gene1 and gene2, popB with gene1 and gene2
+          results.list.names <- lapply(1:length(strataNames(results_gtype)), function(x){
+            Map(function(gene,names) paste(gene, names(names), sep="_"),
+                locNames(results_gtype),
+                r.m[[x]])
+          })
+
+          rln.bind <- do.call(c, lapply(results.list.names, function(x){
+            do.call(c,x)
+             }))
+
+          results <- r.m.bind
+          names(results) <- rln.bind
+
 
           #fusFs
-          ### ERRORS
+          ### Warning: Some sequences could not be unambiguously assigned to a haplotype
           fu.fs <- lapply(locNames(results_gtype), function(l){
             fusFs(results_gtype[,l,])
           })
+          fu.fs.results <- do.call(cbind, fu.fs)
+
 
           # Tajimas D
           t.d <- lapply(locNames(results_gtype), function(l){
@@ -181,7 +199,6 @@ function(params){
           })
 
 
-          ############ START HERE ######################
           # Nucleotide and percent within strata divergence
           dA <- nucleotideDivergence(results_gtype)
           names.dA <- lapply(dA,function(x){
@@ -191,10 +208,14 @@ function(params){
             apply(x, 1, function(y) paste(y, collapse = "."))
           })
 
-          unlist(dA.names)
+          do.call(cbind, dA.names)
+          # Overall, loci per gene, genes = locNames
+          dA.list <- sapply(genes, USE.NAMES = TRUE, simplify = FALSE, function(x){
+            rbind(dA[[x]]$between,
+                  rep(NA, ncol(dA[[x]]$between)-ncol(dA[[x]]$within)))
+            })
 
-
-
+          dA.all <- do.call(cbind, dA.list)
 
           results <- c(results,do.call(c,fu.fs),t.d.results)
           analyses_names <- colnames(results)
@@ -215,6 +236,8 @@ function(params){
 
         }
 
+
+        ############ START HERE ######################
 
 ###########################  Pairwise  ###########################
 
