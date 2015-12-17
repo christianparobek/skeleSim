@@ -48,10 +48,10 @@ observeEvent(input$scenarioNumber,
                  rValues$scenarioNumber <- input$scenarioNumber
              })
 
-observeEvent(input$migrationNumber,
-             {
-                 rValues$migrationNumber <- input$migrationNumber
-             })
+#observeEvent(input$migrationNumber,
+#             {
+#                 rValues$migrationNumber <- input$migrationNumber
+#             })
 
 
 observeEvent(input$numpopsTxt,
