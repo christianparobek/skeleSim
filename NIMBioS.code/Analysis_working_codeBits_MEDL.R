@@ -105,6 +105,8 @@ params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
 #params@rep.result is either a genind <results_genind> or a list of DNAbin objects ,results_gtypes
 # Can't be x.g, that's a gtypes:  params@rep.result <- x.g
 params@rep.result <- x.g
+
+# multigene start here set parameters
 results_gtype <- x.g
 
 curr_scn<-1

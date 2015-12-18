@@ -146,9 +146,22 @@ function(params){
 
         }
 
-        # multiDNA
-        if(inherits(params@rep.result,c("multidna","gtypes")){
+    # multiDNA
+    # Per gene (ignoring population structure, and per gene by population)
 
+      if(inherits(params@rep.result,c("multidna","gtypes")){
+
+          # by gene
+          r.m.gene <- lapply(locNames(results_gtype), function(l){
+            nucleotideDiversity(results_gtype[,l,]@sequences)
+          })
+          results.list.names.gene <- Map(function(gene,names) paste(gene, names(names), sep="_"),
+                                         locNames(results_gtype),
+                                         r.m.gene)
+          results.gene <- do.call(c,r.m.gene)
+          names(results.gene) <- do.call(c,results.list.names.gene)
+
+          # by gene per popualation "strata"
           r.m <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
             nucleotideDiversity(results_gtype[,l,s]@sequences)
@@ -158,7 +171,7 @@ function(params){
           r.m.bind <- do.call(c, lapply(r.m, function(x){
             do.call(c,x)
           }))
-          # popA with gene1 and gene2, popB with gene1 and gene2
+
           results.list.names <- lapply(1:length(strataNames(results_gtype)), function(x){
             Map(function(gene,names) paste(gene, names(names), sep="_"),
                 locNames(results_gtype),
@@ -170,33 +183,62 @@ function(params){
              }))
 
           results <- r.m.bind
-          names(results) <- rln.bind
+          #names(results) <- rln.bind
+
+          nD <- rbind(results.gene, results)
 
 
           #fusFs
           ### Warning: Some sequences could not be unambiguously assigned to a haplotype
+          #by gene
           fu.fs <- lapply(locNames(results_gtype), function(l){
             fusFs(results_gtype[,l,])
           })
-          fu.fs.results <- do.call(cbind, fu.fs)
+          fu.fs.results <- do.call(rbind, fu.fs)
 
+          #by population for each strataNames(results_gtype) and results_gtype[,,pops]
+          fu.fs.pop <- lapply(strataNames(results_gtype), function(s){
+            lapply(locNames(results_gtype), function(l){
+              fusFs(results_gtype[,l,s])
+            })
+          })
+          fu.fs.results.pop <- do.call(rbind, lapply(fu.fs.pop, function(x){
+            do.call(rbind,x)
+          }))
+
+          fu.fs.all <- rbind(fu.fs.results, fu.fs.results.pop)
 
           # Tajimas D
+          # by gene
           t.d <- lapply(locNames(results_gtype), function(l){
             tajimasD(results_gtype[,l,])
           })
-          names <- lapply(t.d, function(x){
-            paste(row.names(x),colnames(x),sep="_")
-          })
-          names1 <- do.call(c,names)
+          t.d.bind <- do.call(rbind,t.d)
+          #don't need names here, just D D_p.value
+          #names <- lapply(t.d, function(x){
+          #  paste(row.names(x),colnames(x),sep="_")
+          #})
+          #names1 <- do.call(c,names)
           t.d.results <- do.call(c,t.d)
-          names(t.d.results) <- names1
+          # names(t.d.results) <- names1
+          # by gene per population
+          t.d.pop <- lapply(strataNames(results_gtype), function(s){
+            lapply(locNames(results_gtype), function(l){
+              tajimasD(results_gtype[,l,s])
+            })
+          })
+          t.d.pop.bind <- do.call(rbind, lapply(t.d.pop, function(x){
+            do.call(rbind,x)
+          }))
 
           # Summary for loci and populations
           smryLoci <- summary(results_gtype) # Not sure what results should be added
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
           })
+
+
+          ############ START HERE ######################
 
 
           # Nucleotide and percent within strata divergence
@@ -236,8 +278,6 @@ function(params){
 
         }
 
-
-        ############ START HERE ######################
 
 ###########################  Pairwise  ###########################
 
