@@ -104,7 +104,7 @@ params<- new("skeleSim.params")
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
 #params@rep.result is either a genind <results_genind> or a list of DNAbin objects ,results_gtypes
 # Can't be x.g, that's a gtypes:  params@rep.result <- x.g
-params@rep.result <- x.g
+params@rep.sample <- x.g
 
 # multigene start here set parameters
 results_gtype <- x.g
@@ -388,7 +388,9 @@ curr_rep<-1
 num_loci <- nLoc(nancycats)
 num_reps <- 5
 num_pops <- nPop(nancycats)
+params@rep.sample <- nancycats
 
+results_gtype <- genind2gtypes(nancycats)
 #After genind2gtypes for results_gtype
 nLoc(results_gtype)
 nStrata(results_gtype)

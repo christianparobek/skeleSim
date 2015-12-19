@@ -9,19 +9,18 @@ function(params){
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
-  genes <- locNames(params@rep.result) #will this work before it's converted to gtypes?
 
-  #params@rep.result is either a genind or a list of DNAbin objects
-  if(inherits(params@rep.result, "genind")){
-    results_gtype<-genind2gtypes(params@rep.result)
-    } else if (inherits(params@rep.result, "gtypes")){  #should -> "DNAbin"? and first do new("multidna", list(sequences)) and sequence2gtypes(new("multidna"...))
-      results_gtype <- params@rep.result
+  #params@rep.sample is either a genind or a list of DNAbin objects
+  if(inherits(params@rep.sample, "genind")){
+    results_gtype<-genind2gtypes(params@rep.sample)
+    } else if (inherits(params@rep.sample, "gtypes")){  #should -> "DNAbin"? and first do new("multidna", list(sequences)) and sequence2gtypes(new("multidna"...))
+      results_gtype <- params@rep.sample
     } else {
       # Convert the list of DNAbin objects to gtypes
-      genes <- params@rep.result$dna.seqs #the multidna object
+      genes <- params@rep.sample$dna.seqs #the multidna object
       names(genes@dna) <- paste("gene", 1:length(genes@dna))
       id <- genes@labels
-      df <- data.frame(id = id, strata = params@rep.result$strata)
+      df <- data.frame(id = id, strata = params@rep.sample$strata)
       gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
       colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
       df <- cbind(df, gene.labels)
@@ -76,9 +75,9 @@ function(params){
   if(params@analyses.requested["Locus"]){
 
 # genind
-        if(inherits(params@rep.result,"genind")){
+        if(inherits(params@rep.sample,"genind")){
 
-          results_genind<-params@rep.result
+          results_genind<-params@rep.sample
 
           #Hardy Weiberg test per population and overall (this comes first because it needs genind)
           pops_as_list<-seppop(results_genind)
@@ -149,7 +148,7 @@ function(params){
     # multiDNA
     # Per gene (ignoring population structure, and per gene by population)
 
-      if(inherits(params@rep.result,c("multidna","gtypes")){
+      if(inherits(params@rep.sample,c("multidna","gtypes"))){
 
           # by gene
           r.m.gene <- lapply(locNames(results_gtype), function(l){
@@ -213,14 +212,8 @@ function(params){
           t.d <- lapply(locNames(results_gtype), function(l){
             tajimasD(results_gtype[,l,])
           })
-          t.d.bind <- do.call(rbind,t.d)
-          #don't need names here, just D D_p.value
-          #names <- lapply(t.d, function(x){
-          #  paste(row.names(x),colnames(x),sep="_")
-          #})
-          #names1 <- do.call(c,names)
           t.d.results <- do.call(c,t.d)
-          # names(t.d.results) <- names1
+
           # by gene per population
           t.d.pop <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
@@ -230,37 +223,65 @@ function(params){
           t.d.pop.bind <- do.call(rbind, lapply(t.d.pop, function(x){
             do.call(rbind,x)
           }))
+          t.d.all <- rbind(t.d.results, t.d.pop.bind)
 
           # Summary for loci and populations
-          smryLoci <- summary(results_gtype) # Not sure what results should be added
+          # Start Here - need summary for gene1 and gene2 not for pop1 and pop2??right
+          smryLoci.gene <- lapply(locNames(results_gtype), function(l){
+            summary(results_gtype[,l,])
+          })
+
+          smryLoci <- summary(results_gtype)
+          smryLoci$strata.smry
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
           })
 
-
-          ############ START HERE ######################
-
+          smryLP <- rbind(smryLoci$strata.smry, do.call(rbind, smryPop))
 
           # Nucleotide and percent within strata divergence
+          # gene by population
           dA <- nucleotideDivergence(results_gtype)
-          names.dA <- lapply(dA,function(x){
-            expand.grid(row.names(x$within),colnames(x$within))
-          })
-          dA.names <- lapply(names.dA,function(x){
-            apply(x, 1, function(y) paste(y, collapse = "."))
-          })
+          dA.names <- colnames(dA[[1]]$within)
+          dA.pop <- do.call(rbind, lapply(1:length(dA), function(i){
+            rbind(dA[[i]]$within)
+          }))
 
-          do.call(cbind, dA.names)
-          # Overall, loci per gene, genes = locNames
-          dA.list <- sapply(genes, USE.NAMES = TRUE, simplify = FALSE, function(x){
-            rbind(dA[[x]]$between,
-                  rep(NA, ncol(dA[[x]]$between)-ncol(dA[[x]]$within)))
+          dA.all <- rbind(NA,NA, dA.pop)
+
+          # More to do before can add
+          # num.private.alleles
+          hapFreqs <- lapply(locNames(results_gtype), function(l){
+            hapFreqs <- alleleFreqs(results_gtype[,l,], by.strata = TRUE)
+            by.loc <- sapply(hapFreqs, function(loc) {
+              mat <- loc[, "freq", ]
+              rowSums(apply(mat, 1, function(r) {
+                result <- rep(FALSE, length(r))
+                if(sum(r > 0) == 1) result[r > 0] <- TRUE
+                result
+                }))
+              })
+            colSums(by.loc)
+          })
+          hapFreqs.pop <- do.call(rbind,hapFreqs)
+
+          #by gene
+          hapFreqs.gene <- lapply(locNames(results_gtype), function(l){
+            hapFreqs <- alleleFreqs(results_gtype[,l,], by.strata = FALSE)
+            by.loc <- sapply(hapFreqs, function(loc) {
+              mat <- loc[,"freq"] #no strata
+              mat[mat>0]<-1
+              sum(mat)
             })
+            sum(by.loc)
+          })
+          hapFreqs.gene <- do.call(rbind,hapFreqs.gene)
 
-          dA.all <- do.call(cbind, dA.list)
+          #Ne placeholder
 
-          results <- c(results,do.call(c,fu.fs),t.d.results)
-          analyses_names <- colnames(results)
+          #how to deal with nD?
+          results <- cbind(fu.fs.all,t.d.all,smryLP,dA.all)
+          analysis_names <- c("fusFs",colnames(t.d.all),colnames(smryLP),dA.names,"num.private.haps")
 
           # Create the data array first time through
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
@@ -273,31 +294,30 @@ function(params){
           }
 
           params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
+      }
 
 
+    ###########################  Pairwise  ###########################
 
-        }
+    if(params@analyses.requested["Pairwise"]){
 
+      ############ START HERE ######################
 
-###########################  Pairwise  ###########################
+      # genind
 
-if(params@analyses.requested["Pairwise"]){
+      if(inherits(params@rep.sample, "genind")){
 
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
 
-        #dA, mean.pct.between
-
-
-        ###Should be able to remove these two lines for the next block to deal with any possible multiDNA objects
-        #pws <- pairwiseTest(results_gtype, nrep = 5,stat.list = list(statGst), quietly = TRUE)
-        #pws[1]$result[,-c(2:5)] # assuming the 2nd through 5th column remain strata.1, strata.2, n.1, and n.2
-
-        #Pairwise Chi2, Fst, PHIst
-        pws.multi <- sapply(locNames(results_gtype), function(g){
-          gene_gtype <- results_gtype[,g,]
-          pairwiseTest(gene_gtype, nrep =5, keep.null=TRUE)
+        #testing nancycats - find and remove the NA locus
+        sapply(locNames(results_gtype), function(l){
+          results_gtype[,l,]
         })
+
+
+        pairwiseTest(gene_gtype, nrep =5, keep.null=TRUE)
+        # with nancycats example containing missing data: use poppr::missingno??
         pws.mulit[1]$result[,-c(2:5)] #removing strata.1, strata.2, n.1, n.2
 
         #Genotype data
@@ -355,7 +375,7 @@ if(inherits(params@rep.sample,"multidna")){
 
 }
 
-if(inherits(rep.result,"DNAbin"))
+if(inherits(rep.sample,"DNAbin"))
 
    if(pairwisepop = TRUE){
 
