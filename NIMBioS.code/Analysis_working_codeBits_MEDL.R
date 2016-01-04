@@ -278,6 +278,10 @@ str(smsat)
 ?combn
 combn(1:3, 2)
 combn(1:9, 2)
+length(data.frame(combn(1:17,2)))
+
+
+length(data.frame(combn(1:num_pops,2)))
 
 ## each run of the simulation would produce a new matrix from
 # such analayses as pairwiseTest to array
@@ -382,21 +386,52 @@ length(msats@loci)
 params<- new("skeleSim.params")
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
 data(nancycats)
-params@rep.result <- nancycats
 curr_scn<-1
 curr_rep<-1
 num_loci <- nLoc(nancycats)
 num_reps <- 5
 num_pops <- nPop(nancycats)
 params@rep.sample <- nancycats
+ploidy(nancycats)
+
+#pairwise didn't work:
+
+
+
+
+# with nancycats example containing missing data: use poppr::missingno??
+pws.mulit[1]$result[,-c(2:5)] #removing strata.1, strata.2, n.1, n.2
+
+#Genotype data
+pws <- pairwiseTest(results_gtype, nrep = 5, stat.list = list(statGst, quietly = TRUE))
+pws.out <- pws$result[-c(2:5)]
+# rownames(pws.out) <- as.matrix(pws[[1]][1])  # could turn into row names at the end.. but they'll be repeated
+sA <- sharedAlleles(results_gtype)[,-c(1:2)]
+nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
+names(sA) <- nsharedAlleles
+pws.out <- cbind(pws.out, sA)
+params@analysis.results[[curr_scn]] <- pws.outS
+}
+
 
 results_gtype <- genind2gtypes(nancycats)
 #After genind2gtypes for results_gtype
 nLoc(results_gtype)
 nStrata(results_gtype)
+strata(results_gtype)
 nInd(results_gtype)
 ploidy(results_gtype)
 results_gtype[,"fca8",]
+
+#Zhian's example
+data(microbov)
+microbov
+foo.gtype <- genind2gtypes(microbov)
+foo.gtype
+
+results_gtype <- foo.gtype
+ploidy(microbov)
+
 
 ###################### troubleshooting
 nancycats
@@ -1005,6 +1040,91 @@ for(group in names(which(params@analyses.requested))){
 
 
 ################################################## October 2015 - end
+
+    ## Removed from analysis_funcs.R January 4, 2016 ######################
+    #######################################################################
+
+    ##### Will need to be in loop
+    # params@num.pops <- the number of rows, pops or pairwise or loci plus overall
+    # nrep <- the number of replicates
+    # dimension names will come from the choice of pairwise, by
+    #   by population, by loci, or whatever
+
+
+    sim.data.analysis <- array(0, dim = c(length(names), length(analyses), nrep),
+                               dimnames = list(names, analyses, 1:nrep))
+
+
+
+
+    ### loading function
+    # This gets called and knows which row (so z spot) matchs the current
+    #   scenario and replicate
+    ########### multiDNA to gtypes
+    if(inherits(params@rep.sample,"multidna")){
+      genes <- rep.sample$dna.seqs
+      names(genes@dna) <- paste("gene", 1:length(genes@dna))
+      id <- genes@labels
+      df <- data.frame(id = id, strata = rep.sample[[1]], hap = id)
+      rep.sample.gtypes <- df2gtypes(df, 1)
+
+    }
+
+    if(inherits(rep.sample,"DNAbin"))
+
+      if(pairwisepop = TRUE){
+
+        npp <- combn(1:params@num.pops, 2)
+        names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
+      } else if (pairwiselocus = TRUE){
+        # for pairwise loci, take number of loci = nloc
+        npl <- combn(1:nloc, 2)
+        names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
+      } else if(bypop = TRUE){
+        # for simple populations
+        names <-  c("overall", 1:params@num.pops)
+      } else {
+        # for loci
+        names <- c("overall", 1:nloc)
+      }
+    #####################################################################
+
+    # testing ones
+    analyses <- c("allel","Freq","prop")
+    nrep <- 5
+
+
+    #####################################################################
+
+    # "all.data" needs to be merged into one matrix per replicate
+    ### Global, Genotypes
+    # Chi2, D, Fst, F'st, Gst, G'st, G''st, P-vals for each
+    ovl <- overallTest(simdata, nrep = 5, stat.list = statList("chi2"), quietly = TRUE)
+    global <- t(ovl$result)
+    pnam <- c()
+    for(i in 1:length(colnames(global))){
+      pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
+    }
+    global.wide <- c(global[1,],global[2,])
+    names(global.wide) <- c(colnames(global),pnam)
+
+
+    ############################################################################
+
+    for(i in 1:params@num.reps){
+      sim.data.analysis[,,i] <- matrix(all.data)
+    }
+
+    ###########################################################################
+
+
+
+
+
+
+
+
+
 
 
 

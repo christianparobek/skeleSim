@@ -67,10 +67,9 @@ function(params){
 
     params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
   }
-}
 
 
-        ################################### LOCUS ######################################
+        ######################### LOCUS ############################
 
   if(params@analyses.requested["Locus"]){
 
@@ -227,17 +226,19 @@ function(params){
 
           # Summary for loci and populations
           # Start Here - need summary for gene1 and gene2 not for pop1 and pop2??right
+          # need strata.smry data, not sequence summary...
           smryLoci.gene <- lapply(locNames(results_gtype), function(l){
-            summary(results_gtype[,l,])
+            summary(results_gtype[,l,])$seq.smry
           })
 
-          smryLoci <- summary(results_gtype)
-          smryLoci$strata.smry
+          smryLoci <- do.call(rbind,smryLoci.gene)
+
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
           })
 
-          smryLP <- rbind(smryLoci$strata.smry, do.call(rbind, smryPop))
+          #Loci over all populations, loci 1 per population, loci 2 per population...
+          smryLP <- rbind(smryLoci, do.call(rbind, smryPop))
 
           # Nucleotide and percent within strata divergence
           # gene by population
@@ -295,13 +296,12 @@ function(params){
 
           params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
       }
+  }
 
 
-    ###########################  Pairwise  ###########################
+        ######################### Pairwise ##########################
 
-    if(params@analyses.requested["Pairwise"]){
-
-      ############ START HERE ######################
+  if(params@analyses.requested["Pairwise"]){
 
       # genind
 
@@ -311,113 +311,61 @@ function(params){
         #Pairwise Chi2, D, F..., G...
 
         #testing nancycats - find and remove the NA locus
-        sapply(locNames(results_gtype), function(l){
-          results_gtype[,l,]
+        split.foo <- sapply(locNames(results_gtype), function(l){
+          if(summary(results_gtype[,l,])$locus.smry[3] == 0){
+            1
+          } else {
+            0
+          }
         })
 
+        summary(results_gtype[,4,])$allele.freqs
+        summary(results_gtype[,4,])$locus.smry
 
-        pairwiseTest(gene_gtype, nrep =5, keep.null=TRUE)
-        # with nancycats example containing missing data: use poppr::missingno??
-        pws.mulit[1]$result[,-c(2:5)] #removing strata.1, strata.2, n.1, n.2
+        results_gtype_narm <- results_gtype[,locNames(results_gtype) != "fca45",]
+        ############ START HERE ######################
+        # fca45 has NaN for nancycats
+        # using microbov excample
 
-        #Genotype data
-        pws <- pairwiseTest(results_gtype, nrep = 5, stat.list = list(statGst, quietly = TRUE))
-        pws.out <- pws$result[-c(2:5)]
-        # rownames(pws.out) <- as.matrix(pws[[1]][1])  # could turn into row names at the end.. but they'll be repeated
-        sA <- sharedAlleles(results_gtype)[,-c(1:2)]
-        nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
-        names(sA) <- nsharedAlleles
-        pws.out <- cbind(pws.out, sA)
+        pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)
+        pws[1]$result #PHist + p.vals always NA
+        sts <- c("pair.label","Chi2","Chi2.p.val","Fst","Fst.p.val","PHIst","PHIst.p.val")
+        pws.sts <- pws[1]$result[sts]
+        pws.sts$pair.label <- gsub("\\s*\\([^\\)]+\\)","",as.character(pws.sts$pair.label))
+        pws.sts$strata.1 <- gsub(" .*$", "", as.character(pws.sts$pair.label))
+        pws.sts$strata.2 <- gsub(".*v.","", as.character(pws.sts$pair.label))
+
+        #pairwise order differs from pws.sts
+        sA <- sharedAlleles(results_gtype)
+
+        #chord.dist
+        results_hierfstat <- genind2hierfstat(params@rep.sample)
+        chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
+        nrow(as.data.frame(as.table(chord.dist)))
+
+        psw.out <- cbind(pws.sts[with(pws.sts, order(strata.1,strata.2)),],
+                         sA[with(sA,order(strata.1,strata.2)),])
+        psw.out[,grep("strata", names(psw.out), invert=TRUE)]
         params@analysis.results[[curr_scn]] <- pws.outS
-      }
+
+        analysis_names <- names(psw.out[-1])
 
       #Data.frame of summary data into simulation replicate
+        # Create the data array first time through
+        if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
+          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(length(data.frame(combn(1:num_pops,2))),
+                                                                           length(analysis_names),
+                                                                           num_reps),
+                                                                  dimnames = list(1:length(data.frame(combn(1:num_pops,2))),
+                                                                                  analysis_names,
+                                                                                  1:num_reps))
+        }
 
-      # Enter array of data into the current scenario
-      params@analysis.results[[curr_scn]] <- data.cube
+        params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
 
-
+      }
+  params
     }
-
   }
 
-  params
 
-}
-
-
-
-
-
-##### Will need to be in loop
-# params@num.pops <- the number of rows, pops or pairwise or loci plus overall
-# nrep <- the number of replicates
-# dimension names will come from the choice of pairwise, by
-#   by population, by loci, or whatever
-
-
-sim.data.analysis <- array(0, dim = c(length(names), length(analyses), nrep),
-                           dimnames = list(names, analyses, 1:nrep))
-
-
-
-
-### loading function
-# This gets called and knows which row (so z spot) matchs the current
-#   scenario and replicate
-########### multiDNA to gtypes
-if(inherits(params@rep.sample,"multidna")){
-  genes <- rep.sample$dna.seqs
-  names(genes@dna) <- paste("gene", 1:length(genes@dna))
-  id <- genes@labels
-  df <- data.frame(id = id, strata = rep.sample[[1]], hap = id)
-  rep.sample.gtypes <- df2gtypes(df, 1)
-
-}
-
-if(inherits(rep.sample,"DNAbin"))
-
-   if(pairwisepop = TRUE){
-
-     npp <- combn(1:params@num.pops, 2)
-     names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
-   } else if (pairwiselocus = TRUE){
-     # for pairwise loci, take number of loci = nloc
-     npl <- combn(1:nloc, 2)
-     names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
-   } else if(bypop = TRUE){
-     # for simple populations
-     names <-  c("overall", 1:params@num.pops)
-   } else {
-     # for loci
-     names <- c("overall", 1:nloc)
-   }
-   #####################################################################
-
-   # testing ones
-   analyses <- c("allel","Freq","prop")
-   nrep <- 5
-
-
-   #####################################################################
-
-   # "all.data" needs to be merged into one matrix per replicate
-   ### Global, Genotypes
-   # Chi2, D, Fst, F'st, Gst, G'st, G''st, P-vals for each
-   ovl <- overallTest(simdata, nrep = 5, stat.list = statList("chi2"), quietly = TRUE)
-   global <- t(ovl$result)
-   pnam <- c()
-   for(i in 1:length(colnames(global))){
-     pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
-   }
-   global.wide <- c(global[1,],global[2,])
-   names(global.wide) <- c(colnames(global),pnam)
-
-
-   ############################################################################
-
-   for(i in 1:params@num.reps){
-     sim.data.analysis[,,i] <- matrix(all.data)
-   }
-
-   ###########################################################################
