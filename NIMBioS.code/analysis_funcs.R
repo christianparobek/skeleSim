@@ -2,6 +2,7 @@ function(params){
 
   stopifnot(require(strataG))
   stopifnot(require(pegas))
+  stopifnot(require(hierfstat))
 
   # saving global variables
   curr_scn<-params@current.scenario
@@ -39,8 +40,8 @@ function(params){
 
   if(params@analyses.requested["Global"]){
 
-    #Don't need this, it's a global variable
-    # num_loci <- nLoc(results_gtype)
+    # multiDNA
+    if(inherits(params@rep.sample,c("multidna","gtypes"))){
 
     #overall_stats() is from skeleSim.funcs.R
     #run by locus analysis across all populations
@@ -57,16 +58,42 @@ function(params){
     # The first row will hold summary statistics over all loci regardless of population structure.
     # The remaining rows will hold summary statistics per locus
     if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci,
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
                                                                        num_analyses,
                                                                        num_reps),
-                                                               dimnames = list(c(1:num_loci),
+                                                               dimnames = list(c(1:num_loci+1),
                                                                                analyses,
                                                                                1:num_reps))
     }
 
     params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
-  }
+    }
+
+    if(inherits(params@rep.sample, "genind")){
+
+      ovl <- lapply(locNames(results_gtype), function(l){
+        overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
+      })
+      #format row per locus not all in a line!
+      ovl.all <-do.call(rbind, ovl)
+      ovl.all.wide <-as.data.frame(as.table(ovl.all))
+      ovl.analyses <- do.call(paste, c(ovl.all.wide[,1:2], sep="."))
+      ovl.all.w <- t(ovl.all.wide)
+
+
+        if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+        params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
+                                                                         num_analyses,
+                                                                         num_reps),
+                                                                 dimnames = list(c(1:num_loci+1),
+                                                                                 analyses,
+                                                                                 1:num_reps))
+      }
+
+      params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
+    }
+
+    }
 
 
         ######################### LOCUS ############################

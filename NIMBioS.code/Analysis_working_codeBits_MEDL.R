@@ -433,6 +433,7 @@ results_gtype <- foo.gtype
 ploidy(microbov)
 
 
+
 ###################### troubleshooting
 nancycats
 g <- genind2gtypes(nancycats)
