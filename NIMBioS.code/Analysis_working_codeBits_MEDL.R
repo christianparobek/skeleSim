@@ -223,6 +223,24 @@ if(inherits(params@rep.result,"multidna")){
   analyses <- length(results)
 }
 
+## out 1/5/2016
+results.list.names.gene <- Map(function(gene,names) paste(gene, names(names), sep="_"),
+                               locNames(results_gtype),
+                               r.m.gene)
+results.gene <- do.call(c,r.m.gene)
+names(results.gene) <- do.call(c,results.list.names.gene)
+
+# by population
+results.list.names <- lapply(1:length(strataNames(results_gtype)), function(x){
+  Map(function(gene,names) paste(gene, names(names), sep="_"),
+      locNames(results_gtype),
+      r.m[[x]])
+})
+
+rln.bind <- do.call(c, lapply(results.list.names, function(x){
+  do.call(c,x)
+}))
+
 
 
 nucleotideDiversity(results_gtype[,locNames(results_gtype)[1],])
@@ -393,6 +411,21 @@ num_reps <- 5
 num_pops <- nPop(nancycats)
 params@rep.sample <- nancycats
 ploidy(nancycats)
+results_gtype<-genind2gtypes(params@rep.sample)
+
+sapply(locNames(results_gtype), function(l){
+  if(is.nan(overallTest(results_gtype[,l,], nrep=5, stat.list = statList("chi2"), quietly=TRUE)$result)){
+    0
+  } else {
+    overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
+  }
+})
+
+ovl.all.names <- lapply(ovl.all, function(x){
+  x$name <- paste(x$Var1,x$Var2,sep="_")
+  x[,-c(1:3)]
+})
+
 
 #pairwise didn't work:
 
@@ -753,6 +786,8 @@ wood.g
 gene1 <- wood.g[, "gene1", ]
 gene1.dnabin <- getSequences(sequences(gene1))
 class(gene1.dnabin)
+
+
 
 #genind create
 #rep$sample will either be a list or a genind

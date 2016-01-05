@@ -74,14 +74,18 @@ function(params){
       ovl <- lapply(locNames(results_gtype), function(l){
         overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
       })
-      #format row per locus not all in a line!
-      ovl.all <-do.call(rbind, ovl)
-      ovl.all.wide <-as.data.frame(as.table(ovl.all))
-      ovl.analyses <- do.call(paste, c(ovl.all.wide[,1:2], sep="."))
-      ovl.all.w <- t(ovl.all.wide)
 
+      ovl.all <- lapply(ovl, function(x){
+        as.data.frame(as.table(x))
+        })
 
-        if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      ovl.all.values <- lapply(ovl.all, function(x){
+        x[,-c(1:2)]
+        })
+      ovl.all.names <- paste(ovl.all[[1]]$Var1, ovl.all[[1]]$Var2,sep="_")
+      ovl.all.out <- do.call(rbind, ovl.all.values)
+
+      if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
         params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
                                                                          num_analyses,
                                                                          num_reps),
@@ -139,8 +143,8 @@ function(params){
           smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
 
 
-          ################# Convert from genind to loci (package pegas))
-          #Allan, Sean and I decided that a workable alternative to Fis estimation below is to use:   Fis = 1-(Ho/He) since we already have obs.He and exp.He is the results
+          # Convert from genind to loci (package pegas))
+          #Fis estimation:   Fis = 1-(Ho/He)
           results_loci<-genind2loci(results_genind)
           #for loci
           FSTloci<-Fst(results_loci)
@@ -178,40 +182,21 @@ function(params){
 
           # by gene
           r.m.gene <- lapply(locNames(results_gtype), function(l){
-            nucleotideDiversity(results_gtype[,l,]@sequences)
+            mean(nucleotideDiversity(results_gtype[,l,]@sequences))
           })
-          results.list.names.gene <- Map(function(gene,names) paste(gene, names(names), sep="_"),
-                                         locNames(results_gtype),
-                                         r.m.gene)
-          results.gene <- do.call(c,r.m.gene)
-          names(results.gene) <- do.call(c,results.list.names.gene)
+          nD <- do.call(rbind, r.m.gene)
+
 
           # by gene per popualation "strata"
           r.m <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
-            nucleotideDiversity(results_gtype[,l,s]@sequences)
+            mean(nucleotideDiversity(results_gtype[,l,s]@sequences))
             })
           })
-
           r.m.bind <- do.call(c, lapply(r.m, function(x){
             do.call(c,x)
           }))
-
-          results.list.names <- lapply(1:length(strataNames(results_gtype)), function(x){
-            Map(function(gene,names) paste(gene, names(names), sep="_"),
-                locNames(results_gtype),
-                r.m[[x]])
-          })
-
-          rln.bind <- do.call(c, lapply(results.list.names, function(x){
-            do.call(c,x)
-             }))
-
-          results <- r.m.bind
-          #names(results) <- rln.bind
-
-          nD <- rbind(results.gene, results)
-
+          nD.all <- c(nD, r.m.bind)
 
           #fusFs
           ### Warning: Some sequences could not be unambiguously assigned to a haplotype
@@ -224,8 +209,12 @@ function(params){
           #by population for each strataNames(results_gtype) and results_gtype[,,pops]
           fu.fs.pop <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
+              if(is.null(fusFs(results_gtype[,l,s]))){
+                NA
+              } else {
               fusFs(results_gtype[,l,s])
-            })
+            }
+              })
           })
           fu.fs.results.pop <- do.call(rbind, lapply(fu.fs.pop, function(x){
             do.call(rbind,x)
@@ -238,7 +227,7 @@ function(params){
           t.d <- lapply(locNames(results_gtype), function(l){
             tajimasD(results_gtype[,l,])
           })
-          t.d.results <- do.call(c,t.d)
+          t.d.results <- do.call(rbind,t.d)
 
           # by gene per population
           t.d.pop <- lapply(strataNames(results_gtype), function(s){
@@ -255,7 +244,7 @@ function(params){
           # Start Here - need summary for gene1 and gene2 not for pop1 and pop2??right
           # need strata.smry data, not sequence summary...
           smryLoci.gene <- lapply(locNames(results_gtype), function(l){
-            summary(results_gtype[,l,])$seq.smry
+            summary(results_gtype[,l,])#$seq.smry
           })
 
           smryLoci <- do.call(rbind,smryLoci.gene)
@@ -263,8 +252,9 @@ function(params){
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
           })
-
-          #Loci over all populations, loci 1 per population, loci 2 per population...
+          smryPop.all <- do.call(rbind, smryPop)
+          summary.analyses <- dimnames(smryPop.all)[[2]]
+          #Loci over all populations, locus 1 per population, locus 2 per population...
           smryLP <- rbind(smryLoci, do.call(rbind, smryPop))
 
           # Nucleotide and percent within strata divergence
@@ -275,11 +265,13 @@ function(params){
             rbind(dA[[i]]$within)
           }))
 
-          dA.all <- rbind(NA,NA, dA.pop)
+          geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+          dA.all <- rbind(geneNAs, dA.pop)
 
-          # More to do before can add
+
           # num.private.alleles
-          hapFreqs <- lapply(locNames(results_gtype), function(l){
+          hapFreqs <- lapply(strataNames(results_gtype), function(s){
+            lapply(locNames(results_gtype), function(l){
             hapFreqs <- alleleFreqs(results_gtype[,l,], by.strata = TRUE)
             by.loc <- sapply(hapFreqs, function(loc) {
               mat <- loc[, "freq", ]
@@ -290,6 +282,7 @@ function(params){
                 }))
               })
             colSums(by.loc)
+            })
           })
           hapFreqs.pop <- do.call(rbind,hapFreqs)
 
@@ -304,12 +297,16 @@ function(params){
             sum(by.loc)
           })
           hapFreqs.gene <- do.call(rbind,hapFreqs.gene)
+          num.pri.haps <- rbind(hapFreqs.gene, hapFreqs.pop)
 
           #Ne placeholder
 
           #how to deal with nD?
+          # make sure nucleotide Divergence is right and add or keep names below
+          # to do start here
           results <- cbind(fu.fs.all,t.d.all,smryLP,dA.all)
-          analysis_names <- c("fusFs",colnames(t.d.all),colnames(smryLP),dA.names,"num.private.haps")
+          analysis_names <- c("nucloetide.diversity", "Fu.F",colnames(t.d.all),summary.analyses,
+                              "nucleotide.divergence","mean.pct.within","num.private.haps", "Ne")
 
           # Create the data array first time through
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
@@ -336,8 +333,6 @@ function(params){
 
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
-
-        #testing nancycats - find and remove the NA locus
         split.foo <- sapply(locNames(results_gtype), function(l){
           if(summary(results_gtype[,l,])$locus.smry[3] == 0){
             1
@@ -373,7 +368,6 @@ function(params){
         psw.out <- cbind(pws.sts[with(pws.sts, order(strata.1,strata.2)),],
                          sA[with(sA,order(strata.1,strata.2)),])
         psw.out[,grep("strata", names(psw.out), invert=TRUE)]
-        params@analysis.results[[curr_scn]] <- pws.outS
 
         analysis_names <- names(psw.out[-1])
 
@@ -389,6 +383,26 @@ function(params){
         }
 
         params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
+
+      }
+
+
+    if(inherits(params@rep.sample, c("multidna","gtypes"))){
+
+      #nucleotide Divergence and mean.pct.between
+      dA <- nucleotideDivergence(results_gtype)
+      dA.between <- lapply(dA, function(x){
+        x$between
+      })
+      dA.all <- do.call(rbind,dA.between)
+
+      #Chi2, Fst, PHist
+      psw <- pairwiseTest(results_gtype,nrep = 5,stat.list = list(statGst),
+                          quietly = TRUE)$result[-c(1:6,8:9,12:21)]
+
+      # shared haps
+      sA <- sharedAlleles(results_gtype)
+
 
       }
   params
