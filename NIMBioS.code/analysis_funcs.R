@@ -28,6 +28,10 @@ function(params){
       results_gtype <- df2gtypes(df, 1)
     }
 
+
+  loc_names <- locNames(results_gtype)
+  strata_names <- strataNames(results_gtype)
+
   # If analysis results is empty, the first analysis done creates the list to hold the data
   if(is.null(params@analysis.results)){
     params@analysis.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
@@ -107,16 +111,21 @@ function(params){
 # genind
         if(inherits(params@rep.sample,"genind")){
 
-          results_genind<-params@rep.sample
+          #Hardy Weinberg, per locus over populations, per locus per population
+          strataSplit(results_gtype)
+          locus <- hweTest(results_gtype)
+          locus.pop <- lapply(strataSplit(results_gtype), function(s){
+            hw <- hweTest(s)
+            missingloc <- setdiff(loc_names, names(hw))
+            hw[missingloc] <- NA
+            hw
+            })
+          hwe.pval <- do.call(rbind,lapply(locus.pop, function(x) x[match(names(locus.pop[[1]]), names(x))]))
 
-          #Hardy Weiberg test per population and overall (this comes first because it needs genind)
-          pops_as_list<-seppop(results_genind)
-          hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
-          hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
-          colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
           #mratio on gtypes object, function needs genetic data as a gtype
           mrat_results_all<-calc.mratio(results_gtype)
+          matrix(mrat_results_all,num_pops,num_loci)
 
           #by locus, all the other stats (num alleles etc) pulled from summarizeLoci
           smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))

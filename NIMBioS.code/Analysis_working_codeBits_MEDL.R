@@ -896,6 +896,17 @@ hw.test(genindobj, B = 0)
 
 
 
+
+results_genind<-params@rep.sample
+
+#Hardy Weiberg test per population and overall (this comes first because it needs genind)
+pops_as_list<-seppop(results_genind)
+hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
+hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
+colnames(hw_results.all)<-c("HWE.df","HWE.pval")
+
+
+
 # Some data about loci
 summary(msats)$locus.smry
 
