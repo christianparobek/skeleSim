@@ -112,7 +112,6 @@ function(params){
         if(inherits(params@rep.sample,"genind")){
 
           #Hardy Weinberg, per locus over populations, per locus per population
-          strataSplit(results_gtype)
           locus <- hweTest(results_gtype)
           locus.pop <- lapply(strataSplit(results_gtype), function(s){
             hw <- hweTest(s)
@@ -121,20 +120,24 @@ function(params){
             hw
             })
           hwe.pval <- do.call(rbind,lapply(locus.pop, function(x) x[match(names(locus.pop[[1]]), names(x))]))
-
+          hwe.pval.pop <- as.data.frame(as.table(hwe.pval))
+          locus.t <- cbind(NA, names(locus), data.frame(locus))
+          names(locus.t) <- c("Pop","Locus","HWE.pval")
+          names(hwe.pval.pop) <- c("Pop","Locus","HWE.pval")
+          hwe <- rbind(locus.t,hwe.pval.pop)
 
           #mratio on gtypes object, function needs genetic data as a gtype
           mrat_results_all<-calc.mratio(results_gtype)
-          matrix(mrat_results_all,num_pops,num_loci)
 
           #by locus, all the other stats (num alleles etc) pulled from summarizeLoci
           smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))
-
           #by population
           locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
           smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
 
-          #Number of private alleles by locus- this should be moved to the skelesimFuncs
+          smry <- rbind(smryLoci[,-c(1:2)],smryPop[,-c(1:2)])
+
+          #Number of private alleles by locus
           alleleFreqs <- alleleFreqs(results_gtype, by.strata = TRUE)
           by.loc <- sapply(alleleFreqs, function(loc) {
             mat <- loc[, "freq", ]
@@ -148,26 +151,27 @@ function(params){
           perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
 
           #the rows will be have the private alleles for each population by locus
-          smryPop <- cbind(smryPop, as.vector(t(by.loc)))
-          smryLoci <- cbind(smryLoci, num.priv.all = perLocus)
-
+          num.priv.allele <- c(perLocus, as.data.frame(as.table(by.loc))[,3])
 
           # Convert from genind to loci (package pegas))
           #Fis estimation:   Fis = 1-(Ho/He)
-          results_loci<-genind2loci(results_genind)
+
+          results_loci<-genind2loci(params@rep.sample)
           #for loci
           FSTloci<-Fst(results_loci)
           Fisloci <- FSTloci[ , c("Fis")]
           Fitloci <- FSTloci[ , c("Fit")]
           Fstloci <- FSTloci[ , c("Fst")]
           #for pops
+          # Start Here - get by pop by locus
+          results_loci_pop <- genind2loci()
           FSTpop<-Fst(results_loci, pop = results_loci$population) #column with pop information#)
           Fispop <- FSTpop[ , c("Fis")]
           Fitpop <- FSTpop[ , c("Fit")]
           Fstpop <- FSTpop[ , c("Fst")]
 
           #all the analyses get bound here
-          locus.final <- cbind(rbind(smryLoci,smryPop),hw_results.all,mrat_results_all)
+          locus.final <- cbind(hwe,mrat_results_all,smry,num.priv.allele)
           analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
@@ -342,43 +346,17 @@ function(params){
 
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
-        split.foo <- sapply(locNames(results_gtype), function(l){
-          if(summary(results_gtype[,l,])$locus.smry[3] == 0){
-            1
-          } else {
-            0
-          }
-        })
+        pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)[1]$result
 
-        summary(results_gtype[,4,])$allele.freqs
-        summary(results_gtype[,4,])$locus.smry
-
-        results_gtype_narm <- results_gtype[,locNames(results_gtype) != "fca45",]
-        ############ START HERE ######################
-        # fca45 has NaN for nancycats
-        # using microbov excample
-
-        pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)
-        pws[1]$result #PHist + p.vals always NA
-        sts <- c("pair.label","Chi2","Chi2.p.val","Fst","Fst.p.val","PHIst","PHIst.p.val")
-        pws.sts <- pws[1]$result[sts]
-        pws.sts$pair.label <- gsub("\\s*\\([^\\)]+\\)","",as.character(pws.sts$pair.label))
-        pws.sts$strata.1 <- gsub(" .*$", "", as.character(pws.sts$pair.label))
-        pws.sts$strata.2 <- gsub(".*v.","", as.character(pws.sts$pair.label))
-
-        #pairwise order differs from pws.sts
         sA <- sharedAlleles(results_gtype)
 
         #chord.dist
         results_hierfstat <- genind2hierfstat(params@rep.sample)
         chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
-        nrow(as.data.frame(as.table(chord.dist)))
+        ch.dist <- as.data.frame(as.table(chord.dist))
 
-        psw.out <- cbind(pws.sts[with(pws.sts, order(strata.1,strata.2)),],
-                         sA[with(sA,order(strata.1,strata.2)),])
-        psw.out[,grep("strata", names(psw.out), invert=TRUE)]
-
-        analysis_names <- names(psw.out[-1])
+        locus.final <- cbind(pws[,-c(2:5)],sA[,-c(1:2)],chord_distance = ch.dist[,2])
+        analysis_names <- names(locus.final)
 
       #Data.frame of summary data into simulation replicate
         # Create the data array first time through
@@ -391,7 +369,7 @@ function(params){
                                                                                   1:num_reps))
         }
 
-        params@analysis.results[["Locus"]][[curr_scn]][,,curr_rep] <-  locus.final
+        params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  locus.final
 
       }
 

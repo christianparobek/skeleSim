@@ -446,6 +446,20 @@ pws.out <- cbind(pws.out, sA)
 params@analysis.results[[curr_scn]] <- pws.outS
 }
 
+pws.sts$pair.label <- gsub("\\s*\\([^\\)]+\\)","",as.character(pws.sts$pair.label))
+pws.sts$strata.1 <- gsub(" .*$", "", as.character(pws.sts$pair.label))
+pws.sts$strata.2 <- gsub(".*v.","", as.character(pws.sts$pair.label))
+
+sts <- c("pair.label","Chi2","Chi2.p.val",
+         "D" "Fst","Fst.p.val","F'st","G'st","G''st","PHIst","PHIst.p.val")
+
+
+psw.out <- cbind(pws.sts[with(pws.sts, order(strata.1,strata.2)),],
+                 sA[with(sA,order(strata.1,strata.2)),])
+psw.out[,grep("strata", names(psw.out), invert=TRUE)]
+
+#pairwise order differs from pws.sts
+
 
 results_gtype <- genind2gtypes(nancycats)
 #After genind2gtypes for results_gtype
