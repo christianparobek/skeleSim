@@ -14,20 +14,14 @@ function(params){
   #params@rep.sample is either a genind or a list of DNAbin objects
   if(inherits(params@rep.sample, "genind")){
     results_gtype<-genind2gtypes(params@rep.sample)
-    } else if (inherits(params@rep.sample, "gtypes")){  #should -> "DNAbin"? and first do new("multidna", list(sequences)) and sequence2gtypes(new("multidna"...))
+    } else if (inherits(params@rep.sample, "gtypes")){
       results_gtype <- params@rep.sample
-    } else {
-      # Convert the list of DNAbin objects to gtypes
-      genes <- params@rep.sample$dna.seqs #the multidna object
-      names(genes@dna) <- paste("gene", 1:length(genes@dna))
-      id <- genes@labels
-      df <- data.frame(id = id, strata = params@rep.sample$strata)
-      gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
-      colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
-      df <- cbind(df, gene.labels)
-      results_gtype <- df2gtypes(df, 1)
-    }
-
+      } else {
+        # Convert the list of DNAbin objects to gtypes
+        genes <- params@rep.sample
+        results_gtype <- sequence2gtypes(genes$dna.seqs, strata = genes$strata)
+        results_gtype <- labelHaplotypes(results_gtype)$gtype
+        }
 
   loc_names <- locNames(results_gtype)
   strata_names <- strataNames(results_gtype)

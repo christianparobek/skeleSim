@@ -115,18 +115,107 @@ num_loci <- nLoc(x.g)
 num_reps <- 5
 num_pops <- nStrata(x.g)
 
-
-
+## multigene example to use
+## Use test.g as a results_gtypes that is haploid
+# January 6, 2016
 ##############################################################
+
+params@rep.sample <- rep.result
+class(params@rep.sample)
+inherits(params@rep.sample, "gtypes")
+
+params <- new("skeleSim.params")
 genes <- rep.result$dna.seqs#the multidna object
+
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
+length(id)
 df <- data.frame(id = id, strata = rep.result[[1]])
 gene.labels <- matrix(id, nrow = length(id), ncol = getNumLoci(rep.result[[2]]))
 colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
 df <- cbind(df, gene.labels)
 test.g <- df2gtypes(df, 1, sequences = genes)
 summary(test.g)
+
+curr_scn<-1
+curr_rep<-1
+num_loci <- nLoc(test.g)
+num_reps <- 5
+num_pops <- nStrata(test.g)
+
+ploidy(test.g) #haploid
+
+results_gtype <- test.g
+labelHaplotypes(results_gtype)
+
+haps <- labelHaplotypes(results_gtype)
+haps$gtypes
+if(is.null(haps)){
+
+} #to get a NA object...
+results_gtype <- haps$gtypes
+
+############################################################
+
+############################################################
+# January 7, 2016
+genes.test <- list(rep.result$dna.seqs@dna[[1]], rep.result$dna.seqs@dna[[2]])
+multidna.test <- new("multidna", genes.test)
+plot(multidna.test, cex =0.2)
+genind.test <- multidna2genind(multidna.test) # and I lost the sequences... boo
+pop(genind.test) <- rep.result$strata
+results_gtype <- genind2gtypes(genind.test)
+ploidy(results_gtype)
+
+### was:
+genes <- params@rep.sample  #@dna   #$dna.seqs #the multidna object
+names(genes@dna) <- paste("gene", 1:length(genes@dna))
+id <- genes@labels
+df <- data.frame(id = id, strata = params@rep.sample$strata)
+gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+df <- cbind(df, gene.labels)
+results_gtype <- df2gtypes(df, 1)
+#label haplotypes
+haps <- labelHaplotypes(results_gtype)
+
+## use this multidna example!!!!
+### Eric gives me the answer..
+results_gtype <- sequence2gtypes(rep.result$dna.seqs, strata = rep.result$strata)
+results_gtype <- labelHaplotypes(results_gtype)$gtype # gets rid of unassigned...
+# something to return a reasonable NA object, what for a missing gene? for a population gone?
+is.null(results_gtype)
+
+
+
+
+df <- data.frame(id = id, strata = rep.result$strata)
+
+strata(multidna.test)
+multidna.test@strata
+
+params@rep.sample <- multidna.test
+# <https://nescent.github.io/popgenInfo/PopDiffSequenceData.html>
+
+df2gtypes(multidna.test)
+
+strata(x.g) <- c("A", "B")
+rep.result@strata
+
+genes <- params@rep.sample  #@dna   #$dna.seqs #the multidna object
+  names(genes) <- paste("gene", 1:length(params@genes@dna))
+names(genes@dna) <- paste("gene", 1:length(genes@dna))
+id <- genes@labels
+df <- data.frame(id = id, strata = params@rep.sample$strata)
+gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+df <- cbind(df, gene.labels)
+results_gtype <- df2gtypes(df, 1)
+#label haplotypes
+haps <- labelHaplotypes(results_gtype)
+
+
+##########################
 
 # to test in skeleSim.funcs overall_stats
 test.one <- results_gtype[,"gene_1",]

@@ -19,3 +19,5 @@ x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
 results_gtype <- x.g
+
+
