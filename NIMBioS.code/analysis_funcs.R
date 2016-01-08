@@ -187,17 +187,21 @@ function(params){
 
       if(inherits(params@rep.sample,c("multidna","gtypes"))){
 
-          # by gene
+        #Nucleotide diversity
+        # by gene, across populations
           r.m.gene <- lapply(locNames(results_gtype), function(l){
-            mean(nucleotideDiversity(results_gtype[,l,]@sequences))
+            nd <- nucleotideDiversity(results_gtype[,l,]@sequences)
+            nd[is.nan(nd)] <- NA
+            mean(nd, na.rm = TRUE)
           })
           nD <- do.call(rbind, r.m.gene)
-
 
           # by gene per popualation "strata"
           r.m <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
-            mean(nucleotideDiversity(results_gtype[,l,s]@sequences))
+            nd <- nucleotideDiversity(results_gtype[,l,s]@sequences)
+            nd[is.nan(nd)] <- NA
+            mean(nd, na.rm = TRUE)
             })
           })
           r.m.bind <- do.call(c, lapply(r.m, function(x){
@@ -205,9 +209,7 @@ function(params){
           }))
           nD.all <- c(nD, r.m.bind)
 
-          #fusFs
-          ### Warning: Some sequences could not be unambiguously assigned to a haplotype
-          #by gene
+        # Fu's Fs
           fu.fs <- lapply(locNames(results_gtype), function(l){
             fusFs(results_gtype[,l,])
           })
@@ -216,26 +218,23 @@ function(params){
           #by population for each strataNames(results_gtype) and results_gtype[,,pops]
           fu.fs.pop <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
-              if(is.null(fusFs(results_gtype[,l,s]))){
-                NA
-              } else {
               fusFs(results_gtype[,l,s])
-            }
               })
-          })
+            })
           fu.fs.results.pop <- do.call(rbind, lapply(fu.fs.pop, function(x){
             do.call(rbind,x)
           }))
 
           fu.fs.all <- rbind(fu.fs.results, fu.fs.results.pop)
 
-          # Tajimas D
+        # Tajimas D
           # by gene
           t.d <- lapply(locNames(results_gtype), function(l){
             tajimasD(results_gtype[,l,])
           })
           t.d.results <- do.call(rbind,t.d)
 
+        # Num samples, num missing, num alleles, percent unique alleles, heterozygosity
           # by gene per population
           t.d.pop <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
@@ -247,24 +246,29 @@ function(params){
           }))
           t.d.all <- rbind(t.d.results, t.d.pop.bind)
 
-          # Summary for loci and populations
+        # Summary for loci and populations
           # Start Here - need summary for gene1 and gene2 not for pop1 and pop2??right
           # need strata.smry data, not sequence summary...
           smryLoci.gene <- lapply(locNames(results_gtype), function(l){
-            summary(results_gtype[,l,])#$seq.smry
+            summary(results_gtype[,l,])$strata.smry
           })
 
           smryLoci <- do.call(rbind,smryLoci.gene)
+          ############ go away? NA instead?
+
+
+          smryLoci <- matrix(NA, num_loci, 5)
 
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
           })
           smryPop.all <- do.call(rbind, smryPop)
           summary.analyses <- dimnames(smryPop.all)[[2]]
-          #Loci over all populations, locus 1 per population, locus 2 per population...
-          smryLP <- rbind(smryLoci, do.call(rbind, smryPop))
 
-          # Nucleotide and percent within strata divergence
+          #Loci over all populations, locus 1 per population, locus 2 per population...
+          smryLP <- rbind(smryLoci,smryPop.all)
+
+        # Nucleotide and percent within strata divergence
           # gene by population
           dA <- nucleotideDivergence(results_gtype)
           dA.names <- colnames(dA[[1]]$within)
@@ -274,9 +278,10 @@ function(params){
 
           geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
           dA.all <- rbind(geneNAs, dA.pop)
+          dA.analyses <- dimnames(dA.all)[[2]]
 
 
-          # num.private.alleles
+        # num.private.alleles
           hapFreqs <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
             hapFreqs <- alleleFreqs(results_gtype[,l,], by.strata = TRUE)
@@ -311,9 +316,9 @@ function(params){
           #how to deal with nD?
           # make sure nucleotide Divergence is right and add or keep names below
           # to do start here
-          results <- cbind(fu.fs.all,t.d.all,smryLP,dA.all)
+          locus.final <- data.frame(nD.all,fu.fs.all,t.d.all,smryLP,dA.all[,1],num.pri.haps)
           analysis_names <- c("nucloetide.diversity", "Fu.F",colnames(t.d.all),summary.analyses,
-                              "nucleotide.divergence","mean.pct.within","num.private.haps", "Ne")
+                              "nucleotide.divergence","num.private.haps")
 
           # Create the data array first time through
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){

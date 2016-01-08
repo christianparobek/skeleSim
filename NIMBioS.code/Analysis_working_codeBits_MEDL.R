@@ -186,8 +186,19 @@ results_gtype <- labelHaplotypes(results_gtype)$gtype # gets rid of unassigned..
 # something to return a reasonable NA object, what for a missing gene? for a population gone?
 is.null(results_gtype)
 
-
-
+### rep.result still has errors
+data(dolph.seqs)
+dloop.haps <- cbind(dLoop = dolph.strata$id)
+rownames(dloop.haps) <- dolph.strata$id
+dloop.g <- new("gtypes", gen.data = dloop.haps, ploidy = 1,
+               schemes = strata.schemes, sequences = dolph.seqs,
+               strata = "fine")
+dloop.g
+dloop.g <- labelHaplotypes(dloop.g, "Hap.")$gtypes
+dloop.g
+results_gtype <- dloop.g
+num_loci <- nLoc(dloop.g)
+num_pops <- nStrata(dloop.g)
 
 df <- data.frame(id = id, strata = rep.result$strata)
 
