@@ -33,9 +33,6 @@ function(params){
 
         ######################### Global ##########################
 
-  # TO DO: Need an across all loci row if a genind object in addition to each loci Will need a different
-  # analysis.results format
-
   if(params@analyses.requested["Global"]){
 
     # multiDNA
@@ -190,18 +187,14 @@ function(params){
         #Nucleotide diversity
         # by gene, across populations
           r.m.gene <- lapply(locNames(results_gtype), function(l){
-            nd <- nucleotideDiversity(results_gtype[,l,]@sequences)
-            nd[is.nan(nd)] <- NA
-            mean(nd, na.rm = TRUE)
-          })
+            mean(nucleotideDiversity(results_gtype[,l,]@sequences),na.rm=TRUE)
+            })
           nD <- do.call(rbind, r.m.gene)
 
           # by gene per popualation "strata"
           r.m <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
-            nd <- nucleotideDiversity(results_gtype[,l,s]@sequences)
-            nd[is.nan(nd)] <- NA
-            mean(nd, na.rm = TRUE)
+            mean(nucleotideDiversity(results_gtype[,l,s]@sequences),na.rm=TRUE)
             })
           })
           r.m.bind <- do.call(c, lapply(r.m, function(x){
@@ -247,17 +240,12 @@ function(params){
           t.d.all <- rbind(t.d.results, t.d.pop.bind)
 
         # Summary for loci and populations
-          # Start Here - need summary for gene1 and gene2 not for pop1 and pop2??right
-          # need strata.smry data, not sequence summary...
-          smryLoci.gene <- lapply(locNames(results_gtype), function(l){
-            summary(results_gtype[,l,])$strata.smry
+          unstrat <- results_gtype
+          strata(unstrat) <- "Default"
+          smryLoci.gene <- lapply(locNames(unstrat), function(l){
+            summary(unstrat[,l,])$strata.smry
           })
-
           smryLoci <- do.call(rbind,smryLoci.gene)
-          ############ go away? NA instead?
-
-
-          smryLoci <- matrix(NA, num_loci, 5)
 
           smryPop <- lapply(locNames(results_gtype), function(l){
             summary(results_gtype[,l,], by.strata = TRUE)$strata.smry
@@ -276,7 +264,9 @@ function(params){
             rbind(dA[[i]]$within)
           }))
 
-          geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+          # START HERE - how to get strataPairs with no strata to get per gene??
+          dA.genes <- nucleotideDivergence(unstrat)[[1]]$within
+
           dA.all <- rbind(geneNAs, dA.pop)
           dA.analyses <- dimnames(dA.all)[[2]]
 

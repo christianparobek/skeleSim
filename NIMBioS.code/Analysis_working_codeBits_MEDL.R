@@ -145,6 +145,10 @@ num_pops <- nStrata(test.g)
 
 ploidy(test.g) #haploid
 
+smryLoci <- matrix(NA, num_loci, 5)
+
+geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+
 results_gtype <- test.g
 labelHaplotypes(results_gtype)
 
@@ -188,6 +192,16 @@ is.null(results_gtype)
 
 ### rep.result still has errors
 data(dolph.seqs)
+data("dolph.strata")
+gene1 <- as.DNAbin(lapply(dolph.seqs, function(x) x[1:200]))
+gene2 <- as.DNAbin(lapply(dolph.seqs, function(x) x[-c(1:200)]))
+split.seqs <- as.multidna(list(gene1 = gene1, gene2 = gene2))
+strata <- dolph.strata$fine
+names(strata) <- dolph.strata$id
+g <- sequence2gtypes(split.seqs, strata = strata)
+results_gtype <- labelHaplotypes(g)$gtypes
+
+##############
 dloop.haps <- cbind(dLoop = dolph.strata$id)
 rownames(dloop.haps) <- dolph.strata$id
 dloop.g <- new("gtypes", gen.data = dloop.haps, ploidy = 1,
