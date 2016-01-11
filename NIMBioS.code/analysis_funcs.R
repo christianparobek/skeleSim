@@ -191,7 +191,7 @@ function(params){
             })
           nD <- do.call(rbind, r.m.gene)
 
-          # by gene per popualation "strata"
+          # by gene per popualation "strata" - pop1:gene1, pop1:gene2, pop2....
           r.m <- lapply(strataNames(results_gtype), function(s){
             lapply(locNames(results_gtype), function(l){
             mean(nucleotideDiversity(results_gtype[,l,s]@sequences),na.rm=TRUE)
@@ -256,16 +256,22 @@ function(params){
           #Loci over all populations, locus 1 per population, locus 2 per population...
           smryLP <- rbind(smryLoci,smryPop.all)
 
-        # Nucleotide and percent within strata divergence
+        # Nucleotide and percent within strata divergence, mean percent within
           # gene by population
+          #mean.pct.within
           dA <- nucleotideDivergence(results_gtype)
           dA.names <- colnames(dA[[1]]$within)
           dA.pop <- do.call(rbind, lapply(1:length(dA), function(i){
             rbind(dA[[i]]$within)
           }))
 
-          # START HERE - how to get strataPairs with no strata to get per gene??
+          # do we want dA in locus, doesn't make sense.
+          colnames(dA[[2]]$between)
+
+          # nucleotide divergence is pairwise between and within strata. Cannot use unstratified.
           dA.genes <- nucleotideDivergence(unstrat)[[1]]$within
+          geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+          dA.all <- rbind(geneNAs, dA.pop)
 
           dA.all <- rbind(geneNAs, dA.pop)
           dA.analyses <- dimnames(dA.all)[[2]]

@@ -240,6 +240,21 @@ results_gtype <- df2gtypes(df, 1)
 haps <- labelHaplotypes(results_gtype)
 
 
+
+
+# multiDNA example with two genes
+data(dolph.seqs)
+data(dolph.strata)
+
+gene1 <- as.DNAbin(lapply(dolph.seqs, function(x) x[1:200]))
+gene2 <- as.DNAbin(lapply(dolph.seqs, function(x) x[-c(1:200)]))
+split.seqs <- as.multidna(list(gene1 = gene1, gene2 = gene2))
+strata <- dolph.strata$fine
+names(strata) <- dolph.strata$id
+g <- sequence2gtypes(split.seqs, strata = strata)
+results_gtype <- labelHaplotypes(g)$gtypes
+
+
 ##########################
 
 # to test in skeleSim.funcs overall_stats
