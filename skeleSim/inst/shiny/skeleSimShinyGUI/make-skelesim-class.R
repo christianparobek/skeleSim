@@ -48,6 +48,11 @@ observeEvent(input$scenarioNumber,
                  rValues$scenarioNumber <- input$scenarioNumber
              })
 
+#observeEvent(input$migrationNumber,
+#             {
+#                 rValues$migrationNumber <- input$migrationNumber
+#             })
+
 
 observeEvent(input$numpopsTxt,
              {
@@ -189,15 +194,8 @@ observeEvent(rValues$ssClass,{
         {
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
                 {
-                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
                     updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
                 }
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec))
-#                {
-#                    #rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
-#                    updateTextInput(session,"fscexec",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec)
-#                }
-            
         }    
 })
 

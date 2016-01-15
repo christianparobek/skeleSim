@@ -98,28 +98,164 @@ x <- new("multidna", genes)
 x.g <- sequence2gtypes(x)
 strata(x.g) <- c("A", "B")
 inherits(x.g, "gtypes")
+inherits(x.g, "DNAbin")
 
 params<- new("skeleSim.params")
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
-params@rep.result <- x.g
+#params@rep.result is either a genind <results_genind> or a list of DNAbin objects ,results_gtypes
+# Can't be x.g, that's a gtypes:  params@rep.result <- x.g
+params@rep.sample <- x.g
+
+# multigene start here set parameters
+results_gtype <- x.g
+
 curr_scn<-1
 curr_rep<-1
 num_loci <- nLoc(x.g)
 num_reps <- 5
 num_pops <- nStrata(x.g)
 
-
-
+## multigene example to use
+## Use test.g as a results_gtypes that is haploid
+# January 6, 2016
 ##############################################################
+
+params@rep.sample <- rep.result
+class(params@rep.sample)
+inherits(params@rep.sample, "gtypes")
+
+params <- new("skeleSim.params")
 genes <- rep.result$dna.seqs#the multidna object
+
 names(genes@dna) <- paste("gene", 1:length(genes@dna))
 id <- genes@labels
+length(id)
 df <- data.frame(id = id, strata = rep.result[[1]])
 gene.labels <- matrix(id, nrow = length(id), ncol = getNumLoci(rep.result[[2]]))
 colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
 df <- cbind(df, gene.labels)
 test.g <- df2gtypes(df, 1, sequences = genes)
 summary(test.g)
+
+curr_scn<-1
+curr_rep<-1
+num_loci <- nLoc(test.g)
+num_reps <- 5
+num_pops <- nStrata(test.g)
+
+ploidy(test.g) #haploid
+
+smryLoci <- matrix(NA, num_loci, 5)
+
+geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+
+results_gtype <- test.g
+labelHaplotypes(results_gtype)
+
+haps <- labelHaplotypes(results_gtype)
+haps$gtypes
+if(is.null(haps)){
+
+} #to get a NA object...
+results_gtype <- haps$gtypes
+
+############################################################
+
+############################################################
+# January 7, 2016
+genes.test <- list(rep.result$dna.seqs@dna[[1]], rep.result$dna.seqs@dna[[2]])
+multidna.test <- new("multidna", genes.test)
+plot(multidna.test, cex =0.2)
+genind.test <- multidna2genind(multidna.test) # and I lost the sequences... boo
+pop(genind.test) <- rep.result$strata
+results_gtype <- genind2gtypes(genind.test)
+ploidy(results_gtype)
+
+### was:
+genes <- params@rep.sample  #@dna   #$dna.seqs #the multidna object
+names(genes@dna) <- paste("gene", 1:length(genes@dna))
+id <- genes@labels
+df <- data.frame(id = id, strata = params@rep.sample$strata)
+gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+df <- cbind(df, gene.labels)
+results_gtype <- df2gtypes(df, 1)
+#label haplotypes
+haps <- labelHaplotypes(results_gtype)
+
+## use this multidna example!!!!
+### Eric gives me the answer..
+results_gtype <- sequence2gtypes(rep.result$dna.seqs, strata = rep.result$strata)
+results_gtype <- labelHaplotypes(results_gtype)$gtype # gets rid of unassigned...
+# something to return a reasonable NA object, what for a missing gene? for a population gone?
+is.null(results_gtype)
+
+### rep.result still has errors
+data(dolph.seqs)
+data("dolph.strata")
+gene1 <- as.DNAbin(lapply(dolph.seqs, function(x) x[1:200]))
+gene2 <- as.DNAbin(lapply(dolph.seqs, function(x) x[-c(1:200)]))
+split.seqs <- as.multidna(list(gene1 = gene1, gene2 = gene2))
+strata <- dolph.strata$fine
+names(strata) <- dolph.strata$id
+g <- sequence2gtypes(split.seqs, strata = strata)
+results_gtype <- labelHaplotypes(g)$gtypes
+
+##############
+dloop.haps <- cbind(dLoop = dolph.strata$id)
+rownames(dloop.haps) <- dolph.strata$id
+dloop.g <- new("gtypes", gen.data = dloop.haps, ploidy = 1,
+               schemes = strata.schemes, sequences = dolph.seqs,
+               strata = "fine")
+dloop.g
+dloop.g <- labelHaplotypes(dloop.g, "Hap.")$gtypes
+dloop.g
+results_gtype <- dloop.g
+num_loci <- nLoc(dloop.g)
+num_pops <- nStrata(dloop.g)
+
+df <- data.frame(id = id, strata = rep.result$strata)
+
+strata(multidna.test)
+multidna.test@strata
+
+params@rep.sample <- multidna.test
+# <https://nescent.github.io/popgenInfo/PopDiffSequenceData.html>
+
+df2gtypes(multidna.test)
+
+strata(x.g) <- c("A", "B")
+rep.result@strata
+
+genes <- params@rep.sample  #@dna   #$dna.seqs #the multidna object
+  names(genes) <- paste("gene", 1:length(params@genes@dna))
+names(genes@dna) <- paste("gene", 1:length(genes@dna))
+id <- genes@labels
+df <- data.frame(id = id, strata = params@rep.sample$strata)
+gene.labels <- matrix(id, nrow = length(id), ncol = num_loci)
+colnames(gene.labels) <- paste("gene", 1:ncol(gene.labels), sep = "_")
+df <- cbind(df, gene.labels)
+results_gtype <- df2gtypes(df, 1)
+#label haplotypes
+haps <- labelHaplotypes(results_gtype)
+
+
+
+
+# multiDNA example with two genes
+data(dolph.seqs)
+data(dolph.strata)
+
+gene1 <- as.DNAbin(lapply(dolph.seqs, function(x) x[1:200]))
+gene2 <- as.DNAbin(lapply(dolph.seqs, function(x) x[-c(1:200)]))
+split.seqs <- as.multidna(list(gene1 = gene1, gene2 = gene2))
+strata <- dolph.strata$fine
+names(strata) <- dolph.strata$id
+g <- sequence2gtypes(split.seqs, strata = strata)
+results_gtype <- labelHaplotypes(g)$gtypes
+
+
+##########################
 
 # to test in skeleSim.funcs overall_stats
 test.one <- results_gtype[,"gene_1",]
@@ -216,6 +352,24 @@ if(inherits(params@rep.result,"multidna")){
   analyses <- length(results)
 }
 
+## out 1/5/2016
+results.list.names.gene <- Map(function(gene,names) paste(gene, names(names), sep="_"),
+                               locNames(results_gtype),
+                               r.m.gene)
+results.gene <- do.call(c,r.m.gene)
+names(results.gene) <- do.call(c,results.list.names.gene)
+
+# by population
+results.list.names <- lapply(1:length(strataNames(results_gtype)), function(x){
+  Map(function(gene,names) paste(gene, names(names), sep="_"),
+      locNames(results_gtype),
+      r.m[[x]])
+})
+
+rln.bind <- do.call(c, lapply(results.list.names, function(x){
+  do.call(c,x)
+}))
+
 
 
 nucleotideDiversity(results_gtype[,locNames(results_gtype)[1],])
@@ -271,6 +425,10 @@ str(smsat)
 ?combn
 combn(1:3, 2)
 combn(1:9, 2)
+length(data.frame(combn(1:17,2)))
+
+
+length(data.frame(combn(1:num_pops,2)))
 
 ## each run of the simulation would produce a new matrix from
 # such analayses as pairwiseTest to array
@@ -375,19 +533,82 @@ length(msats@loci)
 params<- new("skeleSim.params")
 params@analyses.requested<-c(Global=TRUE,Locus=TRUE,Pairwise=TRUE)
 data(nancycats)
-params@rep.result <- nancycats
 curr_scn<-1
 curr_rep<-1
 num_loci <- nLoc(nancycats)
 num_reps <- 5
 num_pops <- nPop(nancycats)
+params@rep.sample <- nancycats
+ploidy(nancycats)
+results_gtype<-genind2gtypes(params@rep.sample)
 
+sapply(locNames(results_gtype), function(l){
+  if(is.nan(overallTest(results_gtype[,l,], nrep=5, stat.list = statList("chi2"), quietly=TRUE)$result)){
+    0
+  } else {
+    overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
+  }
+})
+
+ovl.all.names <- lapply(ovl.all, function(x){
+  x$name <- paste(x$Var1,x$Var2,sep="_")
+  x[,-c(1:3)]
+})
+
+
+#pairwise didn't work:
+
+
+
+
+# with nancycats example containing missing data: use poppr::missingno??
+pws.mulit[1]$result[,-c(2:5)] #removing strata.1, strata.2, n.1, n.2
+
+#Genotype data
+pws <- pairwiseTest(results_gtype, nrep = 5, stat.list = list(statGst, quietly = TRUE))
+pws.out <- pws$result[-c(2:5)]
+# rownames(pws.out) <- as.matrix(pws[[1]][1])  # could turn into row names at the end.. but they'll be repeated
+sA <- sharedAlleles(results_gtype)[,-c(1:2)]
+nsharedAlleles <- paste("sharedAlleles", names(sA), sep = ".")
+names(sA) <- nsharedAlleles
+pws.out <- cbind(pws.out, sA)
+params@analysis.results[[curr_scn]] <- pws.outS
+}
+
+pws.sts$pair.label <- gsub("\\s*\\([^\\)]+\\)","",as.character(pws.sts$pair.label))
+pws.sts$strata.1 <- gsub(" .*$", "", as.character(pws.sts$pair.label))
+pws.sts$strata.2 <- gsub(".*v.","", as.character(pws.sts$pair.label))
+
+sts <- c("pair.label","Chi2","Chi2.p.val",
+         "D" "Fst","Fst.p.val","F'st","G'st","G''st","PHIst","PHIst.p.val")
+
+
+psw.out <- cbind(pws.sts[with(pws.sts, order(strata.1,strata.2)),],
+                 sA[with(sA,order(strata.1,strata.2)),])
+psw.out[,grep("strata", names(psw.out), invert=TRUE)]
+
+#pairwise order differs from pws.sts
+
+
+results_gtype <- genind2gtypes(nancycats)
 #After genind2gtypes for results_gtype
 nLoc(results_gtype)
 nStrata(results_gtype)
+strata(results_gtype)
 nInd(results_gtype)
 ploidy(results_gtype)
 results_gtype[,"fca8",]
+
+#Zhian's example
+data(microbov)
+microbov
+foo.gtype <- genind2gtypes(microbov)
+foo.gtype
+
+results_gtype <- foo.gtype
+ploidy(microbov)
+
+
 
 ###################### troubleshooting
 nancycats
@@ -709,6 +930,8 @@ gene1 <- wood.g[, "gene1", ]
 gene1.dnabin <- getSequences(sequences(gene1))
 class(gene1.dnabin)
 
+
+
 #genind create
 #rep$sample will either be a list or a genind
 
@@ -813,6 +1036,17 @@ hw.test(genindobj) # B = # replicates for MC or regular test B = 0
 hw.test(genindobj, B = 0)
 # library(genetics)
 # HWE.test(genotype) # some other data type...
+
+
+
+
+results_genind<-params@rep.sample
+
+#Hardy Weiberg test per population and overall (this comes first because it needs genind)
+pops_as_list<-seppop(results_genind)
+hw_results<-sapply(pops_as_list, function(p) hw.test(p)[,2:3], simplify = FALSE)
+hw_results.all <- rbind(hw.test(results_genind)[,2:3],do.call(rbind, hw_results))
+colnames(hw_results.all)<-c("HWE.df","HWE.pval")
 
 
 
@@ -996,6 +1230,91 @@ for(group in names(which(params@analyses.requested))){
 
 
 ################################################## October 2015 - end
+
+    ## Removed from analysis_funcs.R January 4, 2016 ######################
+    #######################################################################
+
+    ##### Will need to be in loop
+    # params@num.pops <- the number of rows, pops or pairwise or loci plus overall
+    # nrep <- the number of replicates
+    # dimension names will come from the choice of pairwise, by
+    #   by population, by loci, or whatever
+
+
+    sim.data.analysis <- array(0, dim = c(length(names), length(analyses), nrep),
+                               dimnames = list(names, analyses, 1:nrep))
+
+
+
+
+    ### loading function
+    # This gets called and knows which row (so z spot) matchs the current
+    #   scenario and replicate
+    ########### multiDNA to gtypes
+    if(inherits(params@rep.sample,"multidna")){
+      genes <- rep.sample$dna.seqs
+      names(genes@dna) <- paste("gene", 1:length(genes@dna))
+      id <- genes@labels
+      df <- data.frame(id = id, strata = rep.sample[[1]], hap = id)
+      rep.sample.gtypes <- df2gtypes(df, 1)
+
+    }
+
+    if(inherits(rep.sample,"DNAbin"))
+
+      if(pairwisepop = TRUE){
+
+        npp <- combn(1:params@num.pops, 2)
+        names <- c("overall", apply(npp, 2, function(x) paste(x, collapse = "v")))
+      } else if (pairwiselocus = TRUE){
+        # for pairwise loci, take number of loci = nloc
+        npl <- combn(1:nloc, 2)
+        names <- c("overall", apply(npl, 2, function(x) paste(x, collapse = "v")))
+      } else if(bypop = TRUE){
+        # for simple populations
+        names <-  c("overall", 1:params@num.pops)
+      } else {
+        # for loci
+        names <- c("overall", 1:nloc)
+      }
+    #####################################################################
+
+    # testing ones
+    analyses <- c("allel","Freq","prop")
+    nrep <- 5
+
+
+    #####################################################################
+
+    # "all.data" needs to be merged into one matrix per replicate
+    ### Global, Genotypes
+    # Chi2, D, Fst, F'st, Gst, G'st, G''st, P-vals for each
+    ovl <- overallTest(simdata, nrep = 5, stat.list = statList("chi2"), quietly = TRUE)
+    global <- t(ovl$result)
+    pnam <- c()
+    for(i in 1:length(colnames(global))){
+      pnam <- c(pnam,paste(colnames(global)[i],"pval", sep = ""))
+    }
+    global.wide <- c(global[1,],global[2,])
+    names(global.wide) <- c(colnames(global),pnam)
+
+
+    ############################################################################
+
+    for(i in 1:params@num.reps){
+      sim.data.analysis[,,i] <- matrix(all.data)
+    }
+
+    ###########################################################################
+
+
+
+
+
+
+
+
+
 
 
 

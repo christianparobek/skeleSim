@@ -4,12 +4,10 @@
 \alias{landscape.make.genind}
 \title{Create genind object from landscape}
 \usage{
-landscape.make.genind(l, popnames = NULL)
+landscape.make.genind(l)
 }
 \arguments{
 \item{l}{a \code{rmetasim} landscape object.}
-
-\item{popnames}{character vector of population names.}
 }
 \description{
 Create genind object from landscape
