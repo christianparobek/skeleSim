@@ -15,7 +15,7 @@ LazyLoad: Yes
 LazyData: true
 Depends:
     R (>= 3.2.0),
-    shiny,
+    shiny (>= 0.13.0),
     shinyIncubator,
     shinyFiles,
     igraph
