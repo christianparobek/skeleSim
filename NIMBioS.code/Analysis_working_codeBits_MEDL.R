@@ -1,5 +1,147 @@
 ####ANALYSIS
 
+# after running the fastsimcoal test.params
+# params <- test.params$params
+#params@analyses.requested are 1) Global, 2) Locus, and 3) Pairwise
+######################### Global ##########################
+
+if(params@analyses.requested[1]){
+
+  # multiDNA
+  if(inherits(params@rep.sample,c("list"))){     #"multidna","gtypes",
+
+    #overall_stats() is from skeleSim.funcs.R
+    #run by locus analysis across all populations
+    r.m <- lapply(locNames(results_gtype), function (l){
+      gtypes_this_loc<-results_gtype[,l,]
+      overall_stats(gtypes_this_loc)
+    })
+    results.matrix <- do.call(rbind, r.m)
+    analyses <- colnames(results.matrix)
+    num_analyses <- length(analyses)
+    rownames(results.matrix) <- locNames(results_gtype)
+
+    # We are printing by gene, not overall gene analysis. This differs from the genind code below.
+    # The first row will hold summary statistics over all loci regardless of population structure.
+    # The remaining rows will hold summary statistics per locus
+    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
+                                                                       num_analyses,
+                                                                       num_reps),
+                                                               dimnames = list(c(1:num_loci+1),
+                                                                               analyses,
+                                                                               1:num_reps))
+    }
+
+    params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
+  }
+
+  if(inherits(params@rep.sample, "genind")){
+
+    ovl <- lapply(locNames(results_gtype), function(l){
+      overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
+    })
+
+    ovl.all <- lapply(ovl, function(x){
+      as.data.frame(as.table(x))
+    })
+
+    ovl.all.values <- lapply(ovl.all, function(x){
+      x[,-c(1:2)]
+    })
+    ovl.all.names <- paste(ovl.all[[1]]$Var1, ovl.all[[1]]$Var2,sep="_")
+    ovl.all.out <- do.call(rbind, ovl.all.values)
+
+    if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
+      params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
+                                                                       num_analyses,
+                                                                       num_reps),
+                                                               dimnames = list(c(1:num_loci+1),
+                                                                               analyses,
+                                                                               1:num_reps))
+    }
+
+    params@analysis.results[[1]][[curr_scn]][,,curr_rep] <- results.matrix
+  }
+
+}
+
+
+
+
+
+
+overall_stats <- function(results_gtype){
+  ovl <- overallTest(results_gtype, nrep = 5, quietly = TRUE)
+
+  pnam <- c()
+  for(i in 1:nrow(ovl.result))
+    pnam <- c(pnam,rownames(ovl.result)[i],paste(rownames(ovl.result)[i],"pval", sep = ""))
+
+  global.wide <- as.vector(t(ovl.result))
+  names(global.wide) <- pnam
+  global.wide
+}
+
+# integrate error tajimasD
+x <- results_gtype
+dna <- getSequences(x, simplify=FALSE)[[2]]
+
+function (x)
+{
+  x <- as.multidna(x)
+  result <- do.call(rbind, lapply(getSequences(x, simplify = FALSE),
+                                  function(dna) {
+                                    dna <- as.matrix(dna)
+                                    num.sites <- ncol(dna)
+                                    pws.diff <- dist.dna(dna, model = "N", pairwise.deletion = TRUE,
+                                                         as.matrix = TRUE)
+                                    pi <- mean(pws.diff[lower.tri(pws.diff)])
+                                    S <- ncol(variableSites(dna)$site.freqs)
+                                    n <- nrow(dna)
+                                    n.vec <- 1:(n - 1)
+                                    a1 <- sum(1/n.vec)
+                                    a2 <- sum(1/n.vec^2)
+                                    b1 <- (n + 1)/(3 * (n - 1))
+                                    b2 <- 2 * (n^2 + n + 3)/(9 * n * (n - 1))
+                                    c1 <- b1 - 1/a1
+                                    c2 <- b2 - (n + 2)/(a1 * n) + a2/a1^2
+                                    e1 <- c1/a1
+                                    e2 <- c2/(a1^2 + a2)
+                                    D_obs <- (pi - S/a1)/sqrt(e1 * S + e2 * S * (S -
+                                                                                   1))
+                                    D.to.x <- function(D, Dmin, Dmax) (D - Dmin)/(Dmax -
+                                                                                    Dmin)
+                                    x.to.D <- function(x, Dmin, Dmax) x * (Dmax - Dmin) +
+                                      Dmin
+                                    DMin <- (2/n - 1/a1)/e2^(1/2)
+                                    DMax <- if (n%%2 == 0) {
+                                      (n/(2 * (n - 1)) - 1/a1)/e2^(1/2)
+                                    } else {          # was an extra carrage return before the else
+                                      ((n + 1)/(2 * n) - 1/a1)/e2^(1/2)
+                                    }
+                                    Alpha <- -(1 + DMin * DMax) * DMax/(DMax - DMin)
+                                    Beta <- (1 + DMin * DMax) * DMin/(DMax - DMin)
+                                    beta.D <- function(tajima.D, alpha = Alpha, beta = Beta,
+                                                       Dmin = DMin, Dmax = DMax) {
+                                      gamma(alpha + beta) * (Dmax - tajima.D)^(alpha -
+                                                                                 1) * (tajima.D - Dmin)^(beta - 1)/(gamma(alpha) *
+                                                                                                                      gamma(beta) * (Dmax - Dmin)^(alpha + beta -
+                                                                                                                                                     1))
+                                    }
+                                    LB <- x.to.D(qbeta(0.025, Beta, Alpha), DMin, DMax)
+                                    UB <- x.to.D(qbeta(0.975, Beta, Alpha), DMin, DMax)
+                                    prob <- integrate(beta.D, lower = ifelse(D_obs <
+                                                                               0, DMin, D_obs), upper = ifelse(D_obs < 0, D_obs,
+                                                                                                               DMax), alpha = Alpha, beta = Beta, Dmin = DMin,
+                                                      Dmax = DMax)
+                                    c(D = D_obs, p.value = prob$value)
+                                  }))
+  rownames(result) <- locusNames(x)
+  result
+}
+
+
 #########################################################################################
 ##HAPLOID SEQUENCE DATA
 #########################################################################################

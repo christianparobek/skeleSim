@@ -10,6 +10,7 @@ function(params){
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
+  params@analyses.requested <- analyses.check(params@analyses.requested)
 
   #params@rep.sample is either a genind or a list of DNAbin objects
   if(inherits(params@rep.sample, "genind")){
@@ -36,7 +37,7 @@ function(params){
   if(params@analyses.requested["Global"]){
 
     # multiDNA
-    if(inherits(params@rep.sample,c("multidna","gtypes"))){
+    if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
     #overall_stats() is from skeleSim.funcs.R
     #run by locus analysis across all populations
@@ -44,10 +45,19 @@ function(params){
       gtypes_this_loc<-results_gtype[,l,]
       overall_stats(gtypes_this_loc)
       })
-    results.matrix <- do.call(rbind, r.m)
+    #find complete list of column names
+    analysis.names <- unique(do.call(c, lapply(r.m, function(x) names(x))))
+    r.m <- lapply(r.m, function(x){
+      missing <- setdiff(analysis.names, names(x))
+      x[missing] <- NA
+      names(x) <- analysis.names
+      x
+    })
+    results.matrix.l <- do.call(rbind, r.m)
+    results.matrix <- rbind(overall_stats(results_gtype),results.matrix.l)
     analyses <- colnames(results.matrix)
     num_analyses <- length(analyses)
-    rownames(results.matrix) <- locNames(results_gtype)
+    #rownames(results.matrix) <- locNames(results_gtype)
 
     # We are printing by gene, not overall gene analysis. This differs from the genind code below.
     # The first row will hold summary statistics over all loci regardless of population structure.
@@ -56,7 +66,7 @@ function(params){
       params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
                                                                        num_analyses,
                                                                        num_reps),
-                                                               dimnames = list(c(1:num_loci+1),
+                                                               dimnames = list(c(1:(num_loci+1)),
                                                                                analyses,
                                                                                1:num_reps))
     }
@@ -84,7 +94,7 @@ function(params){
         params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
                                                                          num_analyses,
                                                                          num_reps),
-                                                                 dimnames = list(c(1:num_loci+1),
+                                                                 dimnames = list(c(1:(num_loci+1)),
                                                                                  analyses,
                                                                                  1:num_reps))
       }
@@ -182,7 +192,7 @@ function(params){
     # multiDNA
     # Per gene (ignoring population structure, and per gene by population)
 
-      if(inherits(params@rep.sample,c("multidna","gtypes"))){
+      if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
         #Nucleotide diversity
         # by gene, across populations
@@ -222,10 +232,7 @@ function(params){
 
         # Tajimas D
           # by gene
-          t.d <- lapply(locNames(results_gtype), function(l){
-            tajimasD(results_gtype[,l,])
-          })
-          t.d.results <- do.call(rbind,t.d)
+          t.d.results <-  tajimasD(params@rep.sample$dna.seqs)
 
         # Num samples, num missing, num alleles, percent unique alleles, heterozygosity
           # by gene per population
@@ -356,10 +363,10 @@ function(params){
       #Data.frame of summary data into simulation replicate
         # Create the data array first time through
         if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
-          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(length(data.frame(combn(1:num_pops,2))),
+          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(num_loci*choose(num_pops,2),
                                                                            length(analysis_names),
                                                                            num_reps),
-                                                                  dimnames = list(1:length(data.frame(combn(1:num_pops,2))),
+                                                                  dimnames = list(1:num_loci*choose(num_pops,2),
                                                                                   analysis_names,
                                                                                   1:num_reps))
         }
@@ -369,26 +376,47 @@ function(params){
       }
 
 
-    if(inherits(params@rep.sample, c("multidna","gtypes"))){
+    if(inherits(params@rep.sample, c("multidna","gtypes","list"))){
 
       #nucleotide Divergence and mean.pct.between
       dA <- nucleotideDivergence(results_gtype)
       dA.between <- lapply(dA, function(x){
         x$between
       })
-      dA.all <- do.call(rbind,dA.between)
+      dA.all <- do.call(rbind,dA.between)[,grep("pct",names(dA.between[[1]]),invert = TRUE)]
 
-      #Chi2, Fst, PHist
-      psw <- pairwiseTest(results_gtype,nrep = 5,stat.list = list(statGst),
-                          quietly = TRUE)$result[-c(1:6,8:9,12:21)]
+      #Chi2, Fst, PHist ('Error: not a matrix')
+      psw <- lapply(locNames(results_gtype), function(l){
+        pairwiseTest(results_gtype[,l,],nrep = 5,
+                     stat.list = list(statGst),
+                     quietly = TRUE)$result[-c(1:6,8:9,12:21)]
+        })
+      psw.all <- do.call(rbind,psw)
 
       # shared haps
       sA <- sharedAlleles(results_gtype)
+      sA <- reshape(sA, direction = "long", varying=list(loc_names), v.names="sA",
+              timevar = "gene",idvar=c("strata.1","strata.2"),
+              new.row.names = 1:(num_loci*choose(num_pops,2)))[,"sA"]
 
+      pairwise.final <- cbind(dA.all,psw.all,sA)
+      analysis_names <- names(pairwise.final)
 
+      #Data.frame of summary data into simulation replicate
+      # Create the data array first time through
+      if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
+        params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(num_loci*choose(num_pops,2),
+                                                                            length(analysis_names),
+                                                                            num_reps),
+                                                                   dimnames = list(1:(num_loci*choose(num_pops,2)),
+                                                                                   analysis_names,
+                                                                                   1:num_reps))
       }
-  params
+
+  params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  pairwise.final
+
     }
   }
+}
 
 
