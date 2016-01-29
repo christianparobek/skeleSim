@@ -1,4 +1,4 @@
-function(params){
+analysis_funcs <- function(params){
 
   stopifnot(require(strataG))
   stopifnot(require(pegas))
@@ -213,10 +213,7 @@ function(params){
           nD.all <- c(nD, r.m.bind)
 
         # Fu's Fs
-          fu.fs <- lapply(locNames(results_gtype), function(l){
-            fusFs(results_gtype[,l,])
-          })
-          fu.fs.results <- do.call(rbind, fu.fs)
+          fu.fs.results <- fusFs(results_gtype)
 
           #by population for each strataNames(results_gtype) and results_gtype[,,pops]
           fu.fs.pop <- lapply(strataNames(results_gtype), function(s){
@@ -228,7 +225,7 @@ function(params){
             do.call(rbind,x)
           }))
 
-          fu.fs.all <- rbind(fu.fs.results, fu.fs.results.pop)
+          fu.fs.all <- c(fu.fs.results, fu.fs.results.pop)
 
         # Tajimas D
           # by gene
