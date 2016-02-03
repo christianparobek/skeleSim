@@ -18,6 +18,8 @@ source("simcoal-history.R")
 #source("../rmetasim/rms.classes.R")
 #source("../rmetasim/rms.scenarioCheck.R")
 
+source("modules/matrixInputs.R")
+
 
 ###these two globals record a record of the last
 ###click on the history graphs
@@ -40,6 +42,8 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
             params
         }
 ##############################################
+
+#    ssClass@simulator.type <- "f"
     
     ssClass@scenarios <- list(new("scenario.params"))
 
@@ -54,9 +58,28 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios[[1]]@sequence.length <- 100
     ssClass@scenarios[[1]]@mut.rate <- 10e-5
     ssClass@scenarios[[1]]@simulator.params <-
-        new("fastsimcoal.params") #this will be changed if necessary reactively
+        fastsimcoalInit() #this will be changed if necessary reactively
 
     ssClass
+}
+
+fastsimcoalInit <- function(){
+    parms <- new("fastsimcoal.params")
+    parms
+}
+
+rmetasimInit <- function(){
+    parms <- new("rmetasim.params")
+    parms@num.stgs <- 2
+    parms@selfing <- 0
+    parms@init.pop.sizes <- c(100,100,100,100)
+    parms@surv.matr <- matrix(c(0.2,0,
+                               0.4,0.1),nrow=2,byrow=T)
+    parms@repr.matr <- matrix(c( 0 ,4,
+                               0 ,0),nrow=2,byrow=T)
+    parms@male.matr <- matrix(c(0,0,
+                               0,1),nrow=2,byrow=T)
+    parms
 }
 
 

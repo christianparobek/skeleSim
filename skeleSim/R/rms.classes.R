@@ -1,5 +1,5 @@
 setClassUnion("logOrNULL", c("logical", "NULL"))
-#setClassUnion("listOrNULL", c("list","NULL"))
+setClassUnion("listOrNULL", c("list","NULL"))
 #setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
 #setClassUnion("intOrNum", c("integer","numeric", "NULL"))
@@ -28,7 +28,7 @@ setClass(
             surv.matr = "matrOrNULL", repr.matr = "matrOrNULL",
             male.matr = "matrOrNULL", carrying = "intOrNum",
             init.pop.sizes = "intOrNum",
-            num.alleles = "intOrNum", allele.freqs = "intOrNum",
+            num.alleles = "intOrNum", allele.freqs = "listOrNULL",
             num.gen = "intOrNum"
   ),
   prototype = c(num.stgs = NULL, selfing = NULL,

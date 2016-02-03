@@ -9,7 +9,7 @@
 #'
 rms.convert <- function(Rland, locus.type) {
         ltype <- locus.type
-        if (ltype=="microsat")
+        if (ltype%in%c("microsatellite","MICROSAT","microsat"))
             {
                 this.rep.result <- landscape.make.genind(Rland)
             }

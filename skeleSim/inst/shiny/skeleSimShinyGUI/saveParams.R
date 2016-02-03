@@ -14,7 +14,7 @@ observeEvent(input$ssClassSave,
              })
 
 output$txtObjLabel <- renderText({
-  supportValues$objLabel <- if(is.null(rValues$ssClass@title) | rValues$ssClass@title == "") {
+  supportValues$objLabel <- if(is.null(req(rValues$ssClass@title)) | rValues$ssClass@title == "") {
     NULL
   } else {
     make.names(rValues$ssClass@title)
