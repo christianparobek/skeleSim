@@ -76,6 +76,9 @@ analysis_funcs <- function(params){
 
     if(inherits(params@rep.sample, "genind")){
 
+      ovl.global <- overallTest(results_gtype, nrep=5, stat.list=statList("chi2"), quietly=TRUE)$result
+      ovl.all.global <- as.data.frame(as.table(ovl.global))[,3]
+
       ovl <- lapply(locNames(results_gtype), function(l){
         overallTest(results_gtype[,l,], nrep = 5, stat.list = statList("chi2"), quietly = TRUE)$result
       })
@@ -89,17 +92,18 @@ analysis_funcs <- function(params){
         })
       ovl.all.names <- paste(ovl.all[[1]]$Var1, ovl.all[[1]]$Var2,sep="_")
       ovl.all.out <- do.call(rbind, ovl.all.values)
+      ovl.all.results <- rbind(ovl.all.global,ovl.all.out)
 
       if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
         params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
-                                                                         num_analyses,
+                                                                         length(ovl.all.names),
                                                                          num_reps),
                                                                  dimnames = list(c(1:(num_loci+1)),
-                                                                                 analyses,
+                                                                                 ovl.all.names,
                                                                                  1:num_reps))
       }
 
-      params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
+      params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- ovl.all.results
     }
 
     }
@@ -160,16 +164,15 @@ analysis_funcs <- function(params){
           results_loci<-genind2loci(params@rep.sample)
           #for loci
           FSTloci<-Fst(results_loci)
-          Fisloci <- FSTloci[ , c("Fis")]
-          Fitloci <- FSTloci[ , c("Fit")]
-          Fstloci <- FSTloci[ , c("Fst")]
+          #Fisloci <- FSTloci[ , c("Fis")]
+          #Fitloci <- FSTloci[ , c("Fit")]
+          #Fstloci <- FSTloci[ , c("Fst")]
+
           #for pops
-          # Start Here - get by pop by locus
-          results_loci_pop <- genind2loci()
-          FSTpop<-Fst(results_loci, pop = results_loci$population) #column with pop information#)
-          Fispop <- FSTpop[ , c("Fis")]
-          Fitpop <- FSTpop[ , c("Fit")]
-          Fstpop <- FSTpop[ , c("Fst")]
+          FSTpop<-lapply(unique(results_loci$population), function(x){
+            Fst(results_loci[results_loci$population == x], pop=results_loci$population)
+          })
+
 
           #all the analyses get bound here
           locus.final <- cbind(hwe,mrat_results_all,smry,num.priv.allele)
@@ -263,22 +266,22 @@ analysis_funcs <- function(params){
         # Nucleotide and percent within strata divergence, mean percent within
           # gene by population
           #mean.pct.within
-          dA <- nucleotideDivergence(results_gtype)
-          dA.names <- colnames(dA[[1]]$within)
-          dA.pop <- do.call(rbind, lapply(1:length(dA), function(i){
-            rbind(dA[[i]]$within)
-          }))
+#          dA <- nucleotideDivergence(results_gtype)
+#          dA.names <- colnames(dA[[1]]$within)
+#          dA.pop <- do.call(rbind, lapply(1:length(dA), function(i){
+#            rbind(dA[[i]]$within)
+#          }))
 
           # do we want dA in locus, doesn't make sense.
-          colnames(dA[[2]]$between)
+#          colnames(dA[[2]]$between)
 
           # nucleotide divergence is pairwise between and within strata. Cannot use unstratified.
-          dA.genes <- nucleotideDivergence(unstrat)[[1]]$within
-          geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
-          dA.all <- rbind(geneNAs, dA.pop)
+#          dA.genes <- nucleotideDivergence(unstrat)[[1]]$within
+#          geneNAs <- matrix(NA, num_loci, 6)  # no data over strata for each gene
+#          dA.all <- rbind(geneNAs, dA.pop)
 
-          dA.all <- rbind(geneNAs, dA.pop)
-          dA.analyses <- dimnames(dA.all)[[2]]
+#          dA.all <- rbind(geneNAs, dA.pop)
+#          dA.analyses <- dimnames(dA.all)[[2]]
 
 
         # num.private.alleles
@@ -296,7 +299,7 @@ analysis_funcs <- function(params){
             colSums(by.loc)
             })
           })
-          hapFreqs.pop <- do.call(rbind,hapFreqs)
+          hapFreqs.pop <- do.call(c,do.call(c,hapFreqs))
 
           #by gene
           hapFreqs.gene <- lapply(locNames(results_gtype), function(l){
@@ -308,19 +311,21 @@ analysis_funcs <- function(params){
             })
             sum(by.loc)
           })
-          hapFreqs.gene <- do.call(rbind,hapFreqs.gene)
-          num.pri.haps <- rbind(hapFreqs.gene, hapFreqs.pop)
+          num.pri.haps <- c(do.call(c,hapFreqs.gene), hapFreqs.pop)
 
           #Ne placeholder
 
           #how to deal with nD?
           # make sure nucleotide Divergence is right and add or keep names below
           # to do start here
-          locus.final <- data.frame(nD.all,fu.fs.all,t.d.all,smryLP,dA.all[,1],num.pri.haps)
+          locus.final <- cbind(nD.all,fu.fs.all,t.d.all,smryLP,#dA.all[,1],
+                                    num.pri.haps)
           analysis_names <- c("nucloetide.diversity", "Fu.F",colnames(t.d.all),summary.analyses,
-                              "nucleotide.divergence","num.private.haps")
+                              #"nucleotide.divergence",
+                              "num.private.haps")
 
           # Create the data array first time through
+          # gene.1...gene.num_loci, pop.1/gene.1:gene.num_loci...pop.num.pops/gene.1:gene.num_loci
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
             params@analysis.results[["Locus"]][[curr_scn]] <- array(0, dim=c(num_loci*(num_pops+1),
                                                                              length(analysis_names),
@@ -382,7 +387,7 @@ analysis_funcs <- function(params){
       })
       dA.all <- do.call(rbind,dA.between)[,grep("pct",names(dA.between[[1]]),invert = TRUE)]
 
-      #Chi2, Fst, PHist ('Error: not a matrix')
+      #Chi2, Fst, PHist
       psw <- lapply(locNames(results_gtype), function(l){
         pairwiseTest(results_gtype[,l,],nrep = 5,
                      stat.list = list(statGst),
@@ -397,7 +402,7 @@ analysis_funcs <- function(params){
               new.row.names = 1:(num_loci*choose(num_pops,2)))[,"sA"]
 
       pairwise.final <- cbind(dA.all,psw.all,sA)
-      analysis_names <- names(pairwise.final)
+      analysis_names <- names(pairwise.final)[-c(1:2)]
 
       #Data.frame of summary data into simulation replicate
       # Create the data array first time through
@@ -405,12 +410,12 @@ analysis_funcs <- function(params){
         params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(num_loci*choose(num_pops,2),
                                                                             length(analysis_names),
                                                                             num_reps),
-                                                                   dimnames = list(1:(num_loci*choose(num_pops,2)),
+                                                                   dimnames = list(apply(pairwise.final[,1:2],1,paste,collapse="."),
                                                                                    analysis_names,
                                                                                    1:num_reps))
       }
 
-  params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  pairwise.final
+  params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  data.matrix(pairwise.final[,-c(1:2)])
 
     }
   }
