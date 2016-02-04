@@ -10,6 +10,13 @@ shinyServer(function(input, output,session) {
     source("saveParams.R", local = TRUE)
     source("loadParams.R", local = TRUE)
 
+#    getssClass.file <- callModule(fileIO,"files",
+#                                  roots=VolumeRoots,
+#                                  objLabel = supportValues$objLabel,
+#                                  ssLoadEnv = supportValues$ssLoadEnv,
+#                                  ssClass = rValues$ssClass
+#                                  )
+#    rValues$ssClass <- getssClass.file()
   ##################### include the server code for Christians implemntation of
   ##################### the initial skelesim questions
     source("intro-questions-server.R",local=T)
@@ -23,11 +30,15 @@ shinyServer(function(input, output,session) {
   #################### stored in scenarios.R
     source("scenarios-server.R",local=T)
 
-  ##################### simcoal helpers
-  #################### stored in simcoal-server.R
-  ########################################
+##################### simcoal helpers
+#################### stored in simcoal-server.R
+########################################
     source("simcoal-server.R",local=T)
 
+
+################## rmetasim helpers
+    source("rmetasim-server.R",local=T)
+    
   ############## plotting
     source("serverplots.R",local=T)
 
