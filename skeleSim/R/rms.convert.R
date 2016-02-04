@@ -5,28 +5,39 @@
 #' @param locus.type character giving type of locus (\code{microsat} or
 #'   \code{sequence})
 #'
-#' @importFrom rmetasim landscape.populations
-#'
+#' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind
+#' @export
 rms.convert <- function(Rland, locus.type) {
+    
         ltype <- locus.type
-        if (ltype%in%c("microsatellite","MICROSAT","microsat"))
-            {
-                this.rep.result <- landscape.make.genind(Rland)
-            }
-        else if (ltype=="sequence")
-            {
-                states <- as.data.frame(landscape.locus.states(1,Rland))
-                genos <- data.frame(pop=landscape.populations(Rland),aindex=Rland$individuals[,7])
-                seq <- merge(genos,states,all.x=T)
-                seq <- seq[order(seq$pop),]
-                dna.seq <- strsplit(as.character(tolower(seq$state)),"")
-                this.rep.result <- list(strata=data.frame(seq$pop),
-                                           dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
-            }
-        else if (ltype=="SNP")
-            {
-                this.rep.result <- landscape.make.genind(landscape.snp.convert(Rland))
-            }
-      this.rep.result
 
+
+    if (!is.landscape(Rland)) {stop("incoming landscape problem in rms.convert")}
+
+
+    
+    this.rep.result=NULL
+    if (ltype%in%c("microsatellite","MICROSAT","microsat"))
+    {
+
+        this.rep.result <- landscape.make.genind(Rland)
+
+    }
+    else if (ltype=="sequence")
+    {
+        states <- as.data.frame(landscape.locus.states(Rland,1))
+        genos <- data.frame(pop=landscape.populations(Rland),aindex=Rland$individuals[,7])
+        seq <- merge(genos,states,all.x=T)
+        seq <- seq[order(seq$pop),]
+        dna.seq <- strsplit(as.character(tolower(seq$state)),"")
+        this.rep.result <- list(strata=data.frame(seq$pop),
+                                dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
+    }
+    else if (ltype=="SNP")
+    {
+        this.rep.result <- landscape.make.genind(landscape.snp.convert(Rland))
+    }
+    
+
+    this.rep.result
 }

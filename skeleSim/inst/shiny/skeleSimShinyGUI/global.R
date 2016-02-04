@@ -59,6 +59,8 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios[[1]]@mut.rate <- 10e-5
     ssClass@scenarios[[1]]@simulator.params <-
         fastsimcoalInit() #this will be changed if necessary reactively
+    ssClass@current.scenario <- 1
+    ssClass@current.replicate <- 1
 
     ssClass
 }

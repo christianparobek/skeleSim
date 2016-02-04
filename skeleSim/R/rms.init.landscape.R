@@ -22,7 +22,7 @@
 #' @importFrom rmetasim landscape.new.empty landscape.new.floatparam
 #'   landscape.new.intparam landscape.new.switchparam landscape.new.local.demo
 #'   landscape.mig.matrix landscape.new.epoch landscape.new.locus landscape.new.individuals
-#'
+#' @export
 rms.init.landscape <- function(num.pops = NULL, carrying = NULL,
   sample.size = NULL, mig.rates = NULL, num.loc = NULL, loc.type = NULL,
   mut.rate = NULL, seq.length = NULL, num.stgs = NULL, selfing = NULL,
