@@ -76,6 +76,8 @@ analysis_funcs <- function(params){
 
     if(inherits(params@rep.sample, "genind")){
 
+      # Eric will improve overallTest {strataG} to deal with invariant loci
+      # all statistics crash
       ovl.global <- overallTest(results_gtype, nrep=5, stat.list=statList("chi2"), quietly=TRUE)$result
       ovl.all.global <- as.data.frame(as.table(ovl.global))[,3]
 
@@ -137,10 +139,12 @@ analysis_funcs <- function(params){
           #by locus, all the other stats (num alleles etc) pulled from summarizeLoci
           smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))
           #by population
-          locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each population
-          smryPop <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
+          locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each pop
+          smryPop.1 <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
+          #sort by each population per locus
+          smryPop <- smryPop.1[order(rownames(smryPop.1)),order(colnames(smryPop.1))]
 
-          smry <- rbind(smryLoci[,-c(1:2)],smryPop[,-c(1:2)])
+          smry <- rbind(smryLoci[,-c(1:2)],smryPop[,-c(10,11)])
 
           #Number of private alleles by locus
           alleleFreqs <- alleleFreqs(results_gtype, by.strata = TRUE)
@@ -154,28 +158,30 @@ analysis_funcs <- function(params){
           })
           rownames(by.loc) <- strataNames(results_gtype)
           perLocus <- colSums(by.loc) #this has the number of alleles that are private per locus
-
           #the rows will be have the private alleles for each population by locus
           num.priv.allele <- c(perLocus, as.data.frame(as.table(by.loc))[,3])
 
           # Convert from genind to loci (package pegas))
           #Fis estimation:   Fis = 1-(Ho/He)
-
           results_loci<-genind2loci(params@rep.sample)
           #for loci
           FSTloci<-Fst(results_loci)
-          #Fisloci <- FSTloci[ , c("Fis")]
-          #Fitloci <- FSTloci[ , c("Fit")]
-          #Fstloci <- FSTloci[ , c("Fst")]
 
           #for pops
-          FSTpop<-lapply(unique(results_loci$population), function(x){
-            Fst(results_loci[results_loci$population == x], pop=results_loci$population)
+          # pop.1/locus.1:num_loci - pop.num_pops/locus.1:num_loci..
+          FSTpop<-lapply(levels(results_loci$population), function(x){
+            fst <- Fst(results_loci[results_loci$population == x,], pop=results_loci$population)
+          })
+          FSTpop2sort <- lapply(FSTpop, function(mat){ #try to bind the first elements, then second...
+            do.call(rbind, 2:length(colnames(results_loci)), function(x){
+            do.call(rbind, FSTpop[1,])
           })
 
+          FSTpop.sort$
+          FSTpop.all <- rbind(FSTloci,FSTpop.sort[order()]))
 
           #all the analyses get bound here
-          locus.final <- cbind(hwe,mrat_results_all,smry,num.priv.allele)
+          locus.final <- cbind(hwe,mrat_results_all,smry,num.priv.allele,FSTpop.all)
           analysis_names <- colnames(locus.final)
 
           # Create the data array first time through
