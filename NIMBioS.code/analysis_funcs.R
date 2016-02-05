@@ -172,17 +172,24 @@ analysis_funcs <- function(params){
           FSTpop<-lapply(levels(results_loci$population), function(x){
             fst <- Fst(results_loci[results_loci$population == x,], pop=results_loci$population)
           })
-          FSTpop2sort <- lapply(FSTpop, function(mat){ #try to bind the first elements, then second...
-            do.call(rbind, 2:length(colnames(results_loci)), function(x){
-            do.call(rbind, FSTpop[1,])
-          })
+          FSTpop2sort <- mapply(function(mat,pn){
+            x <- data.frame(mat)
+            x$Locus <- row.names(x)
+            x$Pop <- pn
+            x
+          }, mat = FSTpop, pn = 1:length(FSTpop), SIMPLIFY = FALSE)
+          FSTpop.1 <- do.call(rbind,FSTpop2sort)
+          FSTpop.2 <- FSTpop.1[order(FSTpop.1$Locus,FSTpop.1$Pop),]
+          FSTpop.all <- rbind(FSTloci,FSTpop.2[,-c(4:5)])
 
-          FSTpop.sort$
-          FSTpop.all <- rbind(FSTloci,FSTpop.sort[order()]))
 
           #all the analyses get bound here
-          locus.final <- cbind(hwe,mrat_results_all,smry,num.priv.allele,FSTpop.all)
+          # sorted by Loci across all populaitons,
+          #   then Locus.1/Pop.1:Pop.num_pops ... Locus.num_loci/Pop.1:Pop.num_pops
+          locus.final <- cbind(HWE.pval = hwe[,-c(1:2)],mrat_results_all,smry,num.priv.allele,FSTpop.all)
           analysis_names <- colnames(locus.final)
+          locus.final <- as.matrix(locus.final)
+
 
           # Create the data array first time through
           if(is.null(params@analysis.results[["Locus"]][[curr_scn]])){
@@ -357,6 +364,11 @@ analysis_funcs <- function(params){
         ##### no difference between pws and genotype data pws
         #Pairwise Chi2, D, F..., G...
         pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)[1]$result
+        #pairwise by locus
+        pws.loc <- lapply(loc_names, function(l){
+          pairwiseTest(results_gtype[,l,], nrep = 5, keep.null=TRUE, quietly=TRUE)[1]$result
+        })
+
 
         sA <- sharedAlleles(results_gtype)
 
@@ -365,7 +377,8 @@ analysis_funcs <- function(params){
         chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
         ch.dist <- as.data.frame(as.table(chord.dist))
 
-        locus.final <- cbind(pws[,-c(2:5)],sA[,-c(1:2)],chord_distance = ch.dist[,2])
+        locus.final.names <- cbind(pws[,-c(2:5)],sA[,-c(1:2)],chord_distance = ch.dist[,2])
+        locus.final <- locus.final.names[,sapply(locus.final.names,is.numeric)]
         analysis_names <- names(locus.final)
 
       #Data.frame of summary data into simulation replicate
