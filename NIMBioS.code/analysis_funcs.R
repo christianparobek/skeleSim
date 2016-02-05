@@ -368,6 +368,8 @@ analysis_funcs <- function(params){
         pws.loc <- lapply(loc_names, function(l){
           pairwiseTest(results_gtype[,l,], nrep = 5, keep.null=TRUE, quietly=TRUE)[1]$result
         })
+        pws.loc.all <- do.call(rbind,pws.loc)
+        pws.all <- rbind(pws,pws.loc.all)
 
 
         sA <- sharedAlleles(results_gtype)
