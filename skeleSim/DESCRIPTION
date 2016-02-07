@@ -25,7 +25,7 @@ Imports:
     ggplot2,
     methods,
     reshape2,
-    rmetasim,
+    rmetasim (>= 3.0.0),
     strataG
 Suggests:
     knitr

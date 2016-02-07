@@ -11,16 +11,23 @@ analyses.check <- function(analyses.requested)
     {
         stop("there are analyses requested that we dont recognize")
     }
-    if (is.null(analyses.requested)) ret <- c("Global"=T,"Pairwise"=T,"Locus"=T)
-    add <- c("Global","Locus","Pairwise")[!(c("Global","Locus","Pairwise")%in%names(analyses.requested))]
-
-    if (length(add)>0)
+    if (length(names(analyses.requested))==0) {analyses.requested=NULL} #if the vector of inputs is not named, assume all are requested
+    if (is.null(analyses.requested))
         {
-            tlen <- length(analyses.requested)
-            analyses.requested <- c(analyses.requested,rep(F,length(add)))
-            names(analyses.requested)[names(analyses.requested)==""] <- add
+            ret <- c("Global"=T,"Pairwise"=T,"Locus"=T)
+        } else {
+    
+            add <- c("Global","Locus","Pairwise")[!(c("Global","Locus","Pairwise")%in%names(analyses.requested))]
+            
+            if (length(add)>0)
+            {
+                tlen <- length(analyses.requested)
+                analyses.requested <- c(analyses.requested,rep(F,length(add)))
+                names(analyses.requested)[names(analyses.requested)==""] <- add
+            }
+            ret <- analyses.requested
         }
-    analyses.requested
+    ret
 }
 
 
