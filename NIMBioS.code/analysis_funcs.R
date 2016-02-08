@@ -186,7 +186,7 @@ analysis_funcs <- function(params){
           #all the analyses get bound here
           # sorted by Loci across all populaitons,
           #   then Locus.1/Pop.1:Pop.num_pops ... Locus.num_loci/Pop.1:Pop.num_pops
-          locus.final <- cbind(HWE.pval = hwe[,-c(1:2)],mrat_results_all,smry,num.priv.allele,FSTpop.all)
+          locus.final <- cbind(HWE.pval = hwe[,-c(1:2)],mrat_results_all,smry,num.priv.allele,FSTpop.all, row.names=NULL)
           analysis_names <- colnames(locus.final)
           locus.final <- as.matrix(locus.final)
 
@@ -373,7 +373,14 @@ analysis_funcs <- function(params){
 
 
         sA <- sharedAlleles(results_gtype)
-
+        sA.loc <- lapply(loc_names, function(l){
+          x<-sharedAlleles(results_gtype[,l,])
+          colnames(x) <- c("strata.1","strata.2","locus")
+          x
+        })
+        sA.loc.all <- do.call(rbind, sA.loc)
+        sA.all <- rbind(sA,sA.loc.all)
+  
         #chord.dist
         results_hierfstat <- genind2hierfstat(params@rep.sample)
         chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
@@ -386,7 +393,7 @@ analysis_funcs <- function(params){
       #Data.frame of summary data into simulation replicate
         # Create the data array first time through
         if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
-          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c(num_loci*choose(num_pops,2),
+          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c((num_loci*choose(num_pops,2))+choose(num_pops,2),
                                                                            length(analysis_names),
                                                                            num_reps),
                                                                   dimnames = list(1:num_loci*choose(num_pops,2),
