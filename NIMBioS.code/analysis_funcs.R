@@ -357,55 +357,6 @@ analysis_funcs <- function(params){
 
   if(params@analyses.requested["Pairwise"]){
 
-      # genind
-
-      if(inherits(params@rep.sample, "genind")){
-
-        ##### no difference between pws and genotype data pws
-        #Pairwise Chi2, D, F..., G...
-        pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)[1]$result
-        #pairwise by locus
-        pws.loc <- lapply(loc_names, function(l){
-          pairwiseTest(results_gtype[,l,], nrep = 5, keep.null=TRUE, quietly=TRUE)[1]$result
-        })
-        pws.loc.all <- do.call(rbind,pws.loc)
-        pws.all <- rbind(pws,pws.loc.all)
-
-
-        sA <- sharedAlleles(results_gtype)
-        sA.loc <- lapply(loc_names, function(l){
-          x<-sharedAlleles(results_gtype[,l,])
-          colnames(x) <- c("strata.1","strata.2","locus")
-          x
-        })
-        sA.loc.all <- do.call(rbind, sA.loc)
-        sA.all <- rbind(sA,sA.loc.all)
-  
-        #chord.dist
-        results_hierfstat <- genind2hierfstat(params@rep.sample)
-        chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
-        ch.dist <- as.data.frame(as.table(chord.dist))
-
-        locus.final.names <- cbind(pws[,-c(2:5)],sA[,-c(1:2)],chord_distance = ch.dist[,2])
-        locus.final <- locus.final.names[,sapply(locus.final.names,is.numeric)]
-        analysis_names <- names(locus.final)
-
-      #Data.frame of summary data into simulation replicate
-        # Create the data array first time through
-        if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
-          params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c((num_loci*choose(num_pops,2))+choose(num_pops,2),
-                                                                           length(analysis_names),
-                                                                           num_reps),
-                                                                  dimnames = list(1:num_loci*choose(num_pops,2),
-                                                                                  analysis_names,
-                                                                                  1:num_reps))
-        }
-
-        params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  locus.final
-
-      }
-
-
     if(inherits(params@rep.sample, c("multidna","gtypes","list"))){
 
       #nucleotide Divergence and mean.pct.between
@@ -420,14 +371,14 @@ analysis_funcs <- function(params){
         pairwiseTest(results_gtype[,l,],nrep = 5,
                      stat.list = list(statGst),
                      quietly = TRUE)$result[-c(1:6,8:9,12:21)]
-        })
+      })
       psw.all <- do.call(rbind,psw)
 
       # shared haps
       sA <- sharedAlleles(results_gtype)
       sA <- reshape(sA, direction = "long", varying=list(loc_names), v.names="sA",
-              timevar = "gene",idvar=c("strata.1","strata.2"),
-              new.row.names = 1:(num_loci*choose(num_pops,2)))[,"sA"]
+                    timevar = "gene",idvar=c("strata.1","strata.2"),
+                    new.row.names = 1:(num_loci*choose(num_pops,2)))[,"sA"]
 
       pairwise.final <- cbind(dA.all,psw.all,sA)
       analysis_names <- names(pairwise.final)[-c(1:2)]
@@ -443,10 +394,64 @@ analysis_funcs <- function(params){
                                                                                    1:num_reps))
       }
 
-  params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  data.matrix(pairwise.final[,-c(1:2)])
+      params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  data.matrix(pairwise.final[,-c(1:2)])
 
     }
+
+    if(inherits(params@rep.sample, "genind")){
+
+      #Pairwise Chi2, D, F..., G...
+      pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)[1]$result
+      #pairwise by locus
+      pws.loc <- lapply(loc_names, function(l){
+        pairwiseTest(results_gtype[,l,], nrep = 5, keep.null=TRUE, quietly=TRUE)[1]$result
+        })
+      pws.loc.all <- do.call(rbind,pws.loc)
+      pws.all <- rbind(pws,pws.loc.all)
+
+      sA <- sharedAlleles(results_gtype)
+      sA.long <- reshape(sA, idvar = c("strata.1","strata.2"),
+                         varying = names(sA[,-c(1:2)]),
+                         timevar = "Locus",
+                         v.names = "sA",
+                         direction = "long")
+      #shared alleles sumed over loci
+      sA.sum <- rowSums(sA[,-c(1:2)])
+      sA.all <- c(sA.sum,sA.long$sA)
+
+      #chord.dist
+      results_hierfstat <- genind2hierfstat(params@rep.sample)
+      chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
+      ch.dist <- as.data.frame(as.table(chord.dist))
+      # chord.dist by locus
+      chord.dist.locus <- lapply(loc_names, function(l){
+        as.data.frame(as.table(genet.dist(results_hierfstat[,c("pop",l)], diploid = TRUE, method = "Dch")))
+      })
+      chord.dist.l <- do.call(rbind,chord.dist.locus)
+      chord.dist.all <- rbind(ch.dist,chord.dist.l)
+
+      locus.final <- cbind(pws.all[,-c(1:5)],sA = sA.all,chord_distance = chord.dist.all[,2])
+      #locus.final <- locus.final.names[,sapply(locus.final.names,is.numeric)]
+      analysis_names <- names(locus.final)
+
+      #Data.frame of summary data into simulation replicate
+      # Create the data array first time through
+      if(is.null(params@analysis.results[["Pairwise"]][[curr_scn]])){
+        params@analysis.results[["Pairwise"]][[curr_scn]] <- array(0, dim=c((num_loci*choose(num_pops,2))+choose(num_pops,2),
+                                                                            length(analysis_names),
+                                                                            num_reps),
+                                                                   dimnames = list(1:(num_loci*choose(num_pops,2)+choose(num_pops,2)),
+                                                                                   analysis_names,
+                                                                                   1:num_reps))
+        }
+
+        params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  as.matrix(as.matrix(locus.final))
+
+      }
+
+
   }
+  params
 }
 
 

@@ -1,47 +1,31 @@
-install.packages("installr")
-setInternet2(TRUE)
-installr::updateR()
-
-.libPaths()
-update.packages(checkBuilt=TRUE)
-
-
-
-save.pkg.list <- install.packages()[is.na(install.packages()[,"Priority"]), 1]
-
-install.packages("devtools")
-library("devtools")
-
-install.packages("Rcpp")
-
-install.packages("shiny")
-library("shiny")
-
-install.packages("shinyFiles")
-library("shinyFiles")
-
-
-install.packages("stringi")
-install_github("Rstudio/shiny-incubator") #error!
-
-install.packages("ape")
-library(ape)
-install.packages("rmetasim")
-library(rmetasim)
-library(apex)
-
-install.packages("gsl")
-source("http://bioconductor.org/biocLite.R")
-biocLite("Biostrings")
-
-install.packages("nlme")
-install.packages("swfscMisc")
-
-install_github("ericarcher/strataG/strataG")
-library(strataG)
-
-install_github("christianparobek/skeleSim/skeleSim")
-library(skeleSim)
+#old version
+analyses.check.old <- function(analyses.requested){
+  #If no analyses are requested, default to all requested
+  if(is.null(analyses.requested)){
+    analyses.requested <- c(TRUE,TRUE,TRUE)
+    names(analyses.requested) <- c("Global","Locus","Pairwise")
+    analyses.requested
+  } else {
+    if(TRUE %in% analyses.requested){
+      #if analyses exist but logicals are not named
+      if(is.null(names(analyses.requested))){
+        names(analyses.requested) <- c("Global","Locus","Pairwise")
+        analyses.requested
+      }
+    } else {
+      # no analyses.requested, default to all requested
+      if(is.null(names(analyses.requested))){
+        analyses.requested <- c(TRUE,TRUE,TRUE)
+        names(analyses.requested) <- c("Global","Locus","Pairwise")
+        analyses.requested
+      } else {
+        #no analyses.requested but they are named
+        analyses.requested <- c(TRUE,TRUE,TRUE)
+        analyses.requested
+      }
+    }
+  }
+}
 ####ANALYSIS
 
 # after running the fastsimcoal test.params
