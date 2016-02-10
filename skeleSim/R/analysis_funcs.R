@@ -2,13 +2,16 @@
 #' @description Analyses for genind or multidna data
 #'
 #' @param params Take results of a simulation from params@rep.sample and run Global, Locus, and Pairwise analyses
-#'
-#'  @export
+#' @import strataG
+#' @import pegas
+#' @import hierfstat
+#' @export
 analysis_funcs <- function(params){
 
-  stopifnot(require(strataG))
-  stopifnot(require(pegas))
-  stopifnot(require(hierfstat))
+###next lines are commented out because the @imports above should work instead AES 2/10/16
+#  stopifnot(require(strataG))
+#  stopifnot(require(pegas))
+#  stopifnot(require(hierfstat))
 
   # saving global variables
   curr_scn<-params@current.scenario
