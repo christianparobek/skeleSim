@@ -3,7 +3,7 @@
 #'
 #' @param params Take results of a simulation from params@rep.sample and run Global, Locus, and Pairwise analyses
 #'
-#'  @export
+#' @export
 analysis_funcs <- function(params){
 
   stopifnot(require(strataG))
