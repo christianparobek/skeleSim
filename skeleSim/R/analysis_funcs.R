@@ -63,7 +63,7 @@ analysis_funcs <- function(params){
       results.matrix <- rbind(overall_stats(results_gtype),results.matrix.l)
       analyses <- colnames(results.matrix)
       num_analyses <- length(analyses)
-      #rownames(results.matrix) <- locNames(results_gtype)
+      rownames(results.matrix) <- c("OverLoci",loc_names)
 
       # We are printing by gene, not overall gene analysis. This differs from the genind code below.
       # The first row will hold summary statistics over all loci regardless of population structure.
@@ -82,8 +82,6 @@ analysis_funcs <- function(params){
 
     if(inherits(params@rep.sample, "genind")){
 
-      # Eric will improve overallTest {strataG} to deal with invariant loci
-      # all statistics crash
       ovl.global <- overallTest(results_gtype, nrep=5, stat.list=statList("chi2"), quietly=TRUE)$result
       ovl.all.global <- as.data.frame(as.table(ovl.global))[,3]
 
@@ -101,6 +99,7 @@ analysis_funcs <- function(params){
       ovl.all.names <- paste(ovl.all[[1]]$Var1, ovl.all[[1]]$Var2,sep="_")
       ovl.all.out <- do.call(rbind, ovl.all.values)
       ovl.all.results <- rbind(ovl.all.global,ovl.all.out)
+      row.names(ovl.all.results) <- c("overall",loc_names)
 
       if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
         params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
@@ -146,11 +145,12 @@ analysis_funcs <- function(params){
       smryLoci <- cbind(Locus = 1:num_loci,Pop = NA,summarizeLoci(results_gtype))
       #by population
       locus_pop <- as.matrix(expand.grid(1:num_loci,1:num_pops))  #cycles through the loci for each pop
-      smryPop.1 <- cbind(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
+      smryPop.1 <- data.frame(locus_pop,do.call(rbind,summarizeLoci(results_gtype, by.strata = TRUE)))
       #sort by each population per locus
-      smryPop <- smryPop.1[order(rownames(smryPop.1)),order(colnames(smryPop.1))]
+      smryPop <- smryPop.1[with(smryPop.1, order(smryPop.1$Var1,smryPop.1$Var2)),]
 
-      smry <- rbind(smryLoci[,-c(1:2)],smryPop[,-c(10,11)])
+      smry <- rbind(smryLoci[,-c(1:2)],data.matrix(smryPop[,-c(1,2)]))
+
 
       #Number of private alleles by locus
       alleleFreqs <- alleleFreqs(results_gtype, by.strata = TRUE)
@@ -185,15 +185,18 @@ analysis_funcs <- function(params){
         x
       }, mat = FSTpop, pn = 1:length(FSTpop), SIMPLIFY = FALSE)
       FSTpop.1 <- do.call(rbind,FSTpop2sort)
-      FSTpop.2 <- FSTpop.1[order(FSTpop.1$Locus,FSTpop.1$Pop),]
-      FSTpop.all <- rbind(FSTloci,FSTpop.2[,-c(4:5)])
+      FSTpop.1 <- data.frame(locus_pop,FSTpop.1)
+      FSTpop.2 <- FSTpop.1[order(FSTpop.1$Var1,FSTpop.1$Var2),]
+      FSTpop.all <- rbind(FSTloci,FSTpop.2[,grep("F",colnames(FSTpop.2),value=TRUE)])
 
 
       #all the analyses get bound here
       # sorted by Loci across all populaitons,
       #   then Locus.1/Pop.1:Pop.num_pops ... Locus.num_loci/Pop.1:Pop.num_pops
-      locus.final <- cbind(HWE.pval = hwe[,-c(1:2)],mrat_results_all,smry,num.priv.allele,FSTpop.all, row.names=NULL)
+      locus.final <- data.frame(HWE.pval = hwe[,-c(1:2)],mrat_results_all,smry,num.priv.allele,FSTpop.all, row.names=NULL)
       analysis_names <- colnames(locus.final)
+      row.names(locus.final) <- c(loc_names,apply(expand.grid(1:num_pops,1:num_loci),1,
+                                                  function(x) paste(x[2],x[1],sep="_")))
       locus.final <- as.matrix(locus.final)
 
 
@@ -213,7 +216,6 @@ analysis_funcs <- function(params){
 
     # multiDNA
     # Per gene (ignoring population structure, and per gene by population)
-
     if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
       #Nucleotide diversity
@@ -342,6 +344,9 @@ analysis_funcs <- function(params){
       analysis_names <- c("nucloetide.diversity", "Fu.F",colnames(t.d.all),summary.analyses,
                           #"nucleotide.divergence",
                           "num.private.haps")
+      row.names(locus.final) <- c(loc_names,
+                                  apply(expand.grid(loc_names,strata_names),1,
+                                        function(x) paste(x[2],x[1],sep="_")))
 
       # Create the data array first time through
       # gene.1...gene.num_loci, pop.1/gene.1:gene.num_loci...pop.num.pops/gene.1:gene.num_loci
@@ -388,6 +393,9 @@ analysis_funcs <- function(params){
 
       pairwise.final <- cbind(dA.all,psw.all,sA)
       analysis_names <- names(pairwise.final)[-c(1:2)]
+      row.names(pairwise.final) <- apply(expand.grid(c(apply(combn(strata_names,2),2,
+                                           function(x) paste(x[1],x[2],sep="_"))),loc_names),1,
+                                         function(x) paste(x[2],x[1],sep=""))
 
       #Data.frame of summary data into simulation replicate
       # Create the data array first time through
@@ -436,9 +444,12 @@ analysis_funcs <- function(params){
       chord.dist.l <- do.call(rbind,chord.dist.locus)
       chord.dist.all <- rbind(ch.dist,chord.dist.l)
 
-      locus.final <- cbind(pws.all[,-c(1:5)],sA = sA.all,chord_distance = chord.dist.all[,2])
+      pws.final <- cbind(pws.all[,-c(1:5)],sA = sA.all,chord_distance = chord.dist.all[,2])
       #locus.final <- locus.final.names[,sapply(locus.final.names,is.numeric)]
-      analysis_names <- names(locus.final)
+      analysis_names <- names(pws.final)
+      #### almost!!! ####
+      row.names(pws.final) <- mapply(function(loc,pop){paste(loc,pop,sep=":")},
+                                     loc_names,apply(combn(1:4,2),2,function(x) paste(x[1],x[2],sep="_")))
 
       #Data.frame of summary data into simulation replicate
       # Create the data array first time through
@@ -451,7 +462,7 @@ analysis_funcs <- function(params){
                                                                                    1:num_reps))
       }
 
-      params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  as.matrix(as.matrix(locus.final))
+      params@analysis.results[["Pairwise"]][[curr_scn]][,,curr_rep] <-  as.matrix(pws.final)
 
     }
 
