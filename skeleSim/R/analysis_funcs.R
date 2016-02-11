@@ -3,12 +3,12 @@
 #'
 #' @param params Take results of a simulation from params@rep.sample and run Global, Locus, and Pairwise analyses
 #'
+#' @import strataG
+#' @import pegas
+#' @import hierfstat
+#'
 #' @export
 analysis_funcs <- function(params){
-
-  stopifnot(require(strataG))
-  stopifnot(require(pegas))
-  stopifnot(require(hierfstat))
 
   # saving global variables
   curr_scn<-params@current.scenario
