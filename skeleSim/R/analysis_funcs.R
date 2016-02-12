@@ -447,9 +447,12 @@ analysis_funcs <- function(params){
       pws.final <- cbind(pws.all[,-c(1:5)],sA = sA.all,chord_distance = chord.dist.all[,2])
       #locus.final <- locus.final.names[,sapply(locus.final.names,is.numeric)]
       analysis_names <- names(pws.final)
-      #### almost!!! ####
-      row.names(pws.final) <- mapply(function(loc,pop){paste(loc,pop,sep=":")},
-                                     loc_names,apply(combn(1:4,2),2,function(x) paste(x[1],x[2],sep="_")))
+      #### check order of 3+ populations ####
+      row.names(pws.final) <- c(apply(combn(1:num_pops,2),2,function(x){
+        paste(x[1],x[2],sep="_")
+        }),apply(expand.grid(loc_names,
+                             apply(combn(1:num_pops,2),2,function(x) paste(x[1],x[2],sep="_"))),
+                 1,paste,collapse="."))
 
       #Data.frame of summary data into simulation replicate
       # Create the data array first time through
