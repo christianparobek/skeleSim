@@ -61,14 +61,16 @@ skeletonland<-landscape.new.epoch(skeletonland,epochprob=1, epoch_s_matr, epoch_
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
 #assumes biparental transmission (transmission = 0)
 rms.locus.type = NULL
+
     print(loc.type)
+    
 if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
 if (loc.type %in% c("microsat","MICROSAT","microsatellite")) rms.locus.type = 1
 if (loc.type == "sequence") rms.locus.type = 2
     for (l in 1:num.loc)
         if (rms.locus.type==2)
         {
-            skeletonland<-landscape.new.locus(skeletonland, type=1, ploidy=2, mutationrate=mut.rate[l],
+            skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=2, mutationrate=mut.rate[l],
                                               transmission=0, numalleles=num.alleles[l],
                                               frequencies=allele.freqs[[l]]) #temp remove allele size
         }

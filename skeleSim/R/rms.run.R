@@ -58,6 +58,7 @@ print(str(skeleland_samp))
   
   print("bout to convert")
   #now store the results
+  save(file="tmpskeleland.rda",skeleland_samp)
   params@rep.sample<- rms.convert(skeleland_samp, sc@locus.type)
   print("returned from convert; returning params obj")
   return(params)

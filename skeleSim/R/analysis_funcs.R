@@ -9,7 +9,6 @@
 #'
 #' @export
 analysis_funcs <- function(params){
-
   # saving global variables
   curr_scn<-params@current.scenario
   curr_rep<-params@current.replicate
