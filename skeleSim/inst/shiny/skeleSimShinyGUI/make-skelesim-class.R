@@ -37,6 +37,21 @@ observeEvent(input$coalescent,{
 observeEvent(input$reps, {
     rValues$ssClass@num.reps <- input$reps
 })
+
+observeEvent(input$analysesReq, {
+    vec <- input$analysesReq
+    if (length(vec)>0)
+    {
+        reqvec <- c("Global"=F,"Pairwise"=F,"Locus"=F)
+        reqvec[which(names(reqvec)%in%input$analysesReq)] <- T
+        rValues$ssClass@analyses.requested <- reqvec
+    } else {
+        rValues$ssClass@analyses.requested<- c("Global"=F,"Pairwise"=F,"Locus"=F)
+    }
+
+    
+})
+
 observeEvent(input$wd, {
     rValues$ssClass@wd <- input$wd
                     })
@@ -202,7 +217,13 @@ observeEvent(rValues$ssClass,{
     }
     if (!is.null(rValues$ssClass@num.reps))
         updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
-    if (!is.null(rValues$ssClass@wd))
+
+    if (!is.null(rValues$ssClass@analyses.requested))
+        updateCheckboxGroupInput(session,"analysesReq",
+                                 names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested])
+        
+
+        if (!is.null(rValues$ssClass@wd))
         {
             if (is.null(supportValues$simroot)) {supportValues$simroot <- "."}
             output$simpath <- renderText({

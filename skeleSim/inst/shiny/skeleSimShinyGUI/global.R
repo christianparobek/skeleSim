@@ -35,13 +35,14 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
 
 ##### just a placeholder !!!!!!!! #######
 ##### need to include actual rep analyses
-        ssClass@rep.analysis.func <-  function(params) {
-            result = rnorm(5)
-            names(result) <- paste("result", 1:5, sep = ".")
-            params@rep.result <- result
-            params
-        }
+#        ssClass@rep.analysis.func <-  function(params) {
+#            result = rnorm(5)
+#            names(result) <- paste("result", 1:5, sep = ".")
+#            params@rep.result <- result
+#            params
+#        }
 ##############################################
+    ssClass@rep.analysis.func <-  analysis_funcs
 
 #    ssClass@simulator.type <- "f"
     

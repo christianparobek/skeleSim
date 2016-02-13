@@ -56,8 +56,11 @@ shinyUI(
                                    value = FALSE),
                      numericInput("reps", "Number of simulation reps",
                                   value = 1),
+                     checkboxGroupInput("analysesReq","Type of analyses for each rep",
+                                        c("Global"="Global", "Pairwise"="Pairwise", "Locus"="Locus")),
                      textInput("wd", "Subdirectory for actual simulation",
                                value = "wdTest")
+                     
                  ),
                  mainPanel(h3("Parameters automatically set:"),
                            h4(textOutput("simulator")),

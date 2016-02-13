@@ -18,15 +18,17 @@ Depends:
     shiny (>= 0.13.0),
     shinyIncubator,
     shinyFiles,
-    igraph
+    igraph,
+    strataG,
+    rmetasim (>= 3.0.0),
+    hierfstat,
+    pegas
 Imports:
     adegenet,
     ape,
     ggplot2,
     methods,
-    reshape2,
-    rmetasim (>= 3.0.0),
-    strataG
+    reshape2
 Suggests:
     knitr
 VignetteBuilder: knitr
