@@ -11,3 +11,4 @@ phist <- sapply(locNames(x.g), function(n) {
   unname(statPhist(x.g[, n, ]))
 })
 
+phist

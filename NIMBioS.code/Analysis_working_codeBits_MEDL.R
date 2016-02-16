@@ -29,6 +29,7 @@ library(adegenet)
 library(strataG)
 library(swfscMisc)
 
+install.packages("poppr")
 library(poppr)
 library(MASS)
 
