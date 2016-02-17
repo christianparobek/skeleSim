@@ -12,31 +12,20 @@
 #'
 analysis_func <- function(params){
   # saving global variables
-  curr_scn<-params@current.scenario
-  curr_rep<-params@current.replicate
-  num_loci<-params@scenarios[[curr_scn]]@num.loci
-  num_reps<-params@num.reps
-  num_pops<-params@scenarios[[curr_scn]]@num.pops
+  curr_scn <- params@current.scenario
+  curr_rep <- params@current.replicate
+  num_loci <- params@scenarios[[curr_scn]]@num.loci
+  num_reps <- params@num.reps
+  num_pops <- params@scenarios[[curr_scn]]@num.pops
   params@analyses.requested <- analyses.check(params@analyses.requested)
 
-  #params@rep.sample is either a genind or a list of DNAbin objects
-  if(inherits(params@rep.sample, "genind")){
-    results_gtype<-genind2gtypes(params@rep.sample)
-  } else if (inherits(params@rep.sample, "gtypes")){
-    results_gtype <- params@rep.sample
-  } else {
-    # Convert the list of DNAbin objects to gtypes
-    genes <- params@rep.sample
-    results_gtype <- sequence2gtypes(genes$dna.seqs, strata = genes$strata)
-    results_gtype <- labelHaplotypes(results_gtype)$gtype
-  }
-
+  results_gtype <- results2gtypes(params)
   loc_names <- locNames(results_gtype)
   strata_names <- strataNames(results_gtype)
 
   # If analysis results is empty, the first analysis done creates the list to hold the data
-  if(is.null(params@analysis.results)){
-    params@analysis.results <- sapply(c("Global","Locus","Pairwise"), function(x) NULL)
+  if(is.null(params@analysis.results)) {
+    params@analysis.results <- list(Global = NULL, Locus = NULL, Pairwise = NULL)
   }
 
   ######################### Global ##########################
@@ -46,14 +35,12 @@ analysis_func <- function(params){
     # multiDNA
     if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
-      #overall_stats() is from skeleSim.funcs.R
-      #run by locus analysis across all populations
-      r.m <- lapply(locNames(results_gtype), function (l){
-        gtypes_this_loc<-results_gtype[,l,]
-        overall_stats(gtypes_this_loc)
+      # run by locus analysis across all populations
+      r.m <- lapply(locNames(results_gtype), function(l) {
+        overall_stats(results_gtype[, l, ])
       })
-      #find complete list of column names
-      analysis.names <- unique(do.call(c, lapply(r.m, function(x) names(x))))
+      # find complete list of column names
+      analysis.names <- unique(unlist(lapply(r.m, names)))
       r.m <- lapply(r.m, function(x){
         missing <- setdiff(analysis.names, names(x))
         x[missing] <- NA
@@ -61,24 +48,23 @@ analysis_func <- function(params){
         x
       })
       results.matrix.l <- do.call(rbind, r.m)
-      results.matrix <- rbind(overall_stats(results_gtype),results.matrix.l)
+      results.matrix <- rbind(overall_stats(results_gtype), results.matrix.l)
       analyses <- colnames(results.matrix)
       num_analyses <- length(analyses)
-      rownames(results.matrix) <- c("OverLoci",loc_names)
+      rownames(results.matrix) <- c("OverLoci", loc_names)
 
       # We are printing by gene, not overall gene analysis. This differs from the genind code below.
       # The first row will hold summary statistics over all loci regardless of population structure.
       # The remaining rows will hold summary statistics per locus
-      if(is.null(params@analysis.results[["Global"]][[curr_scn]])){
-        params@analysis.results[["Global"]][[curr_scn]] <- array(0,dim=c(num_loci+1,
-                                                                         num_analyses,
-                                                                         num_reps),
-                                                                 dimnames = list(c(1:(num_loci+1)),
-                                                                                 analyses,
-                                                                                 1:num_reps))
+      if(is.null(params@analysis.results[["Global"]][[curr_scn]])) {
+        empty.arr <- array(
+          0, dim = c(nrow(results.matrix), ncol(results.matrix), num_reps),
+          dimnames = list(rownames(results.matrix), colnames(results.matrix), 1:num_reps)
+        )
+        params@analysis.results[["Global"]][[curr_scn]] <- empty.arr
       }
 
-      params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
+      params@analysis.results[["Global"]][[curr_scn]][, , curr_rep] <- results.matrix
     }
 
     if(inherits(params@rep.sample, "genind")){
@@ -476,3 +462,49 @@ analysis_func <- function(params){
 }
 
 
+overall_stats <- function(g) {
+  opt <- options(warn = -1)
+  ovl <- overallTest(g, nrep = 5, quietly = TRUE)
+  ovl.result <- ovl$result[complete.cases(ovl$result), ]
+  global.wide <- as.vector(t(ovl.result))
+  names(global.wide) <- paste(
+    rep(rownames(ovl.result), each = 2), c("", ".pval"), sep = ""
+  )
+  options(opt)
+  global.wide
+}
+
+.globalAnalysis <- function(params, g, curr_scn, num_reps, curr_rep) {
+  if(is.null(params@analysis.results)) params@analysis.results <- list()
+  if(is.null(x$Global)) x$Global <- NULL
+  # run by locus analysis across all populations
+  r.m <- lapply(locNames(results_gtype), function(l) {
+    overall_stats(g[, l, ])
+  })
+  # find complete list of column names
+  analysis.names <- unique(unlist(lapply(r.m, names)))
+  r.m <- lapply(r.m, function(x){
+    missing <- setdiff(analysis.names, names(x))
+    x[missing] <- NA
+    names(x) <- analysis.names
+    x
+  })
+  results.matrix.l <- do.call(rbind, r.m)
+  results.matrix <- rbind(overall_stats(g), results.matrix.l)
+  analyses <- colnames(results.matrix)
+  num_analyses <- length(analyses)
+  rownames(results.matrix) <- c("Overall", loc_names)
+
+  # We are printing by gene, not overall gene analysis. This differs from the genind code below.
+  # The first row will hold summary statistics over all loci regardless of population structure.
+  # The remaining rows will hold summary statistics per locus
+  if(is.null(params@analysis.results$Global[[curr_scn]])) {
+    empty.arr <- array(
+      0, dim = c(nrow(results.matrix), ncol(results.matrix), num_reps),
+      dimnames = list(rownames(results.matrix), colnames(results.matrix), 1:num_reps)
+    )
+    params@analysis.results$Global[[curr_scn]] <- empty.arr
+  }
+  params@analysis.results$Global[[curr_scn]][, , curr_rep] <- results.matrix
+  return(params)
+}

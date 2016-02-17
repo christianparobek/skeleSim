@@ -51,6 +51,7 @@ print("params checked")
       file <- paste(label, ".params.rdata", sep = "")
       if(!dir.exists(label)) dir.create(label)
       save(params, file = file.path(label, file))
+#-----
       # check timing
       results$timing$end.time <- Sys.time()
       if(!is.null(num.secs)) {

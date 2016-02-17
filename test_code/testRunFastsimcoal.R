@@ -63,4 +63,4 @@ test.params@sim.check.func <- fsc.scenarioCheck
 test.params@rep.analysis.func <- skeleSim::analysis_func
 
 # ---- Run replicates ----
-test.params <- runSim(test.params, 5)
+test.params <- runSim(test.params, 10)
