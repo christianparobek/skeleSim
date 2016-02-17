@@ -4,6 +4,7 @@
 #' @param params a \linkS4class{skeleSim.params} object.
 #' @param num.secs number of seconds to run timing checks
 #'
+#' @importFrom swfscMisc autoUnits
 #' @export
 #'
 runSim <- function(params, num.secs = NULL) {
@@ -21,9 +22,7 @@ runSim <- function(params, num.secs = NULL) {
 print("params checked")
 
   # Check/setup folder structure
-  if(file.exists(params@wd)) {
-    unlink(params@wd, recursive = TRUE, force = TRUE)
-  }
+  if(file.exists(params@wd)) unlink(params@wd, recursive = TRUE, force = TRUE)
   dir.create(params@wd)
   wd <- setwd(params@wd)
 
@@ -62,21 +61,7 @@ print("params checked")
     }
 
     elapsed <- results$timing$end.time - results$timing$start.time
-    units(elapsed) <- "secs"
-    completion <- num.iter * elapsed / i
-    if(completion > 60) {
-      units(completion) <- "mins"
-      if(completion > 60) {
-        units(completion) <- "hours"
-        if(completion > 24) {
-          units(completion) <- "days"
-          if(completion > 7) {
-            units(completion) <- "weeks"
-          }
-        }
-      }
-    }
-    results$timing$completion.time <- completion
+    results$timing$completion.time <- autoUnits(num.iter * elapsed / i)
     results$timing$pct.complete <- round(100 * i / num.iter, 1)
     results$params <- params
   }, finally = setwd(wd))

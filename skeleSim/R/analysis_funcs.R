@@ -1,14 +1,16 @@
 #' @title Analysis functions
-#' @description Analyses for genind or multidna data
+#' @description Take results of a simulation from params@rep.sample and run
+#'   Global, Locus, and Pairwise analyses
 #'
-#' @param params Take results of a simulation from params@rep.sample and run Global, Locus, and Pairwise analyses
+#' @param params a \linkS4class{skeleSim.params} object.
 #'
 #' @import strataG
 #' @import pegas
 #' @import hierfstat
 #'
 #' @export
-analysis_funcs <- function(params){
+#'
+analysis_func <- function(params){
   # saving global variables
   curr_scn<-params@current.scenario
   curr_rep<-params@current.replicate
