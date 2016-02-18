@@ -22,7 +22,7 @@
 #' @importFrom rmetasim landscape.new.empty landscape.new.floatparam
 #'   landscape.new.intparam landscape.new.switchparam landscape.new.local.demo
 #'   landscape.mig.matrix landscape.new.epoch landscape.new.locus landscape.new.individuals
-#'
+#' @export
 rms.init.landscape <- function(num.pops = NULL, carrying = NULL,
   sample.size = NULL, mig.rates = NULL, num.loc = NULL, loc.type = NULL,
   mut.rate = NULL, seq.length = NULL, num.stgs = NULL, selfing = NULL,
@@ -44,10 +44,14 @@ for (i in 1:num.pops)
 	skeletonland<-landscape.new.local.demo(skeletonland,surv.matr, repr.matr, male.matr)
 
 #cross habitat matrices
-epoch_s_matr<-matrix(0,nrow=4, ncol=4)
-epoch_r_matr<-landscape.mig.matrix(h=num.pops,s=num.stgs,mig.model="stepping.stone.linear")$R
-epoch_m_matr<-matrix(0,nrow=4, ncol=4)
+#epoch_s_matr<-matrix(0,nrow=4, ncol=4)
+#epoch_r_matr<-
+#epoch_m_matr<-matrix(0,nrow=4, ncol=4)
+    epoch_s_matr<-matrix(0,nrow=(num.pops*num.stgs), ncol=(num.pops*num.stgs))
+    epoch_r_matr <- landscape.mig.matrix(h=num.pops,s=num.stgs,R.custom=mig.rates)$R
+    epoch_m_matr <- epoch_s_matr
 
+    
 #no extinction allowed, hard coded
 skeletonland<-landscape.new.epoch(skeletonland,epochprob=1, epoch_s_matr, epoch_r_matr, epoch_m_matr,
     startgen=0,extinct=NULL,carry=carrying)
@@ -57,14 +61,26 @@ skeletonland<-landscape.new.epoch(skeletonland,epochprob=1, epoch_s_matr, epoch_
 #type = 0 IAM, type = 1 SMM type = 2 DNA sequence
 #assumes biparental transmission (transmission = 0)
 rms.locus.type = NULL
+
+    print(loc.type)
+    
 if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
-if (loc.type == "microsat") rms.locus.type = 1
+if (loc.type %in% c("microsat","MICROSAT","microsatellite")) rms.locus.type = 1
 if (loc.type == "sequence") rms.locus.type = 2
-for (l in 1:num.loc)
-skeletonland<-landscape.new.locus(skeletonland, type=1, ploidy=2, mutationrate=mut.rate[l],
-    transmission=0, numalleles=num.alleles[l], frequencies=allele.freqs, allelesize=seq.length[l])
-
+    for (l in 1:num.loc)
+        if (rms.locus.type==2)
+        {
+            skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=2, mutationrate=mut.rate[l],
+                                              transmission=0, numalleles=num.alleles[l],
+                                              frequencies=allele.freqs[[l]]) #temp remove allele size
+        }
+        else
+        {
+            skeletonland<-landscape.new.locus(skeletonland, type=1, ploidy=2, mutationrate=mut.rate[l],
+                                              transmission=0, numalleles=num.alleles[l],
+                                              frequencies=allele.freqs[[l]])
+        }
 #assumes population initial sizes all defined nicely by user
-skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
-
+    skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
+    
 }

@@ -21,19 +21,37 @@ observeEvent(input$coalescent,{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
     rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rmw")
     for (s in 1:length(rValues$ssClass@scenarios))
-        if (input$coalescent)
+        if (rValues$ssClass@simulator.type=="c")
             {
                 rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    new("fastsimcoal.params")
+                    fastsimcoalInit()
             } else {
                 rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    new("rmetasim.params")
+                    rmetasimInit()
+                rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- rep(1,rValues$ssClass@scenarios[[s]]@num.loci)
+                rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- vector("list",rValues$ssClass@scenarios[[s]]@num.loci)
+                rValues$ssClass@scenarios[[s]]@simulator.params@num.gen <- 50
             }
 })
 
 observeEvent(input$reps, {
     rValues$ssClass@num.reps <- input$reps
 })
+
+observeEvent(input$analysesReq, {
+    vec <- input$analysesReq
+    if (length(vec)>0)
+    {
+        reqvec <- c("Global"=F,"Pairwise"=F,"Locus"=F)
+        reqvec[which(names(reqvec)%in%input$analysesReq)] <- T
+        rValues$ssClass@analyses.requested <- reqvec
+    } else {
+        rValues$ssClass@analyses.requested<- c("Global"=F,"Pairwise"=F,"Locus"=F)
+    }
+
+    
+})
+
 observeEvent(input$wd, {
     rValues$ssClass@wd <- input$wd
                     })
@@ -64,6 +82,19 @@ observeEvent(input$numpopsTxt,
 observeEvent(input$numloci,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- input$numloci
+                 #### rmetasim addition
+                 if (rValues$ssClass@simulator.type=="f")
+                 {
+                     print("resetting the number of alleles per locus vector")
+                     navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
+                     print(navec)
+                     #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
+                     if (length(navec)!=input$numloci) 
+                         navec <- rep(1,input$numloci)
+                     print(navec)
+                     navec[is.na(navec)] <- 1
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
+                 }
              })
 
 observeEvent(input$loctype,
@@ -113,23 +144,53 @@ observeEvent(input$specScenNumber,
 
 observeEvent(input$infSiteModel,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
+                 if (rValues$ssClass@simulator.type=="c")
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
              })
 
 observeEvent(input$fscexec,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
+                 if (rValues$ssClass@simulator.type=="c")
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
              })
 
 observeEvent(input$stvec,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(input$stvec)
+                 if (rValues$ssClass@simulator.type=="c")
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(input$stvec)
              })
 
 observeEvent(input$grvec,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- c(input$grvec)
+                 if (rValues$ssClass@simulator.type=="c")
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- c(input$grvec)
              })
+
+#######rmetasim parameters
+observeEvent(input$stages,
+{
+    if (rValues$ssClass@simulator.type=="f")
+    {
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- input$stages
+        if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)) || (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)[1]!=input$stages))
+        {
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr <- matrix(0,input$stages,input$stages)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr <- matrix(0,input$stages,input$stages)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@male.matr <- matrix(0,input$stages,input$stages)
+        }
+    
+    }
+})
+
+observeEvent(input$self,
+{
+    if (rValues$ssClass@simulator.type=="f")
+    {
+         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing <- input$self
+    }
+})
+
+
 
 
 ##############################################################################################
@@ -156,7 +217,13 @@ observeEvent(rValues$ssClass,{
     }
     if (!is.null(rValues$ssClass@num.reps))
         updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
-    if (!is.null(rValues$ssClass@wd))
+
+    if (!is.null(rValues$ssClass@analyses.requested))
+        updateCheckboxGroupInput(session,"analysesReq",
+                                 names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested])
+        
+
+        if (!is.null(rValues$ssClass@wd))
         {
             if (is.null(supportValues$simroot)) {supportValues$simroot <- "."}
             output$simpath <- renderText({
@@ -196,7 +263,14 @@ observeEvent(rValues$ssClass,{
                 {
                     updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
                 }
-        }    
+        } else { ########this is for rmetasim
+#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing))
+#                updateNumericInput(session,"self",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing)
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
+                updateNumericInput(session,"gens",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen)
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
+                updateNumericInput(session,"stages",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
+        }
 })
 
 ###change stuff if the scenario number changes
