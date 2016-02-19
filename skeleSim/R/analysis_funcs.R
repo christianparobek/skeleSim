@@ -1,22 +1,27 @@
+#' @name analysis_funcs
 #' @title Analysis functions
 #' @description Run Global, Locus, and Pairwise analyses on results from
 #'   a single simulation replicate stored in params@rep.sample#'
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
 #'
+#' @import strataG
 #' @export
 #'
-analysis_func <- function(params){
+analysis_funcs <- function(params){
   if(is.null(params@analysis.results)) {
-    params@analysis.results <- list(Global = NULL, Locus = NULL, Pairwise = NULL)
+    empty.list <- lapply(1:length(params@scenarios), function(x) NULL)
+    params@analysis.results <- list(
+      Global = empty.list, Locus = empty.list, Pairwise = empty.list
+    )
   }
 
   results_gtype <- results2gtypes(params)
   params@analyses.requested <- analyses.check(params@analyses.requested)
 
   if(params@analyses.requested["Global"]) {
-    mat <- globalAnalysis(params, results_gtype)
-    params < loadResultsMatrix(params, mat, "Global")
+    mat <- globalAnalysis(results_gtype)
+    params <- loadResultsMatrix(params, mat, "Global")
   }
 
   if(params@analyses.requested["Locus"]) {
@@ -28,24 +33,24 @@ analysis_func <- function(params){
     params <- loadResultsMatrix(params, mat, "Locus")
   }
 
-  if(params@analyses.requested["Pairwise"]) {
-    mat <- pairwiseAnalysis(params, results_gtype)
-    params <- loadResultsMatrix(params, mat, "Global")
-  }
+#   if(params@analyses.requested["Pairwise"]) {
+#     mat <- pairwiseAnalysis(params, results_gtype)
+#     params <- loadResultsMatrix(params, mat, "Global")
+#   }
 
   return(params)
 }
 
-
+#' @rdname analysis_funcs
+#'
 loadResultsMatrix <- function(params, mat, label) {
-  curr_scn <- params@current_scenario
+  curr_scn <- params@current.scenario
   num_reps <- params@num.reps
   if(is.null(params@analysis.results[[label]][[curr_scn]])) {
-    empty.arr <- array(
-      0, dim = c(nrow(mat), ncol(mat), num_reps),
+    params@analysis.results[[label]][[curr_scn]] <- array(
+      NA, dim = c(nrow(mat), ncol(mat), num_reps),
       dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
     )
-    params@analysis.results[[label]][[curr_scn]] <- empty.arr
   }
   curr_rep <- params@current.replicate
   params@analysis.results[[label]][[curr_scn]][, , curr_rep] <- mat
@@ -53,6 +58,8 @@ loadResultsMatrix <- function(params, mat, label) {
 }
 
 
+#' @rdname analysis_funcs
+#'
 overall_stats <- function(g) {
   opt <- options(warn = -1)
   ovl <- overallTest(g, nrep = 5, quietly = TRUE)
@@ -66,7 +73,9 @@ overall_stats <- function(g) {
 }
 
 
-globalAnalysis <- function(params, g) {
+#' @rdname analysis_funcs
+#'
+globalAnalysis <- function(g) {
   loc_names <- locNames(g)
 
   # run by locus analysis across all populations
@@ -86,12 +95,13 @@ globalAnalysis <- function(params, g) {
   analyses <- colnames(results.matrix)
   num_analyses <- length(analyses)
   rownames(results.matrix) <- c("Overall", loc_names)
-
-  loadResultsMatrix(params, results.matrix, "Global")
+  return(results.matrix)
 }
 
 
+#' @rdname analysis_funcs
 #' @importFrom reshape2 melt
+#'
 locusAnalysisGenotypes <- function(params, g) {
   opt <- options(warn = -1)
 
@@ -180,6 +190,8 @@ locusAnalysisGenotypes <- function(params, g) {
 }
 
 
+#' @rdname analysis_funcs
+#'
 hapSmryFunc <- function(g) {
   g <- g[, , , drop = TRUE]
   unstrat <- g
@@ -194,6 +206,8 @@ hapSmryFunc <- function(g) {
 }
 
 
+#' @rdname analysis_funcs
+#'
 locusAnalysisHaplotypes <- function(g) {
   opt <- options(warn = -1)
 
@@ -219,6 +233,8 @@ locusAnalysisHaplotypes <- function(g) {
 }
 
 
+#' @rdname analysis_funcs
+#'
 calcChordDist <- function(dat, is.diploid) {
   chord.dist <- genet.dist(dat, diploid = is.diploid, method = "Dch")
   chord.dist <- as.matrix(chord.dist)
@@ -236,6 +252,8 @@ calcChordDist <- function(dat, is.diploid) {
 }
 
 
+#' @rdname analysis_funcs
+#'
 pairwiseAnalysis <- function(g) {
   # pairwise test
   stats <- if(ploidy(g) == 1) {

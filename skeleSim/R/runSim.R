@@ -31,9 +31,7 @@ print("params checked")
   tryCatch({
     num.sc <- length(params@scenarios)
     num.reps <- params@num.reps
-    sc.vec <- rep(1:num.sc, num.reps)
-    rep.vec <- rep(1:num.reps, each = num.sc)
-    params@scenario.reps <- cbind(scenario = sc.vec, replicate = rep.vec)
+    params@scenario.reps <- as.matrix(expand.grid(scenario = 1:num.sc, replicate = 1:num.reps))
     quit <- FALSE
     # loop through replicates for scenarios
     num.iter <- nrow(params@scenario.reps)
