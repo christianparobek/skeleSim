@@ -10,7 +10,7 @@ analysis_func(params)
 \item{params}{a \linkS4class{skeleSim.params} object.}
 }
 \description{
-Take results of a simulation from params@rep.sample and run
-  Global, Locus, and Pairwise analyses
+Run Global, Locus, and Pairwise analyses on results from
+  a single simulation replicate stored in params@rep.sample#'
 }
 

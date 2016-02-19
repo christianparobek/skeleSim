@@ -237,9 +237,6 @@ calcChordDist <- function(dat, is.diploid) {
 
 
 pairwiseAnalysis <- function(g) {
-  # nucleotide Divergence and mean.pct.between
-  dA <- lapply(nucleotideDivergence(g), function(x) x$between[, 1:3])
-
   # pairwise test
   stats <- if(ploidy(g) == 1) {
     list(statChi2, statFst, statPhist)
@@ -247,35 +244,38 @@ pairwiseAnalysis <- function(g) {
     list(statChi2, statFst, statFstPrime, statGst, statGstPrime,
          statGstDblPrime, statFis)
   }
-  pws.all <- pairwiseTest(g, nrep = 5, stat.list = stats, quietly = TRUE)$result
+  pws.all <- pairwiseTest(g, nrep = 5, stats = stats, quietly = TRUE)$result
   pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
-  pws <- lapply(locNames(g), function(l) {
+  pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = 5, stat.list = stats, quietly = TRUE
+      g[, l, ], nrep = 5, stats = stats, quietly = TRUE
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
-    result
-  })
-  names(pws) <- locNames(g)
+    cbind(result[, 1:2], Locus = l, result[, 3:ncol(result)])
+  }))
 
   # shared alleles
   sA <- sharedAlleles(g)
-  sA.mean <- rowMeans(sA[, -(1:2)])
-  sA.sum <- rowSums(sA[, -(1:2)])
-  sA <- cbind(sA, mean = sA.mean, sum = sA.sum)
+  sA$mean <- rowMeans(sA[, -(1:2)])
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
-       variable.name = "Locus", value.name = "shared.alleles")
+             variable.name = "Locus", value.name = "shared.alleles")
+  sA$Locus[sA$Locus == "mean"] <- NA
 
-  # chord.dist
-  if(ploidy(g) %in% 1:2) {
-    dat <- genind2hierfstat(gtypes2genind(g))
-    is.diploid <- ploidy(g) == 2
-    chord.dist <- calcChordDist(dat, is.diploid)
-    # chord.dist by locus
-    chord.dist.locus <- lapply(locNames(g), function(l) {
-      print(l)
-      result <- calcChordDist(dat[, c("pop", l)], is.diploid)
-      cbind(result[, 1:2], Locus = l, result[, 3])
-    })
-  }
+  dA <- if(ploidy(g) == 1) {
+    # nucleotide Divergence and mean.pct.between
+    lapply(nucleotideDivergence(g), function(x) x$between[, 1:3])
+  } else NULL
+
+#   # chord.dist
+#   if(ploidy(g) %in% 1:2) {
+#     dat <- genind2hierfstat(gtypes2genind(g))
+#     is.diploid <- ploidy(g) == 2
+#     chord.dist <- calcChordDist(dat, is.diploid)
+#     # chord.dist by locus
+#     chord.dist.locus <- lapply(locNames(g), function(l) {
+#       print(l)
+#       result <- calcChordDist(dat[, c("pop", l)], is.diploid)
+#       cbind(result[, 1:2], Locus = l, result[, 3])
+#     })
+#   } else NULL
 }

@@ -28,7 +28,6 @@ currentLabel <- function(params) {
 }
 
 #' @rdname skeleSim.internals
-#' @importFrom strataG genind2gtypes sequence2gtypes labelHaplotypes
 #'
 results2gtypes <- function(params) {
   #params@rep.sample is either a genind or a list of DNAbin objects

@@ -3,7 +3,6 @@
 \name{skeleSim.internals}
 \alias{currentLabel}
 \alias{currentScenario}
-\alias{overall_stats}
 \alias{results2gtypes}
 \alias{skeleSim.internals}
 \title{SkeleSim internal functions}
@@ -13,8 +12,6 @@ currentScenario(params)
 currentLabel(params)
 
 results2gtypes(params)
-
-overall_stats(g)
 }
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}
