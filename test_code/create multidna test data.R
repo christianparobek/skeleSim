@@ -10,3 +10,4 @@ dna.seqs <- as.multidna(lapply(list(1:150, 151:300, 301:402), function(i) {
 }))
 
 g <- labelHaplotypes(sequence2gtypes(dna.seqs, strata = fine))$gtypes
+save(g, file = "multidna test data.rdata")

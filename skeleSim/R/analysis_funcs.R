@@ -204,7 +204,7 @@ locusAnalysisHaplotypes <- function(g) {
     result
   }))
 
-  # num.private.alleles
+  # number of private alleles
   pa <- privateAlleles(g)
   pa.melt <- melt(pa)
 
@@ -219,64 +219,63 @@ locusAnalysisHaplotypes <- function(g) {
 }
 
 
-pairwiseAnalysis <- function(g) {
+calcChordDist <- function(dat, is.diploid) {
+  chord.dist <- genet.dist(dat, diploid = is.diploid, method = "Dch")
+  chord.dist <- as.matrix(chord.dist)
+  rownames(chord.dist) <- colnames(chord.dist) <- levels(dat$pop)
+  pop.pairs <- data.frame(combn(levels(dat$pop), 2), stringsAsFactors = FALSE)
+  result <- do.call(rbind, lapply(pop.pairs, function(pop.pair) {
+    data.frame(
+      strata.1 = pop.pair[1], strata.2 = pop.pair[2],
+      chord.distance = chord.dist[pop.pair[1], pop.pair[2]],
+      stringsAsFactors = FALSE
+    )
+  }))
+  rownames(result) <- NULL
+  result
+}
 
-  #nucleotide Divergence and mean.pct.between
+
+pairwiseAnalysis <- function(g) {
+  # nucleotide Divergence and mean.pct.between
   dA <- lapply(nucleotideDivergence(g), function(x) x$between[, 1:3])
 
-  #Chi2, Fst, PHist
+  # pairwise test
+  stats <- if(ploidy(g) == 1) {
+    list(statChi2, statFst, statPhist)
+  } else {
+    list(statChi2, statFst, statFstPrime, statGst, statGstPrime,
+         statGstDblPrime, statFis)
+  }
+  pws.all <- pairwiseTest(g, nrep = 5, stat.list = stats, quietly = TRUE)$result
+  pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
   pws <- lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = 5, stat.list = list(statGst), quietly = TRUE
+      g[, l, ], nrep = 5, stat.list = stats, quietly = TRUE
     )$result
-    to.keep <- sapply(result, function(x) !all(is.na(x)))
-    result <- result[, to.keep]
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     result
   })
   names(pws) <- locNames(g)
 
-  # shared haps
+  # shared alleles
   sA <- sharedAlleles(g)
-  sA <- reshape(sA, direction = "long", varying=list(loc_names), v.names="sA",
-                timevar = "gene",idvar=c("strata.1","strata.2"),
-                new.row.names = 1:(num_loci*choose(num_pops,2)))[,"sA"]
+  sA.mean <- rowMeans(sA[, -(1:2)])
+  sA.sum <- rowSums(sA[, -(1:2)])
+  sA <- cbind(sA, mean = sA.mean, sum = sA.sum)
+  sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
+       variable.name = "Locus", value.name = "shared.alleles")
 
-
-
-
-
-
-  #Pairwise Chi2, D, F..., G...
-  pws <- pairwiseTest(results_gtype, nrep =5, keep.null=TRUE, quietly = TRUE)[1]$result
-  #pairwise by locus
-  pws.loc <- lapply(loc_names, function(l){
-    pairwiseTest(results_gtype[,l,], nrep = 5, keep.null=TRUE, quietly=TRUE)[1]$result
-  })
-  pws.loc.all <- do.call(rbind,pws.loc)
-  pws.all <- rbind(pws,pws.loc.all)
-
-  sA <- sharedAlleles(results_gtype)
-  sA.long <- reshape(sA, idvar = c("strata.1","strata.2"),
-                     varying = names(sA[,-c(1:2)]),
-                     timevar = "Locus",
-                     v.names = "sA",
-                     direction = "long")
-  #shared alleles sumed over loci
-  sA.sum <- rowSums(sA[,-c(1:2)])
-  sA.all <- c(sA.sum,sA.long$sA)
-
-  #chord.dist
-  results_hierfstat <- genind2hierfstat(params@rep.sample)
-  chord.dist <- genet.dist(results_hierfstat, diploid = TRUE, method = "Dch")
-  ch.dist <- as.data.frame(as.table(chord.dist))
-  # chord.dist by locus
-  chord.dist.locus <- lapply(loc_names, function(l){
-    as.data.frame(as.table(genet.dist(results_hierfstat[,c("pop",l)], diploid = TRUE, method = "Dch")))
-  })
-  chord.dist.l <- do.call(rbind,chord.dist.locus)
-  chord.dist.all <- rbind(ch.dist,chord.dist.l)
-
-
-
+  # chord.dist
+  if(ploidy(g) %in% 1:2) {
+    dat <- genind2hierfstat(gtypes2genind(g))
+    is.diploid <- ploidy(g) == 2
+    chord.dist <- calcChordDist(dat, is.diploid)
+    # chord.dist by locus
+    chord.dist.locus <- lapply(locNames(g), function(l) {
+      print(l)
+      result <- calcChordDist(dat[, c("pop", l)], is.diploid)
+      cbind(result[, 1:2], Locus = l, result[, 3])
+    })
+  }
 }
