@@ -18,9 +18,13 @@ analysis_funcs <- function(params){
 
   results_gtype <- results2gtypes(params)
   params@analyses.requested <- analyses.check(params@analyses.requested)
+  num.perm.reps <- params@num.perm.reps
+  num.cores <- params@num.cores
+
+  opt <- options(warn = -1)
 
   if(params@analyses.requested["Global"]) {
-    mat <- globalAnalysis(results_gtype)
+    mat <- globalAnalysis(results_gtype, num.perm.reps, num.cores)
     params <- loadResultsMatrix(params, mat, "Global")
   }
 
@@ -33,13 +37,15 @@ analysis_funcs <- function(params){
     params <- loadResultsMatrix(params, mat, "Locus")
   }
 
-#   if(params@analyses.requested["Pairwise"]) {
-#     mat <- pairwiseAnalysis(params, results_gtype)
-#     params <- loadResultsMatrix(params, mat, "Global")
-#   }
+  if(params@analyses.requested["Pairwise"]) {
+    mat <- pairwiseAnalysis(results_gtype, num.perm.reps, num.cores)
+    params <- loadResultsMatrix(params, mat, "Pairwise")
+  }
 
+  options(opt)
   return(params)
 }
+
 
 #' @rdname analysis_funcs
 #'
@@ -60,27 +66,25 @@ loadResultsMatrix <- function(params, mat, label) {
 
 #' @rdname analysis_funcs
 #'
-overall_stats <- function(g) {
-  opt <- options(warn = -1)
-  ovl <- overallTest(g, nrep = 5, quietly = TRUE)
+overall_stats <- function(g, num.perm.reps, num.cores) {
+  ovl <- overallTest(g, nrep = num.perm.reps, num.cores = num.cores, quietly = TRUE)
   ovl.result <- ovl$result[complete.cases(ovl$result), ]
   global.wide <- as.vector(t(ovl.result))
   names(global.wide) <- paste(
     rep(rownames(ovl.result), each = 2), c("", ".pval"), sep = ""
   )
-  options(opt)
-  global.wide
+  return(global.wide)
 }
 
 
 #' @rdname analysis_funcs
 #'
-globalAnalysis <- function(g) {
+globalAnalysis <- function(g, num.perm.reps, num.cores) {
   loc_names <- locNames(g)
 
   # run by locus analysis across all populations
   r.m <- lapply(loc_names, function(l) {
-    overall_stats(g[, l, ])
+    overall_stats(g[, l, ], num.perm.reps, num.cores)
   })
   # find complete list of column names
   analysis.names <- unique(unlist(lapply(r.m, names)))
@@ -91,7 +95,7 @@ globalAnalysis <- function(g) {
     x
   })
   results.matrix.l <- do.call(rbind, r.m)
-  results.matrix <- rbind(overall_stats(g), results.matrix.l)
+  results.matrix <- rbind(overall_stats(g, num.perm.reps, num.cores), results.matrix.l)
   analyses <- colnames(results.matrix)
   num_analyses <- length(analyses)
   rownames(results.matrix) <- c("Overall", loc_names)
@@ -102,9 +106,7 @@ globalAnalysis <- function(g) {
 #' @rdname analysis_funcs
 #' @importFrom reshape2 melt
 #'
-locusAnalysisGenotypes <- function(params, g) {
-  opt <- options(warn = -1)
-
+locusAnalysisGenotypes <- function(g) {
   loc_names <- locNames(g)
 
   # by locus, all the other stats (num alleles etc) pulled from summarizeLoci
@@ -185,7 +187,6 @@ locusAnalysisGenotypes <- function(params, g) {
   locus.final$Pop <- locus.final$Locus <- NULL
   locus.final <- as.matrix(locus.final[order(rownames(locus.final)), ])
 
-  options(opt)
   return(locus.final)
 }
 
@@ -209,8 +210,6 @@ hapSmryFunc <- function(g) {
 #' @rdname analysis_funcs
 #'
 locusAnalysisHaplotypes <- function(g) {
-  opt <- options(warn = -1)
-
   smry.all <- hapSmryFunc(g)
   smry.pop <- do.call(rbind, lapply(strataNames(g), function(st) {
     result <- hapSmryFunc(g[, ,st])
@@ -228,7 +227,6 @@ locusAnalysisHaplotypes <- function(g) {
   smry.pop <- cbind(smry.pop, num.private.alleles = pa.melt[, 3])
   smry <- rbind(smry.all, smry.pop)
 
-  options(opt)
   return(smry)
 }
 
@@ -248,43 +246,61 @@ calcChordDist <- function(dat, is.diploid) {
     )
   }))
   rownames(result) <- NULL
-  result
+  return(result)
 }
 
 
 #' @rdname analysis_funcs
 #'
-pairwiseAnalysis <- function(g) {
-  # pairwise test
+pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
+  # pairwise population structure test
   stats <- if(ploidy(g) == 1) {
     list(statChi2, statFst, statPhist)
   } else {
     list(statChi2, statFst, statFstPrime, statGst, statGstPrime,
          statGstDblPrime, statFis)
   }
-  pws.all <- pairwiseTest(g, nrep = 5, stats = stats, quietly = TRUE)$result
+  pws.all <- pairwiseTest(
+    g, nrep = num.perm.reps, stats = stats,
+    quietly = TRUE, num.cores = num.cores
+  )$result
   pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
   pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = 5, stats = stats, quietly = TRUE
+      g[, l, ], nrep = num.perm.reps, stats = stats,
+      quietly = TRUE, num.cores = num.cores
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result)])
   }))
+  pws <- rbind(cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all)]), pws)
 
   # shared alleles
   sA <- sharedAlleles(g)
-  sA$mean <- rowMeans(sA[, -(1:2)])
+  sA <- cbind(sA[, 1:2], mean = rowMeans(sA[, -(1:2)], na.rm = TRUE), sA[, 3:ncol(sA)])
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
              variable.name = "Locus", value.name = "shared.alleles")
   sA$Locus[sA$Locus == "mean"] <- NA
 
   dA <- if(ploidy(g) == 1) {
     # nucleotide Divergence and mean.pct.between
-    lapply(nucleotideDivergence(g), function(x) x$between[, 1:3])
+    dA.locus <- lapply(nucleotideDivergence(g), function(x) x$between[, 1:4])
+    dA.locus <- do.call(rbind, lapply(names(dA.locus), function(l) {
+      x <- dA.locus[[l]]
+      cbind(x[, 1:2], Locus = l, x[, 3:ncol(x)])
+    }))
+    colnames(dA.locus)[5] <- "mean.nucleotide.divergence"
+    dA.all <- aggregate(
+      dA.locus[, -(1:3)],
+      list(strata.1 = dA.locus$strata.1, strata.2 = dA.locus$strata.2),
+      mean, na.rm = TRUE
+    )
+    rbind(
+      cbind(dA.all[, 1:2], Locus = NA, dA.all[, 3:ncol(dA.all)]), dA.locus
+    )
   } else NULL
 
-#   # chord.dist
+  #   # chord.dist
 #   if(ploidy(g) %in% 1:2) {
 #     dat <- genind2hierfstat(gtypes2genind(g))
 #     is.diploid <- ploidy(g) == 2
@@ -296,4 +312,16 @@ pairwiseAnalysis <- function(g) {
 #       cbind(result[, 1:2], Locus = l, result[, 3])
 #     })
 #   } else NULL
+
+  smry <- merge(pws, sA, by = c("strata.1", "strata.2", "Locus"))
+  if(!is.null(dA)) smry <- merge(smry, dA, by = c("strata.1", "strata.2", "Locus"))
+  smry <- smry[with(smry, order(Locus, strata.1, strata.2)), ]
+  rownames(smry) <- sapply(1:nrow(smry), function(i) {
+    st.pair <- paste(smry$strata.1[i], smry$strata.2[i], sep = "_")
+    if(is.na(smry$Locus[i])) st.pair else paste(st.pair, smry$Locus[i], sep = "_")
+  })
+  smry$strata.1 <- smry$strata.2 <- smry$Locus <- NULL
+  smry <- as.matrix(smry)
+
+  return(smry)
 }

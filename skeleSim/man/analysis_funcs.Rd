@@ -16,11 +16,11 @@ analysis_funcs(params)
 
 loadResultsMatrix(params, mat, label)
 
-overall_stats(g)
+overall_stats(g, num.perm.reps, num.cores)
 
-globalAnalysis(g)
+globalAnalysis(g, num.perm.reps, num.cores)
 
-locusAnalysisGenotypes(params, g)
+locusAnalysisGenotypes(g)
 
 hapSmryFunc(g)
 
@@ -28,7 +28,7 @@ locusAnalysisHaplotypes(g)
 
 calcChordDist(dat, is.diploid)
 
-pairwiseAnalysis(g)
+pairwiseAnalysis(g, num.perm.reps, num.cores)
 }
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}
