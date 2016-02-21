@@ -11,8 +11,9 @@ test.params@quiet <- FALSE
 test.params@question <- "n"
 test.params@simulator.type <- "c"
 test.params@simulator <- "fsc"
-test.params@num.reps <- 100
-#test.params@timing <- 2
+test.params@num.reps <- 10
+test.params@num.perm.reps <- 100
+test.params@num.cores <- 1
 test.params@sim.func <- fsc.run
 test.params@wd <- "testRun.wd"
 
@@ -61,12 +62,7 @@ test.params@scenarios <- scenario.list
 test.params@sim.check.func <- fsc.scenarioCheck
 
 # ---- Set analysis function ----
-test.params@rep.analysis.func <- function(params) {
-  result = rnorm(5)
-  names(result) <- paste("result", 1:5, sep = ".")
-  params@rep.result <- result
-  params
-}
+test.params@rep.analysis.func <- skeleSim::analysis_funcs
 
 # ---- Run replicates ----
 test.params <- runSim(test.params)

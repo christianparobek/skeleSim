@@ -46,6 +46,11 @@ Must take and return only a \code{skeleSim.params} object.}
 \item{\code{rep.analysis.func}}{a function that analyzes the results of one
 simulation replicate.}
 
+\item{\code{num.perm.reps}}{number of permutation replicates to run for population structure
+statistics.}
+
+\item{\code{num.cores}}{number of cores to use for multithreading.}
+
 \item{\code{rep.result}}{result from last call to \code{rep.analysis.func}.}
 
 \item{\code{analysis.results}}{a matrix containing result of all replicate analyses.}
@@ -65,8 +70,8 @@ running the simualtions}
 \item{\code{scenario.reps}}{a two column matrix describing which iteration matches
 which scenario/replicate}
 
-\item{\code{analyses.requested}}{vector of logicals specifying "Global", "Population",
-"Locus", or "Pairwise" analyses have been requested.}
+\item{\code{analyses.requested}}{vector of logicals specifying "Global", "Locus",
+or "Pairwise" analyses have been requested.}
 
 \item{\code{num.pops}}{number of populations.}
 

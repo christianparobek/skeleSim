@@ -2,14 +2,39 @@
 % Please edit documentation in R/analysis_funcs.R
 \name{analysis_funcs}
 \alias{analysis_funcs}
+\alias{calcChordDist}
+\alias{globalAnalysis}
+\alias{hapSmryFunc}
+\alias{loadResultsMatrix}
+\alias{locusAnalysisGenotypes}
+\alias{locusAnalysisHaplotypes}
+\alias{overall_stats}
+\alias{pairwiseAnalysis}
 \title{Analysis functions}
 \usage{
 analysis_funcs(params)
+
+loadResultsMatrix(params, mat, label)
+
+overall_stats(g, num.perm.reps, num.cores)
+
+globalAnalysis(g, num.perm.reps, num.cores)
+
+locusAnalysisGenotypes(g)
+
+hapSmryFunc(g)
+
+locusAnalysisHaplotypes(g)
+
+calcChordDist(dat, is.diploid)
+
+pairwiseAnalysis(g, num.perm.reps, num.cores)
 }
 \arguments{
-\item{params}{Take results of a simulation from params@rep.sample and run Global, Locus, and Pairwise analyses}
+\item{params}{a \linkS4class{skeleSim.params} object.}
 }
 \description{
-Analyses for genind or multidna data
+Run Global, Locus, and Pairwise analyses on results from
+  a single simulation replicate stored in params@rep.sample#'
 }
 
