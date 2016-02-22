@@ -134,8 +134,8 @@ locusAnalysisGenotypes <- function(g) {
   # Number of private alleles by locus
   pa <- privateAlleles(g)
   # this has the number of alleles that are private per locus
-  perLocus <- colSums(by.loc)
-  by.loc <- melt(by.loc)
+  perLocus <- colSums(pa)
+  by.loc <- melt(pa)
   colnames(by.loc) <- c("Pop", "Locus", "num.priv.allele")
   perLocus <- data.frame(
     Pop = NA, Locus = names(perLocus), num.priv.allele = perLocus,

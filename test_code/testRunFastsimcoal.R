@@ -27,10 +27,10 @@ base.scenario@migration <- list(matrix(
   c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
   nrow = base.scenario@num.pops
 ))
-base.scenario@locus.type <- "sequence"
-base.scenario@num.loci <- 2
-base.scenario@sequence.length <- c(400, 1000)
-base.scenario@mut.rate <- c(1e-6, 1e-3)
+base.scenario@locus.type <- "microsat"
+base.scenario@num.loci <- 3
+base.scenario@sequence.length <- 10
+base.scenario@mut.rate <- 1e-3
 
 # create fastsimcoal params object to load into base scenario
 fsc.params <- new("fastsimcoal.params")
