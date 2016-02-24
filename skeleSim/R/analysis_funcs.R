@@ -19,7 +19,7 @@ analysis_funcs <- function(params){
   num_loci<-params@scenarios[[curr_scn]]@num.loci
   num_reps<-params@num.reps
   num_pops<-params@scenarios[[curr_scn]]@num.pops
-  params@analyses.requested <- analyses.check(params@analyses.requested)
+  params@analyses.requested <- analyses.check(params@analyses.requested) # forces TRUE for Global, Pairwise, Locus
 
   #params@rep.sample is either a genind or a list of DNAbin objects
   if(inherits(params@rep.sample, "genind")){
@@ -45,16 +45,18 @@ analysis_funcs <- function(params){
 
   if(params@analyses.requested["Global"]){
 
-    # multiDNA
+    # multiDNA - from apex package
     if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
       #overall_stats() is from skeleSim.funcs.R
       #run by locus analysis across all populations
+      # i.e. for each locus, run analysis across populations
       r.m <- lapply(locNames(results_gtype), function (l){
         gtypes_this_loc<-results_gtype[,l,]
         overall_stats(gtypes_this_loc)
       })
       #find complete list of column names
+      #Just in case any didn't get computed above?
       analysis.names <- unique(do.call(c, lapply(r.m, function(x) names(x))))
       r.m <- lapply(r.m, function(x){
         missing <- setdiff(analysis.names, names(x))
@@ -62,7 +64,7 @@ analysis_funcs <- function(params){
         names(x) <- analysis.names
         x
       })
-      results.matrix.l <- do.call(rbind, r.m)
+      results.matrix.l <- do.call(rbind, r.m) # make that list into a matrix
       results.matrix <- rbind(overall_stats(results_gtype),results.matrix.l)
       analyses <- colnames(results.matrix)
       num_analyses <- length(analyses)
@@ -83,6 +85,7 @@ analysis_funcs <- function(params){
       params@analysis.results[["Global"]][[curr_scn]][,,curr_rep] <- results.matrix
     }
 
+    # if data came in genind form?
     if(inherits(params@rep.sample, "genind")){
 
       # Eric will improve overallTest {strataG} to deal with invariant loci
@@ -174,13 +177,13 @@ analysis_funcs <- function(params){
       #Fis estimation:   Fis = 1-(Ho/He)
       results_loci<-genind2loci(params@rep.sample)
       #for loci
-      FSTloci<-Fst(results_loci)
+      FSTloci<-pegas::Fst(results_loci) ## had to add the pegas ref, because a circos error was in the way
 
       #for pops
       # pop.1/locus.1:num_loci - pop.num_pops/locus.1:num_loci..
       FSTpop<-lapply(levels(results_loci$population), function(x){
-        fst <- Fst(results_loci[results_loci$population == x,], pop=results_loci$population)
-      })
+        fst <- pegas::Fst(results_loci[results_loci$population == x,], pop=results_loci$population)
+      }) # had to add the pegas thing here too...
       FSTpop2sort <- mapply(function(mat,pn){
         x <- data.frame(mat)
         x$Locus <- row.names(x)
@@ -216,7 +219,6 @@ analysis_funcs <- function(params){
 
     # multiDNA
     # Per gene (ignoring population structure, and per gene by population)
-
     if(inherits(params@rep.sample,c("multidna","gtypes","list"))){
 
       #Nucleotide diversity
@@ -366,6 +368,7 @@ analysis_funcs <- function(params){
 
   if(params@analyses.requested["Pairwise"]){
 
+    # If data comes in multidna form
     if(inherits(params@rep.sample, c("multidna","gtypes","list"))){
 
       #nucleotide Divergence and mean.pct.between
@@ -407,6 +410,7 @@ analysis_funcs <- function(params){
 
     }
 
+    # If data comes in genind form
     if(inherits(params@rep.sample, "genind")){
 
       #Pairwise Chi2, D, F..., G...
@@ -458,9 +462,8 @@ analysis_funcs <- function(params){
 
     }
 
-
   }
-  params
+  params # what does this do?
 }
 
 
