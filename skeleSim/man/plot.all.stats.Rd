@@ -4,7 +4,7 @@
 \alias{plot.all.stats}
 \title{Plot all results}
 \usage{
-\method{plot}{all.stats}(params)
+plot.all.stats(params)
 }
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}

@@ -99,7 +99,8 @@ output$simexec <- renderUI({
         if (rValues$ssClass@simulator=="fsc")
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params))
                     {
-                        sim.exec <- c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,supportValues$simexec)
+                        sim.exec <- c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,
+                                      supportValues$simexec)
                         sim.exec <- sim.exec[!is.null(sim.exec)]
                         sim.exec <- unique(sim.exec)
                         sim.exec <- basename(Sys.which(sim.exec))

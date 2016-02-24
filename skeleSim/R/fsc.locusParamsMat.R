@@ -50,3 +50,5 @@ fsc.locusParamsMat <- function(sc) {
     locus.param.6 = locus.param.6
   )
 }
+
+

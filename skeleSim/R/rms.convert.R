@@ -9,22 +9,23 @@
 #' @export
 rms.convert <- function(Rland, locus.type) {
     
-        ltype <- locus.type
+    ltype <- locus.type
 
-
+    print("in rms.convert")
+    print(paste("locustype:",ltype))
+    
     if (!is.landscape(Rland)) {stop("incoming landscape problem in rms.convert")}
-
-
+    
+    
     
     this.rep.result=NULL
     if (ltype%in%c("microsatellite","MICROSAT","microsat"))
     {
-
         this.rep.result <- landscape.make.genind(Rland)
-
     }
     else if (ltype=="sequence")
     {
+        print("converting rmetasim sequences")
         states <- as.data.frame(landscape.locus.states(Rland,1))
         genos <- data.frame(pop=landscape.populations(Rland),aindex=Rland$individuals[,7])
         seq <- merge(genos,states,all.x=T)
