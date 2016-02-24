@@ -8,24 +8,26 @@
 #' @param growth.rate numeric vector: growth rate of each population.
 #' @param mig.rates list of matrices: migration rates between populations.
 #' @param hist.ev matrix: one row per historical event.
-#' @param num.chrom number of chromosomes.
-#' @param locus.params matrix: one row per locus parameter.
+#' @param num.chrom number of unique chromosomes.
+#' @param locus.params data.frame: one row per locus parameter.
 #' @param label character: label for file naming.
 #'
 fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
                       growth.rate = NULL, mig.rates = NULL,
-                      hist.ev = NULL, num.chrom = 1,
-                      locus.params = NULL, label = NULL) {
+                      hist.ev = NULL, num.chrom = NULL,
+                      locus.params = NULL, ploidy = NULL, label = NULL) {
+
+  if(is.null(ploidy)) {
+    pl <- attr(locus.params, "ploidy")
+    ploidy <- if(is.null(pl)) 1 else pl
+  }
+  Ne <- Ne * ploidy
+  if(!is.null(sample.size)) sample.size <- sample.size * ploidy
 
   if(is.null(label)) label <- "fastsimcoal.skeleSim"
   file <- paste(label, ".par", sep = "")
   mig.rates <- if(is.list(mig.rates)) mig.rates else list(mig.rates)
   hist.ev <- if(is.list(hist.ev)) do.call(rbind, hist.ev) else rbind(hist.ev)
-  #if (dim(hist.ev)[2]!=7) {hist.ev <- t(hist.ev)}   #somehow histev is becoming transposed...
-  locus.params <- if(is.list(locus.params)) do.call(rbind, locus.params) else rbind(locus.params)
-  if(nrow(locus.params) == 1 & num.chrom > 1) {
-    locus.params <- do.call(rbind, lapply(1:num.chrom, function(i) locus.params[1, ]))
-  }
 
   # Write input file
   write(paste("//  <<", label, ">>  (input from 'fastsimcoal.skeleSim.run')"), file)
@@ -61,13 +63,21 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
     }
   }
 
-  write("//Number of independent loci [chromosome]", file, append = T)
-  write(paste(num.chrom, "1"), file, append = T)
-  for(i in 1:num.chrom) {
+  if(!is.null(num.chrom)) locus.params$chromosome <- 1
+  locus.params <- split(locus.params, locus.params$chromosome)
+  num.independent <- if(is.null(num.chrom)) length(locus.params) else num.chrom
+  chrom.struct <- if(num.independent == 1 | !is.null(num.chrom)) 0 else 1
+  write("//Number of independent loci [chromosomes]", file, append = T)
+  write(paste(num.independent, chrom.struct), file, append = T)
+  for(block in locus.params) {
+    block$chromosome <- NULL
     write("//Per chromosome: Number of linkage blocks", file, append = T)
-    write("1", file, append = T)
+    write(nrow(block), file, append = T)
     write("//Per block: data type, num loci, rec. rate and mut rate + optional parameters", file, append = T)
-    write(paste(locus.params[i, ], collapse = " "), file, append = T)
+    for(i in 1:nrow(block)) {
+      line <- paste(block[i, ], collapse = " ")
+      write(gsub(" NA", "", line), file, append = T)
+    }
   }
 
   invisible(file)

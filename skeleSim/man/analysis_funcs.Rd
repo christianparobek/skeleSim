@@ -32,6 +32,20 @@ pairwiseAnalysis(g, num.perm.reps, num.cores)
 }
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}
+
+\item{mat}{results matrix to be loaded into params object.}
+
+\item{label}{analysis type label ("Global", "Locus", or "Pairwise").}
+
+\item{g}{a gtypes object.}
+
+\item{num.perm.reps}{number of permutation replicates.}
+
+\item{num.cores}{number of CPU cores to use.}
+
+\item{dat}{data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).}
+
+\item{is.diploid}{logical - is this a diploid object?}
 }
 \description{
 Run Global, Locus, and Pairwise analyses on results from

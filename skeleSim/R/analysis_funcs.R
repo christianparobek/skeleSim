@@ -4,6 +4,13 @@
 #'   a single simulation replicate stored in params@rep.sample#'
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
+#' @param g a gtypes object.
+#' @param num.perm.reps number of permutation replicates.
+#' @param num.cores number of CPU cores to use.
+#' @param mat results matrix to be loaded into params object.
+#' @param label analysis type label ("Global", "Locus", or "Pairwise").
+#' @param dat data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).
+#' @param is.diploid logical - is this a diploid object?
 #'
 #' @import strataG
 #' @export
@@ -16,7 +23,7 @@ analysis_funcs <- function(params){
     )
   }
 
-  results_gtype <- results2gtypes(params)
+  results_gtype <- params@rep.results
   params@analyses.requested <- analyses.check(params@analyses.requested)
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
@@ -105,6 +112,7 @@ globalAnalysis <- function(g, num.perm.reps, num.cores) {
 
 #' @rdname analysis_funcs
 #' @importFrom reshape2 melt
+#' @importFrom pegas Fst
 #'
 locusAnalysisGenotypes <- function(g) {
   loc_names <- locNames(g)
@@ -232,6 +240,7 @@ locusAnalysisHaplotypes <- function(g) {
 
 
 #' @rdname analysis_funcs
+#' @importFrom hierfstat genet.dist
 #'
 calcChordDist <- function(dat, is.diploid) {
   chord.dist <- genet.dist(dat, diploid = is.diploid, method = "Dch")

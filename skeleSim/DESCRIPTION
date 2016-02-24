@@ -20,15 +20,15 @@ Depends:
     shinyFiles,
     igraph,
     strataG (>= 1.0),
-    rmetasim (>= 3.0.0),
-    hierfstat,
-    pegas
+    rmetasim (>= 3.0.0)
 Imports:
     adegenet,
-    ape,
     ggplot2,
+    hierfstat,
+    pegas,
     methods,
     reshape2,
+    stringi,
     swfscMisc (>= 1.1)
 Suggests:
     knitr
