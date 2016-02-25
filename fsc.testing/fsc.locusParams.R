@@ -1,40 +1,34 @@
-#' @name fscLocusParams
+#' @name fsc.locusParams
 #' @title Create fastsimcoal locus parameter data.frames
 #' @description Create fastsimcoal locus parameter data.frames
 #'
-#' @param sc a \linkS4class{scenario.params} object.
-#' @param fsc a \linkS4class{fastsimcaoal.params} object.
+#' @param sequence.length DNA: number of base pairs for sequence.
+#' @param mut.rate DNA: mutation rate per bp, MICROSAT: mutation rate per locus.
+#' @param transition.rate DNA: fraction of substitutions that are transitions.
+#' @param recomb.rate recombination rate between adjacent markers.
+#' @param chromosome number or character identifying which chromosome the marker
+#'   is on.
+#' @param num.loci MICROSAT, SNP: number of loci to simulate.
+#' @param min.freq SNP: minimum frequency for the derived allele.
+#' @param gsm.param Value of the geometric parameter for a Generalized Stepwise
+#'   Mutation (GSM) model. This value represents the proportion of mutations
+#'   that will change the allele size by more than one step. Values between
+#'   0 and 1 are required. A value of 0 is for a strict
+#'   Stepwise Mutation Model (SMM).
+#' @param range.constraint Range constraint (number of different alleles
+#'   allowed). A value of 0 means no range constraint
 #'
-#' @return a \linkS4class{fastsimcoal.params} object with the
-#'   \code{locus.params} slot filled.
-#'
+NULL
+
+#' @rdname fsc.locusParams
 #' @export
 #'
-fsc.loadScenariolocusParams <- function(sc, fsc) {
-  loci <- data.frame(
-    type = sc@locus.type,
-    num.loci = sc@num.loci,
-    sequence.length = sc@sequence.length,
-    mut.rate = sc@mut.rate
-  )
+fsc.locus.dna <- function(sequence.length, mut.rate, transition.rate = NULL,
+                          recomb.rate = NULL, chromosome = NULL) {
 
-  for(i in 1:nrow(loci)) {
-    lp <- switch(loci$type[i],
-      sequence = fsc.dna.locus(loci$sequence.length[i], loci$mut.rate[i]),
-      microsat = fsc.msat.locus(loci$num.loci[i], loci$num.alleles[i], loci$mut.rate[i]),
-      snp = fsc.snp.locus(loci$num.loci[i], loci$mut.rate[i])
-    )
-    loadLocusParams(fsc, lp)
-  }
-  fsc
-}
-
-
-#' @rdname fscLocusParams
-#' @export
-#'
-fsc.locus.dna <- function(sequence.length, mut.rate, transition.rate = 1 / 3,
-                          recomb.rate = 0, chromosome = 1) {
+  if(is.null(transition.rate)) transition.rate <- 1 / 3
+  if(is.null(recomb.rate)) recomb.rate <- 0
+  if(is.null(chromosome)) chromosome <- 1
   df <- data.frame(
     chromosome = chromosome,
     type = "DNA",
@@ -52,18 +46,24 @@ fsc.locus.dna <- function(sequence.length, mut.rate, transition.rate = 1 / 3,
 }
 
 
-#' @rdname fscLocusParams
+#' @rdname fsc.locusParams
 #' @export
 #'
-fsc.locus.snp <- function(num.loci, min.freq, recomb.rate = 0, chromosome = 1) {
+fsc.locus.msat <- function(num.loci, mut.rate, gsm.param = NULL,
+                           range.constraint = NULL, recomb.rate = NULL,
+                           chromosome = NULL) {
+  if(is.null(gsm.param)) gsm.param <- 0
+  if(is.null(range.constraint)) range.constraint <- 0
+  if(is.null(recomb.rate)) recomb.rate <- 0
+  if(is.null(chromosome)) chromosome <- 1
   df <- data.frame(
     chromosome = chromosome,
-    type = "SNP",
+    type = "MICROSAT",
     num.markers = num.loci,
     recomb.rate = recomb.rate,
-    param.4 = min.freq,
-    param.5 = NA,
-    param.6 = NA,
+    param.4 = mut.rate,
+    param.5 = gsm.param,
+    param.6 = range.constraint,
     stringsAsFactors = FALSE
   )
   df <- df[order(df$chromosome), ]
@@ -73,20 +73,20 @@ fsc.locus.snp <- function(num.loci, min.freq, recomb.rate = 0, chromosome = 1) {
 }
 
 
-#' @rdname fscLocusParams
+#' @rdname fsc.locusParams
 #' @export
 #'
-fsc.locus.msat <- function(num.loci, num.alleles, mut.rate, gsm.param = 0,
-                           range.constraint = 0, recomb.rate = 0,
-                           chromosome = 1) {
+fsc.locus.snp <- function(num.loci, min.freq, recomb.rate = NULL, chromosome = NULL) {
+  if(is.null(recomb.rate)) recomb.rate <- 0
+  if(is.null(chromosome)) chromosome <- 1
   df <- data.frame(
     chromosome = chromosome,
-    type = "MICROSAT",
+    type = "SNP",
     num.markers = num.loci,
     recomb.rate = recomb.rate,
-    param.4 = mut.rate,
-    param.5 = gsm.param,
-    param.6 = range.constraint,
+    param.4 = min.freq,
+    param.5 = NA,
+    param.6 = NA,
     stringsAsFactors = FALSE
   )
   df <- df[order(df$chromosome), ]

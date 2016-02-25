@@ -17,29 +17,33 @@ test.params@num.cores <- 1
 test.params@sim.func <- fsc.run
 test.params@wd <- "testRun.wd"
 
-# create a base scenario parameters object. It will be copied and modified
-#   later for different scenarios
-base.scenario <- fsc.loadScenario(
-  num.pops = 3,
-  pop.size = c(50, 100, 500),
-  sample.size = c(25, 50, 10),
-  migration = list(matrix(
-    c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
-  )),
-  locus.type = "msat",
-  num.loci = 20,
-  mut.rate = 1e-2,
-  range.constraint = c(0, 20)
-)
+# create scenarios
+scenario.list <- list(
+  fsc.loadScenario(
+    num.pops = 3,
+    pop.size = c(50, 100, 500),
+    sample.size = c(25, 50, 10),
+    migration = list(matrix(
+      c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
+    )),
+    locus.type = "dna",
+    sequence.length = c(400, 100),
+    mut.rate = c(1e-7, 1e-3)
+  ),
 
-# create list of scenarios and modify
-scenario.list <- lapply(1:3, function(i) base.scenario)
-#  decrease the mutation rate in scenario 2...
-scenario.list[[2]]@mut.rate <- 1e-5
-locus.params <- fsc.locus.dna(base.scenario@sequence.length, scenario.list[[2]]@mut.rate)
-scenario.list[[2]]@simulator.params@locus.params <- locus.params
-#  decrease the migration rate in scenario 3...
-scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
+  fsc.loadScenario(
+    num.pops = 3,
+    pop.size = c(50, 100, 500),
+    sample.size = c(25, 50, 10),
+    migration = list(matrix(
+      c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
+    )),
+    locus.type = "msat",
+    num.loci = c(10, 20, 10),
+    mut.rate = c(1e-2, 1e-5, 1e-2),
+    range.constraint = c(0, 10, 10)
+  )
+)
 
 # load scenarios
 test.params@scenarios <- scenario.list

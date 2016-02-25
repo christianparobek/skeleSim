@@ -2,7 +2,7 @@
 % Please edit documentation in R/fsc.loadScenario.R
 \name{fsc.loadScenario}
 \alias{fsc.loadScenario}
-\title{Load fastsimcoal locus parameters}
+\title{Load skeleSim scenario parameters for fastsimcoal}
 \usage{
 fsc.loadScenario(num.pops, pop.size, sample.size, migration, mut.rate,
   sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
@@ -14,15 +14,15 @@ fsc.loadScenario(num.pops, pop.size, sample.size, migration, mut.rate,
 \arguments{
 \item{num.pops}{number of populations.}
 
-\item{pop.size}{a vector \code{num.pop} long giving size of each populaiton.}
+\item{pop.size}{a vector giving size of each populaiton.}
 
-\item{sample.size}{a vector \code{num.pop} long giving the number of
-samples to take from each population.}
+\item{sample.size}{a vector giving the number of samples to take from each
+population.}
 
 \item{migration}{a \code{num.pop} x \code{num.pop} matrix giving the
 migration rates between each population.}
 
-\item{mut.rate}{mutation rate for DNA or msat.}
+\item{mut.rate}{\code{dna, msat}: per base pair or locus mutation rate.}
 
 \item{sample.times}{a vector giving the number of generations in the past
 at which samples are taken.}
@@ -34,22 +34,22 @@ at which samples are taken.}
 \item{locus.type}{a character representation of what type of marker to simulate.
 Can be "dna", "msat", or "snp".}
 
-\item{sequence.length}{number of DNA base pairs to use.}
+\item{sequence.length}{\code{dna}: number of DNA base pairs to use.}
 
-\item{num.loci}{number of msat or snp loci to simulate.}
+\item{num.loci}{\code{msat, snp}: number of loci to simulate.}
 
-\item{transition.rate}{DNA: fraction of substitutions that are transitions.}
+\item{transition.rate}{dna: fraction of substitutions that are transitions.}
 
-\item{gsm.param}{Value of the geometric parameter for a Generalized Stepwise
-Mutation (GSM) model. This value represents the proportion of mutations
-that will change the allele size by more than one step. Values between
-0 and 1 are required. A value of 0 is for a strict
-Stepwise Mutation Model (SMM).}
+\item{gsm.param}{\code{msat}: Value of the geometric parameter for a
+Generalized Stepwise Mutation (GSM) model. This value represents the
+proportion of mutations that will change the allele size by more than
+one step. Values between 0 and 1 are required. A value of 0 is for a
+strict Stepwise Mutation Model (SMM).}
 
-\item{range.constraint}{Range constraint (number of different alleles
-allowed). A value of 0 means no range constraint}
+\item{range.constraint}{\code{msat}: Range constraint (number of different
+alleles allowed). A value of 0 means no range constraint.}
 
-\item{min.freq}{SNP: minimum frequency for the derived allele.}
+\item{min.freq}{\code{snp}: minimum frequency for the derived allele.}
 
 \item{recomb.rate}{recombination rate between adjacent markers.}
 
@@ -62,7 +62,19 @@ is on.}
 \code{chromosome} column in \code{locus.params}. Any non-\code{NULL}
 integer will cause the \code{chromosome} column to be ignored.}
 }
+\value{
+a \linkS4class{scenario.params} object to be loaded into a list in the
+  \code{scenarios} slot of a \linkS4class{skeleSim.params} object.
+}
 \description{
-Load fastsimcoal locus parameters
+Load skeleSim scenario parameters for fastsimcoal
+}
+\note{
+Vectors for \code{pop.size, sample.size, sample.times, and growth.rate}
+  will be expanded/recycled to ensure they are as long as \code{num.pops}.
+
+Depending on the choice of \code{locus.type}, values for some arguments may
+  be ignored. See argument list above for which arguments are applicable
+  to which \code{locus.type}.
 }
 
