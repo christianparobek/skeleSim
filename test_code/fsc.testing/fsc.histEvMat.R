@@ -62,7 +62,9 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
 
 #' @rdname fsc.histEvMat
 #'
-fsc.histEvCheck <- function(hist.ev, num.pops, num.mig.mats = NULL) {
+fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
+  if(is.null(hist.ev)) return(TRUE)
+  num.pops <- length(pop.size)
   if ((!is.numeric(as.matrix(hist.ev))) & (!(is.matrix(hist.ev)|is.data.frame(hist.ev)))) {
     cat("'hist.ev' must be a numerical matrix or numerical dataframe.\n")
     return(FALSE)
@@ -81,6 +83,10 @@ fsc.histEvCheck <- function(hist.ev, num.pops, num.mig.mats = NULL) {
   }
   if(!is.null(num.mig.mats)) if(any(hist.ev[, 6] > num.mig.mats)) {
     cat("values in column 6 (new migration matrix) cannot be greater than the number of migration matrices.\n")
+    return(FALSE)
+  }
+  if(!fsc.histEvConverges(hist.ev, pop.size, growth.rate, num.mig.mats)) {
+    cat("historical event matrix will not converge.\n")
     return(FALSE)
   }
   TRUE

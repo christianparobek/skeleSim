@@ -310,17 +310,17 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
   } else NULL
 
   #   # chord.dist
-#   if(ploidy(g) %in% 1:2) {
-#     dat <- genind2hierfstat(gtypes2genind(g))
-#     is.diploid <- ploidy(g) == 2
-#     chord.dist <- calcChordDist(dat, is.diploid)
-#     # chord.dist by locus
-#     chord.dist.locus <- lapply(locNames(g), function(l) {
-#       print(l)
-#       result <- calcChordDist(dat[, c("pop", l)], is.diploid)
-#       cbind(result[, 1:2], Locus = l, result[, 3])
-#     })
-#   } else NULL
+  cd <- if(ploidy(g) %in% 1:2) {
+    dat <- genind2hierfstat(gtypes2genind(g))
+    is.diploid <- ploidy(g) == 2
+    chord.dist <- calcChordDist(dat, is.diploid)
+    # chord.dist by locus
+    chord.dist.locus <- lapply(locNames(g), function(l) {
+      print(l)
+      result <- calcChordDist(dat[, c("pop", l)], is.diploid)
+      cbind(result[, 1:2], Locus = l, result[, 3])
+    })
+  } else NULL
 
   smry <- merge(pws, sA, by = c("strata.1", "strata.2", "Locus"))
   if(!is.null(dA)) smry <- merge(smry, dA, by = c("strata.1", "strata.2", "Locus"))
