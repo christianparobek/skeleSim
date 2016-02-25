@@ -1,5 +1,6 @@
 rm(list = ls())
 library(skeleSim)
+set.seed(1)
 
 # ---- Load parameters ---
 

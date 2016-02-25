@@ -24,6 +24,9 @@ analysis_funcs <- function(params){
   }
 
   results_gtype <- params@rep.sample
+# -->> REMOVE FOR RELEASE: SAVING gtypes OBJECT FOR TESTING <<--
+  save(results_gtype, file = "results_gtype.rdata")
+# ---
   params@analyses.requested <- analyses.check(params@analyses.requested)
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
