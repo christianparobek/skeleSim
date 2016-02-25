@@ -19,14 +19,16 @@ setClassUnion("dfOrNULL", c("data.frame", "NULL"))
 #'   integer will cause the \code{chromosome} column to be ignored.
 #' @slot locus.params a data.frame giving the parameters for each locus.
 #'
-setClass(
+#' @export
+#'
+fastsimcoal.params <- setClass(
   Class = "fastsimcoal.params",
   slots = c(
     fastsimcoal.exec = "character", sample.times = "intOrNum",
     growth.rate = "intOrNum", hist.ev = "matrOrNULL", num.chrom = "intOrNum",
     locus.params = "dfOrNULL"
   ),
-  prototype = c(
+  prototype = list(
     fastsimcoal.exec = "fsc252", sample.times = NULL, growth.rate = NULL,
     hist.ev = NULL, num.chrom = NULL, locus.params = NULL
   ),
@@ -35,17 +37,17 @@ setClass(
   }
 )
 
-setMethod("initialize", "fastsimcoal.params",
-  function(.Object, fastsimcoal.exec = "fsc252", sample.times = NULL,
-           growth.rate = NULL, hist.ev = NULL, num.chrom = NULL,
-           locus.params = NULL
-  ) {
-    .Object@fastsimcoal.exec <- fastsimcoal.exec
-    .Object@sample.times <- sample.times
-    .Object@growth.rate <- growth.rate
-    .Object@hist.ev <- hist.ev
-    .Object@num.chrom <- num.chrom
-    .Object@locus.params <- locus.params
-    .Object
-  }
-)
+# setMethod("initialize", "fastsimcoal.params",
+#   function(.Object, fastsimcoal.exec = "fsc252", sample.times = NULL,
+#            growth.rate = NULL, hist.ev = NULL, num.chrom = NULL,
+#            locus.params = NULL
+#   ) {
+#     .Object@fastsimcoal.exec <- fastsimcoal.exec
+#     .Object@sample.times <- sample.times
+#     .Object@growth.rate <- growth.rate
+#     .Object@hist.ev <- hist.ev
+#     .Object@num.chrom <- num.chrom
+#     .Object@locus.params <- locus.params
+#     .Object
+#   }
+# )

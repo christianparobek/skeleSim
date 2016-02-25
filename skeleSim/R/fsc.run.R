@@ -16,12 +16,9 @@ fsc.run <- function(params) {
   # Check that folder is empty
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
-  ploidy <- sc@simulator.params@ploidy
   locus.params <- sc@simulator.params@locus.params
-  if(is.null(ploidy)) {
-    pl <- attr(locus.params, "ploidy")
-    ploidy <- if(is.null(pl)) 1 else pl
-  }
+  ploidy <- attr(locus.params, "ploidy")
+  if(is.null(ploidy)) ploidy <- 1
 
   # Write fastsimcoal input file
   file <- fsc.write(

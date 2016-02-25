@@ -4,6 +4,7 @@
 #' @param analyses.requested A named logical vector with elements named Global, Locus, and Pairwise
 #'
 #' @export
+#'
 analyses.check <- function(analyses.requested)
 {
     ret <- NULL

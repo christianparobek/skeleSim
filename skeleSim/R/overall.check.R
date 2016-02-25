@@ -9,7 +9,7 @@ overall.check <- function(params) {
   params@other.checks <- non.scenario.check(params)
   print(params@other.checks)
   #here we call the scenario checks (simulator specific and general)
-  prv_chk<-params@sim.scen.checks  #store what is was in check slot
+  prv_chk <- params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
   ths_chk <- rbind(params@sim.check.func(params), gen.scenario.check(params))
   print(prv_chk);  print(ths_chk)

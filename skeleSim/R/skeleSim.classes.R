@@ -1,5 +1,5 @@
 #' @name skeleSim.classes
-#' @import methods
+#' @importFrom methods setClassUnion
 setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
@@ -21,12 +21,12 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot simulator a three character code representing which simulator is being run.
 #'   Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.
 #' @slot scenarios a list of \code{scenario.params} objects.
-#' @slot start.time a POSIXct representation of the starting time of the simulation.
-#' @slot end.time a POSIXct representation of the end time of the simulation.
 #' @slot num.reps number of replicates to run.
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
-#' @slot last.sample result of last call to \code{sim.func}.
+#' @slot current.scenario number of current scenario being run.
+#' @slot current.replicate number of current replicate within current scenario being run.
+#' @slot rep.sample result of last call to \code{sim.func}.
 #' @slot rep.analysis.func a function that analyzes the results of one
 #'   simulation replicate.
 #' @slot num.perm.reps number of permutation replicates to run for population structure
@@ -46,40 +46,38 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot analyses.requested vector of logicals specifying "Global", "Locus",
 #'   or "Pairwise" analyses have been requested.
 #'
-setClass(
+#' @export
+#'
+skeleSim.params <- setClass(
   Class = "skeleSim.params",
-  slots = c(title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
-            question = "charOrNULL", simulator.type = "charOrNULL",
-            simulator = "charOrNULL", wd = "charOrNULL",
-            scenarios = "listOrNULL",
-            num.reps = "intOrNum",  sim.func = "funcOrNULL",
-            current.scenario = "intOrNum", current.replicate = "intOrNum",
-            rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
-            num.perm.reps = "intOrNum", num.cores = "intOrNum",
-            rep.result = "intOrNum", analysis.results = "ANY",
-            sim.summary.func = "funcOrNULL", summary.results = "listOrNULL",
-            sim.check.func = "funcOrNULL", sim.scen.checks = "matrOrNULL",
-            other.checks = "logOrNULL", scenario.reps = "matrOrNULL",
-            analyses.requested = "logOrNULL"
+  slots = c(
+    title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
+    question = "charOrNULL", simulator.type = "charOrNULL",
+    simulator = "charOrNULL", wd = "charOrNULL", scenarios = "listOrNULL",
+    num.reps = "intOrNum",  sim.func = "funcOrNULL",
+    current.scenario = "intOrNum", current.replicate = "intOrNum",
+    rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
+    num.perm.reps = "intOrNum", num.cores = "intOrNum", rep.result = "intOrNum",
+    analysis.results = "ANY", sim.summary.func = "funcOrNULL",
+    summary.results = "listOrNULL", sim.check.func = "funcOrNULL",
+    sim.scen.checks = "matrOrNULL", other.checks = "logOrNULL",
+    scenario.reps = "matrOrNULL", analyses.requested = "logOrNULL"
   ),
-  prototype = c(title = NULL, date = NULL, quiet = NULL, question = NULL,
-                simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
-                num.reps = NULL, sim.func = NULL,
-                current.scenario = 1, current.replicate = NULL,
-                rep.sample = NULL, rep.analysis.func = NULL, num.perm.reps = NULL,
-                num.cores = NULL, rep.result = NULL,
-                analysis.results = NULL, sim.summary.func = NULL,
-                summary.results = NULL, sim.check.func = NULL, sim.scen.checks = NULL,
-                other.checks = NULL, scenario.reps = NULL,
-                analyses.requested = c(Global = TRUE, Population = TRUE, Locus = TRUE,
-                                       Pairwise = TRUE)
+  prototype = list(
+    title = NULL, date = NULL, quiet = NULL, question = NULL,
+    simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
+    num.reps = NULL, sim.func = NULL, current.scenario = 1,
+    current.replicate = NULL, rep.sample = NULL, rep.analysis.func = NULL,
+    num.perm.reps = NULL, num.cores = NULL, rep.result = NULL,
+    analysis.results = NULL, sim.summary.func = NULL, summary.results = NULL,
+    sim.check.func = NULL, sim.scen.checks = NULL, other.checks = NULL,
+    scenario.reps = NULL,
+    analyses.requested = c(Global = TRUE, Locus = TRUE, Pairwise = TRUE)
   )
 )
 
 
 #' @rdname skeleSim.classes
-#' @title Scenario Parameters Class
-#' @description An S4 class storing parameters for each simulation scenario
 #'
 #' @slot num.pops number of populations.
 #' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.
@@ -87,25 +85,30 @@ setClass(
 #'   samples to take from each population.
 #' @slot migration a \code{num.pop} x \code{num.pop} matrix giving the
 #'   migration rates between each population.
+#' @slot locus.type a character representation of what type of marker to simulate.
+#'   Can be "dna", "msat", or "snp".
 #' @slot mig.helper a list of flags and values that are needed for the shiny interface but are not needed for the simulation
 #'   itself.  Makes it easier to keep track of different ways to specify migration matrices for different scenarios.
 #'   List elements will include migration model, rows and columns of landscape and distance function.
+#' @slot num.loci number of msat or snp loci to simulate.
+#' @slot sequence.length number of DNA base pairs to use.
+#' @slot mut.rate mutation rate for DNA or msat.
 #' @slot simulator.params an object storing simulator-specific parameters. Can
 #'   be a list or a simulator-specific class.
 #'
-setClass(
+#' @export
+#'
+scenario.params <- setClass(
   Class = "scenario.params",
-  slots = c(num.pops = "intOrNum", pop.size = "intOrNum",
-            sample.size = "intOrNum", migration = "listOrNULL",
-            mig.helper = "listOrNULL",
-            locus.type = "charOrNULL", num.loci = "intOrNum",
-            sequence.length = "intOrNum", mut.rate = "intOrNum",
-            simulator.params = "ANY"
+  slots = c(
+    num.pops = "intOrNum", pop.size = "intOrNum", sample.size = "intOrNum",
+    migration = "listOrNULL", mig.helper = "listOrNULL",
+    locus.type = "charOrNULL", num.loci = "intOrNum",
+    sequence.length = "intOrNum", mut.rate = "intOrNum", simulator.params = "ANY"
   ),
-  prototype = c(num.pops = NULL, pop.size = NULL, sample.size = NULL,
-      migration = NULL, mig.helper = NULL,
-      locus.type = NULL, num.loci = NULL,
-      sequence.length = NULL, mut.rate = NULL,
-      simulator.params = NULL
-      )
+  prototype = list(
+    num.pops = NULL, pop.size = NULL, sample.size = NULL, migration = NULL,
+    mig.helper = NULL, locus.type = NULL, num.loci = NULL,
+    sequence.length = NULL, mut.rate = NULL, simulator.params = NULL
+  )
 )

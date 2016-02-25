@@ -2,6 +2,7 @@
 % Please edit documentation in R/fsc.classes.R
 \docType{class}
 \name{fastsimcoal.params-class}
+\alias{fastsimcoal.params}
 \alias{fastsimcoal.params-class}
 \title{fastsimcoal Parameters Class}
 \description{

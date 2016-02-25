@@ -14,13 +14,13 @@ loadLocusParams(x) <- value
 
 \S4method{loadLocusParams}{fastsimcoal.params}(x) <- value
 
-fsc.locus.dna(sequence.length, mut.rate, transition.rate = 1/3,
-  recomb.rate = 0, chromosome = 1)
+fsc.locus.dna(sequence.length, mut.rate, transition.rate = NULL,
+  recomb.rate = NULL, chromosome = NULL)
 
-fsc.locus.snp(num.loci, min.freq, recomb.rate = 0, chromosome = 1)
+fsc.locus.msat(num.loci, mut.rate, gsm.param = NULL,
+  range.constraint = NULL, recomb.rate = NULL, chromosome = NULL)
 
-fsc.locus.msat(num.loci, mut.rate, gsm.param = 0, range.constraint = 0,
-  recomb.rate = 0, chromosome = 1)
+fsc.locus.snp(num.loci, min.freq, recomb.rate = NULL, chromosome = NULL)
 }
 \arguments{
 \item{x}{a \linkS4class{fastsimcoal.params} object.}
@@ -40,8 +40,6 @@ is on.}
 
 \item{num.loci}{MICROSAT, SNP: number of loci to simulate.}
 
-\item{min.freq}{SNP: minimum frequency for the derived allele.}
-
 \item{gsm.param}{Value of the geometric parameter for a Generalized Stepwise
 Mutation (GSM) model. This value represents the proportion of mutations
 that will change the allele size by more than one step. Values between
@@ -50,6 +48,8 @@ Stepwise Mutation Model (SMM).}
 
 \item{range.constraint}{Range constraint (number of different alleles
 allowed). A value of 0 means no range constraint}
+
+\item{min.freq}{SNP: minimum frequency for the derived allele.}
 }
 \description{
 Create fastsimcoal locus parameter data.frames

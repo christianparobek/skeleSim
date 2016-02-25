@@ -23,7 +23,7 @@ analysis_funcs <- function(params){
     )
   }
 
-  results_gtype <- params@rep.results
+  results_gtype <- params@rep.sample
   params@analyses.requested <- analyses.check(params@analyses.requested)
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
@@ -286,7 +286,7 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
 
   # shared alleles
   sA <- sharedAlleles(g)
-  sA <- cbind(sA[, 1:2], mean = rowMeans(sA[, -(1:2)], na.rm = TRUE), sA[, 3:ncol(sA)])
+  sA <- cbind(sA[, 1:2], mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE), sA[, 3:ncol(sA)])
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
              variable.name = "Locus", value.name = "shared.alleles")
   sA$Locus[sA$Locus == "mean"] <- NA

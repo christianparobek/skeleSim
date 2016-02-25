@@ -2,15 +2,15 @@
 % Please edit documentation in R/skeleSim.classes.R
 \docType{class}
 \name{skeleSim.classes}
+\alias{scenario.params}
 \alias{scenario.params-class}
 \alias{skeleSim.classes}
+\alias{skeleSim.params}
 \alias{skeleSim.params-class}
 \title{skeleSim Parameters Class}
 \description{
 An S4 class storing generic parameters used throughout
   the workflow
-
-An S4 class storing parameters for each simulation scenario
 }
 \section{Slots}{
 
@@ -32,16 +32,16 @@ Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.}
 
 \item{\code{scenarios}}{a list of \code{scenario.params} objects.}
 
-\item{\code{start.time}}{a POSIXct representation of the starting time of the simulation.}
-
-\item{\code{end.time}}{a POSIXct representation of the end time of the simulation.}
-
 \item{\code{num.reps}}{number of replicates to run.}
 
 \item{\code{sim.func}}{a function that runs one replicate of the simulator.
 Must take and return only a \code{skeleSim.params} object.}
 
-\item{\code{last.sample}}{result of last call to \code{sim.func}.}
+\item{\code{current.scenario}}{number of current scenario being run.}
+
+\item{\code{current.replicate}}{number of current replicate within current scenario being run.}
+
+\item{\code{rep.sample}}{result of last call to \code{sim.func}.}
 
 \item{\code{rep.analysis.func}}{a function that analyzes the results of one
 simulation replicate.}
@@ -83,9 +83,18 @@ samples to take from each population.}
 \item{\code{migration}}{a \code{num.pop} x \code{num.pop} matrix giving the
 migration rates between each population.}
 
+\item{\code{locus.type}}{a character representation of what type of marker to simulate.
+Can be "dna", "msat", or "snp".}
+
 \item{\code{mig.helper}}{a list of flags and values that are needed for the shiny interface but are not needed for the simulation
 itself.  Makes it easier to keep track of different ways to specify migration matrices for different scenarios.
 List elements will include migration model, rows and columns of landscape and distance function.}
+
+\item{\code{num.loci}}{number of msat or snp loci to simulate.}
+
+\item{\code{sequence.length}}{number of DNA base pairs to use.}
+
+\item{\code{mut.rate}}{mutation rate for DNA or msat.}
 
 \item{\code{simulator.params}}{an object storing simulator-specific parameters. Can
 be a list or a simulator-specific class.}

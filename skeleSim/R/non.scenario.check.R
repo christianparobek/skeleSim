@@ -2,7 +2,7 @@
 #' @description Check general simulation parameters
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
-
+#'
 non.scenario.check <- function(params) {
   results.check <- c(
     title.not.null = !is.null(params@title),

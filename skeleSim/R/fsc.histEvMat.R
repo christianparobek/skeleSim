@@ -63,6 +63,7 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
 #' @rdname fsc.histEvMat
 #'
 fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
+  if(is.null(hist.ev)) return(TRUE)
   num.pops <- length(pop.size)
   if ((!is.numeric(as.matrix(hist.ev))) & (!(is.matrix(hist.ev)|is.data.frame(hist.ev)))) {
     cat("'hist.ev' must be a numerical matrix or numerical dataframe.\n")
