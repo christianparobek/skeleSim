@@ -102,7 +102,9 @@ globalAnalysis <- function(g, num.perm.reps, num.cores) {
     x
   })
   results.matrix.l <- do.call(rbind, r.m)
-  results.matrix <- rbind(overall_stats(g, num.perm.reps, num.cores), results.matrix.l)
+  results.matrix <- rbind(
+    overall_stats(g, num.perm.reps, num.cores), results.matrix.l
+  )
   analyses <- colnames(results.matrix)
   num_analyses <- length(analyses)
   rownames(results.matrix) <- c("Overall", loc_names)
@@ -119,7 +121,8 @@ locusAnalysisGenotypes <- function(g) {
 
   # by locus, all the other stats (num alleles etc) pulled from summarizeLoci
   smryLoci <- summarizeLoci(g)
-  smryLoci <- data.frame(Pop = NA, Locus = rownames(smryLoci), smryLoci, stringsAsFactors = FALSE)
+  smryLoci <- data.frame(Pop = NA, Locus = rownames(smryLoci), smryLoci,
+                         stringsAsFactors = FALSE)
 
   # by population
   smryLociPop <- summarizeLoci(g, by.strata = TRUE)
@@ -158,7 +161,8 @@ locusAnalysisGenotypes <- function(g) {
   #for loci
   g.loci <- gtypes2loci(g)
   FSTloci <- Fst(g.loci)
-  FSTloci <- data.frame(Pop = NA, Locus = loc_names, FSTloci[loc_names, ], stringsAsFactors = FALSE)
+  FSTloci <- data.frame(Pop = NA, Locus = loc_names, FSTloci[loc_names, ],
+                        stringsAsFactors = FALSE)
 
   #for pops
   # pop.1/locus.1:num_loci - pop.num_pops/locus.1:num_loci..
@@ -168,7 +172,8 @@ locusAnalysisGenotypes <- function(g) {
   names(FSTpop) <- levels(g.loci$population)
 
   FSTpop <- do.call(rbind, mapply(function(mat, pop){
-    data.frame(Pop = pop, Locus = loc_names, mat[loc_names, ], stringsAsFactors = FALSE)
+    data.frame(Pop = pop, Locus = loc_names, mat[loc_names, ],
+               stringsAsFactors = FALSE)
   }, mat = FSTpop, pop = names(FSTpop), SIMPLIFY = FALSE))
   rownames(FSTpop) <- NULL
 
@@ -260,6 +265,7 @@ calcChordDist <- function(dat, is.diploid) {
 
 
 #' @rdname analysis_funcs
+#' @importFrom hierfstat genind2hierfstat
 #'
 pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
   # pairwise population structure test
@@ -282,11 +288,16 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result)])
   }))
-  pws <- rbind(cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all)]), pws)
+  pws <- rbind(
+    cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all)]),
+    pws
+  )
 
   # shared alleles
   sA <- sharedAlleles(g)
-  sA <- cbind(sA[, 1:2], mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE), sA[, 3:ncol(sA)])
+  sA <- cbind(sA[, 1:2],
+              mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE),
+              sA[, 3:ncol(sA)])
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
              variable.name = "Locus", value.name = "shared.alleles")
   sA$Locus[sA$Locus == "mean"] <- NA
@@ -309,25 +320,33 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
     )
   } else NULL
 
-  #   # chord.dist
+  # chord distance
   cd <- if(ploidy(g) %in% 1:2) {
     dat <- genind2hierfstat(gtypes2genind(g))
     is.diploid <- ploidy(g) == 2
     chord.dist <- calcChordDist(dat, is.diploid)
     # chord.dist by locus
-    chord.dist.locus <- lapply(locNames(g), function(l) {
-      print(l)
+    chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
       result <- calcChordDist(dat[, c("pop", l)], is.diploid)
       cbind(result[, 1:2], Locus = l, result[, 3])
-    })
+    }))
+    colnames(chord.dist.locus)[4] <- "chord.dist"
+    chord.dist.locus
   } else NULL
 
-  smry <- merge(pws, sA, by = c("strata.1", "strata.2", "Locus"))
-  if(!is.null(dA)) smry <- merge(smry, dA, by = c("strata.1", "strata.2", "Locus"))
+  # combine results into single matrix
+  by.cols <- c("strata.1", "strata.2", "Locus")
+  smry <- merge(pws, sA, by = by.cols)
+  if(!is.null(dA)) smry <- merge(smry, dA, by = by.cols)
+  if(!is.null(cd)) smry <- merge(smry, cd, by = by.cols)
   smry <- smry[with(smry, order(Locus, strata.1, strata.2)), ]
   rownames(smry) <- sapply(1:nrow(smry), function(i) {
     st.pair <- paste(smry$strata.1[i], smry$strata.2[i], sep = "_")
-    if(is.na(smry$Locus[i])) st.pair else paste(st.pair, smry$Locus[i], sep = "_")
+    if(is.na(smry$Locus[i])) {
+      st.pair
+    } else {
+      paste(st.pair, smry$Locus[i], sep = "_")
+    }
   })
   smry$strata.1 <- smry$strata.2 <- smry$Locus <- NULL
   smry <- as.matrix(smry)
