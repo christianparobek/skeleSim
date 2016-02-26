@@ -23,6 +23,7 @@ Depends:
     rmetasim (>= 3.0.0)
 Imports:
     adegenet,
+    ape,
     ggplot2,
     hierfstat,
     pegas,

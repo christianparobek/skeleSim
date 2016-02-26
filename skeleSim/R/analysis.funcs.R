@@ -1,4 +1,4 @@
-#' @name analysis_funcs
+#' @name analysis.funcs
 #' @title Analysis functions
 #' @description Run Global, Locus, and Pairwise analyses on results from
 #'   a single simulation replicate stored in params@rep.sample#'
@@ -15,40 +15,38 @@
 #' @import strataG
 #' @export
 #'
-analysis_funcs <- function(params){
+analysisFunc <- function(params) {
   if(is.null(params@analysis.results)) {
-    empty.list <- lapply(1:length(params@scenarios), function(x) NULL)
-    params@analysis.results <- list(
-      Global = empty.list, Locus = empty.list, Pairwise = empty.list
-    )
+    params@analysis.results <- lapply(1:length(params@scenarios), function(x) {
+      list(Global = NULL, Locus = NULL, Pairwise = NULL)
+    })
   }
 
-  results_gtype <- params@rep.sample
+  results.gtype <- params@rep.sample
 # -->> REMOVE FOR RELEASE: SAVING gtypes OBJECT FOR TESTING <<--
-  save(results_gtype, file = "results_gtype.rdata")
+  save(results.gtype, file = "results.gtype.rdata")
 # ---
-  params@analyses.requested <- analyses.check(params@analyses.requested)
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
 
   opt <- options(warn = -1)
 
   if(params@analyses.requested["Global"]) {
-    mat <- globalAnalysis(results_gtype, num.perm.reps, num.cores)
+    mat <- globalAnalysis(results.gtype, num.perm.reps, num.cores)
     params <- loadResultsMatrix(params, mat, "Global")
   }
 
   if(params@analyses.requested["Locus"]) {
-    mat <- if(ploidy(results_gtype) > 1) {
-      locusAnalysisGenotypes(results_gtype)
+    mat <- if(ploidy(results.gtype) > 1) {
+      locusAnalysisGenotypes(results.gtype)
     } else {
-      locusAnalysisHaplotypes(results_gtype)
+      locusAnalysisHaplotypes(results.gtype)
     }
     params <- loadResultsMatrix(params, mat, "Locus")
   }
 
   if(params@analyses.requested["Pairwise"]) {
-    mat <- pairwiseAnalysis(results_gtype, num.perm.reps, num.cores)
+    mat <- pairwiseAnalysis(results.gtype, num.perm.reps, num.cores)
     params <- loadResultsMatrix(params, mat, "Pairwise")
   }
 
@@ -57,44 +55,47 @@ analysis_funcs <- function(params){
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #'
 loadResultsMatrix <- function(params, mat, label) {
   curr_scn <- params@current.scenario
   num_reps <- params@num.reps
-  if(is.null(params@analysis.results[[label]][[curr_scn]])) {
-    params@analysis.results[[label]][[curr_scn]] <- array(
+  if(is.null(params@analysis.results[[curr_scn]][[label]])) {
+    params@analysis.results[[curr_scn]][[label]] <- array(
       NA, dim = c(nrow(mat), ncol(mat), num_reps),
       dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
     )
   }
   curr_rep <- params@current.replicate
-  params@analysis.results[[label]][[curr_scn]][, , curr_rep] <- mat
+  params@analysis.results[[curr_scn]][[label]][, , curr_rep] <- mat
   return(params)
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #'
-overall_stats <- function(g, num.perm.reps, num.cores) {
-  ovl <- overallTest(g, nrep = num.perm.reps, num.cores = num.cores, quietly = TRUE)
-  ovl.result <- ovl$result[complete.cases(ovl$result), ]
-  global.wide <- as.vector(t(ovl.result))
-  names(global.wide) <- paste(
-    rep(rownames(ovl.result), each = 2), c("", ".pval"), sep = ""
+formatOverallStats <- function(g, num.perm.reps, num.cores) {
+  result <- overallTest(
+    g, nrep = num.perm.reps, num.cores = num.cores, quietly = TRUE
+  )$result
+  result <- result[complete.cases(result), ]
+  result.names <- paste(
+    rep(rownames(result), each = 2), c("", ".pval"), sep = ""
   )
-  return(global.wide)
+  result <- as.vector(t(result))
+  names(result) <- result.names
+  return(result)
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #'
 globalAnalysis <- function(g, num.perm.reps, num.cores) {
   loc_names <- locNames(g)
 
   # run by locus analysis across all populations
   r.m <- lapply(loc_names, function(l) {
-    overall_stats(g[, l, ], num.perm.reps, num.cores)
+    formatOverallStats(g[, l, ], num.perm.reps, num.cores)
   })
   # find complete list of column names
   analysis.names <- unique(unlist(lapply(r.m, names)))
@@ -106,7 +107,7 @@ globalAnalysis <- function(g, num.perm.reps, num.cores) {
   })
   results.matrix.l <- do.call(rbind, r.m)
   results.matrix <- rbind(
-    overall_stats(g, num.perm.reps, num.cores), results.matrix.l
+    formatOverallStats(g, num.perm.reps, num.cores), results.matrix.l
   )
   analyses <- colnames(results.matrix)
   num_analyses <- length(analyses)
@@ -115,7 +116,7 @@ globalAnalysis <- function(g, num.perm.reps, num.cores) {
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #' @importFrom reshape2 melt
 #' @importFrom pegas Fst
 #'
@@ -207,7 +208,7 @@ locusAnalysisGenotypes <- function(g) {
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #'
 hapSmryFunc <- function(g) {
   g <- g[, , , drop = TRUE]
@@ -223,7 +224,7 @@ hapSmryFunc <- function(g) {
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #'
 locusAnalysisHaplotypes <- function(g) {
   smry.all <- hapSmryFunc(g)
@@ -247,7 +248,7 @@ locusAnalysisHaplotypes <- function(g) {
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #' @importFrom hierfstat genet.dist
 #'
 calcChordDist <- function(dat, is.diploid) {
@@ -267,7 +268,7 @@ calcChordDist <- function(dat, is.diploid) {
 }
 
 
-#' @rdname analysis_funcs
+#' @rdname analysis.funcs
 #' @importFrom hierfstat genind2hierfstat
 #'
 pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
@@ -289,10 +290,10 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
       quietly = TRUE, num.cores = num.cores
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
-    cbind(result[, 1:2], Locus = l, result[, 3:ncol(result)])
+    cbind(result[, 1:2], Locus = l, result[, 3:ncol(result), drop = FALSE])
   }))
   pws <- rbind(
-    cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all)]),
+    cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all), drop = FALSE]),
     pws
   )
 
@@ -300,7 +301,7 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
   sA <- sharedAlleles(g)
   sA <- cbind(sA[, 1:2],
               mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE),
-              sA[, 3:ncol(sA)])
+              sA[, 3:ncol(sA), drop = FALSE])
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
              variable.name = "Locus", value.name = "shared.alleles")
   sA$Locus[sA$Locus == "mean"] <- NA
@@ -319,7 +320,8 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
       mean, na.rm = TRUE
     )
     rbind(
-      cbind(dA.all[, 1:2], Locus = NA, dA.all[, 3:ncol(dA.all)]), dA.locus
+      cbind(dA.all[, 1:2], Locus = NA, dA.all[, 3:ncol(dA.all), drop = FALSE]),
+      dA.locus
     )
   } else NULL
 

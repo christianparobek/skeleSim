@@ -3,7 +3,6 @@
 setClassUnion("logOrNULL", c("logical", "NULL"))
 setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
-setClassUnion("vectOrNULL", c("vector", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 
 #' @rdname skeleSim.classes

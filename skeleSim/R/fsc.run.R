@@ -7,6 +7,7 @@
 #' @return a modified \linkS4class{skeleSim.params} object with the results of
 #'   a fastsimcoal run.
 #'
+#' @importFrom parallel detectCores
 #' @export
 #'
 fsc.run <- function(params) {
@@ -36,10 +37,17 @@ fsc.run <- function(params) {
   )
 
   # Run fastsimcoal
+  num.cores <- params@num.cores
+  cores.spec <- if(!is.null(num.cores)) {
+    num.cores <- max(1, num.cores)
+    num.cores <- min(num.cores, min(detectCores(), 12))
+    paste(c("-c", "-B"), num.cores, collapse = " ")
+  } else "-c 0 -B 12"
   cmd.line <- paste(
     sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
-    ifelse(params@quiet, "-q", ""), "-S -c0"
+    ifelse(params@quiet, "-q", ""), "-S", cores.spec
   )
+print(cmd.line)
   err <- if(.Platform$OS.type == "unix") {
     system(cmd.line, intern = F)
   } else {

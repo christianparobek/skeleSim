@@ -5,19 +5,20 @@
 #' @param locus.type character giving type of locus (\code{microsat} or
 #'   \code{sequence})
 #'
-#' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind
+#' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind landscape.locus.states
+#' @importFrom ape as.DNAbin
 #' @export
 rms.convert <- function(Rland, locus.type) {
-    
+
     ltype <- locus.type
 
     print("in rms.convert")
     print(paste("locustype:",ltype))
-    
+
     if (!is.landscape(Rland)) {stop("incoming landscape problem in rms.convert")}
-    
-    
-    
+
+
+
     this.rep.result=NULL
     if (ltype%in%c("microsatellite","MICROSAT","microsat"))
     {
@@ -38,7 +39,7 @@ rms.convert <- function(Rland, locus.type) {
     {
         this.rep.result <- landscape.make.genind(landscape.snp.convert(Rland))
     }
-    
+
 
     this.rep.result
 }
