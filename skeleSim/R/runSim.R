@@ -9,17 +9,18 @@
 #'
 runSim <- function(params, num.secs = NULL) {
   # check parameters
-  params<-overall.check(params)
+  params <- overall.check(params)
+  print(params@other.checks)
+  print(params@sim.scen.checks)
   if(!all(params@other.checks, params@sim.scen.checks)) {
     filewr <- "error.log"
-    write.csv(params@sim.scen.checks, file=filewr)
+    write.csv(params@sim.scen.checks, file = filewr)
     print(params@other.checks)
-    write("\n",file=filewr,append=T)
-    write.table(params@other.checks, file=filewr,append=T)
-
+    write("\n", file = filewr, append = T)
+    write.table(params@other.checks, file = filewr, append = T)
     stop("parameters do not pass checks; see error log for details")
   }
-print("params checked")
+  cat("\nparameter check complete\n\n")
 
   # Check/setup folder structure
   if(file.exists(params@wd)) unlink(params@wd, recursive = TRUE, force = TRUE)

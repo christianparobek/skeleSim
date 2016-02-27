@@ -49,7 +49,7 @@
 #' @export
 #'
 fsc.loadScenario <- function(
-  num.pops, pop.size, sample.size, migration, mut.rate, sample.times = NULL,
+  num.pops, pop.size, sample.size, mut.rate, migration = NULL, sample.times = NULL,
   growth.rate = NULL, hist.ev = NULL, locus.type = c("dna", "msat", "snp"),
   sequence.length = NULL, num.loci = NULL, transition.rate = NULL, gsm.param = NULL,
   range.constraint = NULL, min.freq = NULL, recomb.rate = NULL, chromosome = NULL,
@@ -70,7 +70,6 @@ fsc.loadScenario <- function(
   sc@num.pops <- num.pops
   sc@pop.size <- rep(pop.size, length.out = num.pops)
   sc@sample.size <- rep(sample.size, length.out = num.pops)
-  sc@migration <- migration
   sc@locus.type <- locus.type
   sc@sequence.length <- sequence.length
   sc@num.loci <- num.loci
@@ -83,8 +82,8 @@ fsc.loadScenario <- function(
                                 param.5, param.6, ploidy) {
     df <- data.frame(
       chromosome = chr, type = type, num.markers = num.markers,
-      param.4 = param.4, param.5 = param.5, param.6 = param.6,
-      stringsAsFactors = FALSE
+      recomb.rate = recomb.rate, param.4 = param.4, param.5 = param.5,
+      param.6 = param.6, stringsAsFactors = FALSE
     )
     df <- df[order(df$chromosome), ]
     attr(df, "ploidy") <- ploidy

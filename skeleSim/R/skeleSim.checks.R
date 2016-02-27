@@ -8,22 +8,20 @@
 #'
 overall.check <- function(params) {
   params@other.checks <- non.scenario.check(params)
-  print(params@other.checks)
   #here we call the scenario checks (simulator specific and general)
   prv_chk <- params@sim.scen.checks  #store what is was in check slot
   #then calculate new checks
   ths_chk <- rbind(params@sim.check.func(params), gen.scenario.check(params))
-  print(prv_chk);  print(ths_chk)
-  #if what was there is null, replace with new checks
-  if (is.null(prv_chk)) params@sim.scen.checks <- ths_chk
-  #else, check which lines are there and replace info
-  else {
-    for (i in rownames(ths_chk)) {
-      if (i %in% rownames(prv_chk)) prv_chk[i,] <- ths_chk[i,] #if it is there, replace it
-      else {
-        rbind(prv_chk,ths_chk[i,])  #if not, bind it
-        rownames(prv_chk)[nrow(prv_chk)]<-i
 
+  if(is.null(prv_chk)) { #if what was there is null, replace with new checks
+    params@sim.scen.checks <- ths_chk
+  } else { # else, check which lines are there and replace info
+    for(x in rownames(ths_chk)) {
+      if(x %in% rownames(prv_chk)) { #if it is there, replace it
+        prv_chk[x, ] <- ths_chk[x, ]
+      } else { # if not, bind it
+        prv_chk <- rbind(prv_chk, ths_chk[x, ])
+        rownames(prv_chk)[nrow(prv_chk)] <- x
       }
     }
     params@sim.scen.checks <- prv_chk
@@ -33,7 +31,6 @@ overall.check <- function(params) {
 
   #output result based on both sets of checks
   return(params)
-
 }
 
 
@@ -46,7 +43,6 @@ non.scenario.check <- function(params) {
     #check that number of reps is greater than 0
     at.least.1.rep = params@num.reps > 0
   )
-  print(results.check)
   return(results.check)
 }
 
@@ -65,26 +61,38 @@ gen.scenario.check <- function(params) {
   #check that migration matrix all between 0 and 1
   #check that all migration matrix diagonals are 0
 
-  results.check <- sapply(params@scenarios, function(sc) {
-    #This will make a vector of TRUE/ FALSE
+  sapply(params@scenarios, function(sc) {
+    mig <- sc@migration
+    mig.fmt <- if(is.null(mig)) TRUE else {
+      if(is.matrix(mig)) mig <- list(mig)
+      if(is.list(mig)) all(sapply(mig, is.matrix)) else FALSE
+    }
+    is.mig.square <- if(!mig.fmt) FALSE else {
+      if(is.null(mig)) TRUE else {
+        all(sapply(mig, function(x) {
+          nrow(x) == ncol(x) & nrow(x) == sc@num.pops
+        }))
+      }
+    }
+    mig.btwn.0.1 <- if(!mig.fmt) FALSE else {
+      if(is.null(mig)) TRUE else all(sapply(mig, function(x) all(x >= 0 & x <= 1)))
+    }
+    mig.diag.eq.0 <- if(!mig.fmt) FALSE else {
+      if(is.null(mig)) TRUE else all(sapply(mig, function(x) all(diag(x) == 0)))
+    }
+
     c(nsizes.eq.npops = length(sc@pop.size) == sc@num.pops,
       nsamps.eq.npops = length(sc@sample.size) == sc@num.pops,
-      is.mig.square = sapply(sc@migration, function(mig) {
-        nrow(mig) == ncol(mig) & nrow(mig) == sc@num.pops
-      }),
       at.lst.1.pop = sc@num.pops >= 1,
       at.lst.1.loc = all(sc@num.loci >= 1),
-      mut.rate.ok = all((sc@mut.rate>=0)&(sc@mut.rate<1)),
-      at.lst.1.samp = min(sc@sample.size)>0,
-      mig.bet.0.1 = sapply(sc@migration, function(mig) {
-        all((mig>=0)&(mig<=1))
-      }),
-      mig.diag.eq.0 = sapply(sc@migration, function(mig) {
-        all(diag(mig)==0)
-      })
+      at.lst.1.samp = min(sc@sample.size) > 0,
+      mut.rate.ok = all(sc@mut.rate >= 0 & sc@mut.rate < 1),
+      mig.fmt = mig.fmt,
+      is.mig.square = is.mig.square,
+      mig.btwn.0.1 = mig.btwn.0.1,
+      mig.diag.eq.0 = mig.diag.eq.0
     )
   })
-  return(results.check)
 }
 
 

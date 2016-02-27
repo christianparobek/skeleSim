@@ -1,7 +1,15 @@
 #' @title Create fastsimcoal historical event matrices
 #' @description Create fastsimcoal historical event matrices
 #'
-#' @param num.events number of historical events.
+#' @param num.gen Number of generations, t, before present at which the
+#'   historical event happened.
+#' @param source.deme Source deme (the first listed deme has index 0)
+#' @param sink.deme Sink deme
+#' @param prop.migrants Expected proportion of migrants to move from source to sink.
+#' @param new.sink.size New size for the sink deme, relative to its size at
+#'   generation t.
+#' @param new.sink.growth New growth rate for the sink deme.
+#' @param new.mig.mat New migration matrix to be used further back in time.
 #' @param hist.ev a matrix describing historical events, with one row per event.
 #' @param pop.size numerical vector giving size of each population.
 #' @param growth.rate numerical vector giving growth rate of each population.
@@ -12,22 +20,14 @@
 #'
 #' @export
 #'
-fsc.histEvMat <- function(num.events = 0) {
-  # -- historical events --
-  # 1) Number of generations, t, before present at which the historical event
-  #    happened
-  # 2) Source deme (the first listed deme has index 0)
-  # 3) Sink deme
-  # 4) Expected proportion of migrants to move from source to sink.
-  # 5) New size for the sink deme, relative to its size at generation t
-  # 6) New growth rate for the sink deme
-  # 7) New migration matrix to be used further back in time
-  if(num.events == 0) return(NULL)
-  hist.ev <- c(
-    num.gen = 0, source.deme = 0, sink.deme = 0, prop.migrants = 1,
-    new.sink.size = 1, new.sink.growth = 0, new.mig.mat = 0
+fsc.histEvMat <- function(num.gen = 0, source.deme = 0, sink.deme = 0,
+                          prop.migrants = 1, new.sink.size = 1,
+                          new.sink.growth = 0, new.mig.mat = 0) {
+  cbind(
+    num.gen = num.gen, source.deme = source.deme, sink.deme = sink.deme,
+    prop.migrants = prop.migrants, new.sink.size = new.sink.size,
+    new.sink.growth = new.sink.growth, new.mig.mat = new.mig.mat
   )
-  do.call(rbind, lapply(1:num.events, function(x) hist.ev))
 }
 
 
@@ -40,9 +40,7 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
     cat("'pop.size' and 'growth.rate' vectors must be same size.\n")
     return(FALSE)
   }
-  if(!fsc.histEvCheck(hist.ev, length(pop.size), num.mig.mats)) return(FALSE)
   hist.ev <- hist.ev[order(hist.ev[, 1], hist.ev[, 2], hist.ev[, 3]), , drop = FALSE]
-  print(hist.ev)
   for(i in 1:nrow(hist.ev)) {
     gen <- hist.ev[i, 1]
     from <- hist.ev[i, 2] + 1
@@ -54,7 +52,6 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
     pop.size[to] <- pop.size[to] * exp(growth.rate[to] * t)
     growth.rate[to] <- hist.ev[i, 6]
     pop.size[to] <- pop.size[to] * new.size
-    print(pop.size)
   }
   sum(pop.size > 0) == 1
 }
@@ -73,7 +70,7 @@ fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL)
     cat("'hist.ev' must have 7 columns.\n")
     return(FALSE)
   }
-  if(any(hist.ev[, 2] >= num.pops | hist.ev[, 3] >= num.pops)) {
+  if(any(hist.ev[, 2] > (num.pops - 1) | hist.ev[, 3] > (num.pops - 1))) {
     cat("values in columns 2 and 3 (source and sink demes) cannot be greater than the number of populations.\n")
     return(FALSE)
   }

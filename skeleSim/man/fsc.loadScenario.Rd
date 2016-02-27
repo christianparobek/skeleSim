@@ -4,7 +4,7 @@
 \alias{fsc.loadScenario}
 \title{Load skeleSim scenario parameters for fastsimcoal}
 \usage{
-fsc.loadScenario(num.pops, pop.size, sample.size, migration, mut.rate,
+fsc.loadScenario(num.pops, pop.size, sample.size, mut.rate, migration = NULL,
   sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
   locus.type = c("dna", "msat", "snp"), sequence.length = NULL,
   num.loci = NULL, transition.rate = NULL, gsm.param = NULL,
@@ -19,10 +19,10 @@ fsc.loadScenario(num.pops, pop.size, sample.size, migration, mut.rate,
 \item{sample.size}{a vector giving the number of samples to take from each
 population.}
 
+\item{mut.rate}{\code{dna, msat}: per base pair or locus mutation rate.}
+
 \item{migration}{a \code{num.pop} x \code{num.pop} matrix giving the
 migration rates between each population.}
-
-\item{mut.rate}{\code{dna, msat}: per base pair or locus mutation rate.}
 
 \item{sample.times}{a vector giving the number of generations in the past
 at which samples are taken.}

@@ -47,7 +47,6 @@ fsc.run <- function(params) {
     sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
     ifelse(params@quiet, "-q", ""), "-S", cores.spec
   )
-print(cmd.line)
   err <- if(.Platform$OS.type == "unix") {
     system(cmd.line, intern = F)
   } else {
@@ -93,6 +92,8 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
                       hist.ev = NULL, num.chrom = NULL,
                       locus.params = NULL, ploidy = NULL, label = NULL) {
 
+  opt <- options(scipen = 999)
+
   if(is.null(ploidy)) {
     pl <- attr(locus.params, "ploidy")
     ploidy <- if(is.null(pl)) 1 else pl
@@ -102,7 +103,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
 
   if(is.null(label)) label <- "fastsimcoal.skeleSim"
   file <- paste(label, ".par", sep = "")
-  mig.rates <- if(is.list(mig.rates)) mig.rates else list(mig.rates)
+  mig.rates <- if(!is.null(mig.rates)) if(is.list(mig.rates)) mig.rates else list(mig.rates)
   hist.ev <- if(is.list(hist.ev)) do.call(rbind, hist.ev) else rbind(hist.ev)
 
   # Write input file
@@ -156,6 +157,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
     }
   }
 
+  options(opt)
   invisible(file)
 }
 

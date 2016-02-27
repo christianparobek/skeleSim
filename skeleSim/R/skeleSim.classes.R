@@ -82,8 +82,8 @@ skeleSim.params <- setClass(
 #' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.
 #' @slot sample.size a vector \code{num.pop} long giving the number of
 #'   samples to take from each population.
-#' @slot migration a \code{num.pop} x \code{num.pop} matrix giving the
-#'   migration rates between each population.
+#' @slot migration a list of one or more \code{num.pop} x \code{num.pop} matrices
+#'   giving the migration rates between each population.
 #' @slot locus.type a character representation of what type of marker to simulate.
 #'   Can be "dna", "msat", or "snp".
 #' @slot mig.helper a list of flags and values that are needed for the shiny interface but are not needed for the simulation

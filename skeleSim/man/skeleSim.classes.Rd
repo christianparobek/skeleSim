@@ -80,8 +80,8 @@ or "Pairwise" analyses have been requested.}
 \item{\code{sample.size}}{a vector \code{num.pop} long giving the number of
 samples to take from each population.}
 
-\item{\code{migration}}{a \code{num.pop} x \code{num.pop} matrix giving the
-migration rates between each population.}
+\item{\code{migration}}{a list of one or more \code{num.pop} x \code{num.pop} matrices
+giving the migration rates between each population.}
 
 \item{\code{locus.type}}{a character representation of what type of marker to simulate.
 Can be "dna", "msat", or "snp".}
