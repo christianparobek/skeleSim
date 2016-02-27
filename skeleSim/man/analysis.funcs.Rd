@@ -27,7 +27,7 @@ hapSmryFunc(g)
 
 locusAnalysisHaplotypes(g)
 
-calcChordDist(dat, is.diploid)
+calcChordDist(dat)
 
 pairwiseAnalysis(g, num.perm.reps, num.cores)
 }
@@ -45,8 +45,6 @@ pairwiseAnalysis(g, num.perm.reps, num.cores)
 \item{num.cores}{number of CPU cores to use.}
 
 \item{dat}{data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).}
-
-\item{is.diploid}{logical - is this a diploid object?}
 }
 \description{
 Run Global, Locus, and Pairwise analyses on results from

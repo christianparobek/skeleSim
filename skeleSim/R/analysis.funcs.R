@@ -10,7 +10,6 @@
 #' @param mat results matrix to be loaded into params object.
 #' @param label analysis type label ("Global", "Locus", or "Pairwise").
 #' @param dat data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).
-#' @param is.diploid logical - is this a diploid object?
 #'
 #' @import strataG
 #' @export
@@ -140,14 +139,26 @@ locusAnalysisGenotypes <- function(g) {
   }))
 
   smry <- rbind(smryLoci, smryLociPop)
+  smry <- smry[,
+    which(!colnames(smry) %in% c("num.genotyped", "pct.genotyped"))
+  ]
   rownames(smry) <- NULL
 
   # mratio on gtypes object, function needs genetic data as a gtype
-  mratio.all <- melt(t(mRatio(g)))
+  mratio.locus <- mRatio(g, by.strata = FALSE, rpt.size = 1)
+  mratio.all <- melt(t(mRatio(g, rpt.size = 1)))
   colnames(mratio.all) <- c("Pop", "Locus", "mRatio")
+  mratio.all <- rbind(
+    data.frame(
+      Pop = NA, Locus = names(mratio.locus),
+      mRatio = mratio.locus, stringsAsFactors = FALSE
+    ),
+    mratio.all
+  )
+  rownames(mratio.all) <- NULL
 
   # Number of private alleles by locus
-  pa <- privateAlleles(g)
+  pa <- t(privateAlleles(g))
   # this has the number of alleles that are private per locus
   perLocus <- colSums(pa)
   by.loc <- melt(pa)
@@ -202,9 +213,8 @@ locusAnalysisGenotypes <- function(g) {
     }
   })
   locus.final$Pop <- locus.final$Locus <- NULL
-  locus.final <- as.matrix(locus.final[order(rownames(locus.final)), ])
 
-  return(locus.final)
+  return(as.matrix(locus.final))
 }
 
 
@@ -217,6 +227,7 @@ hapSmryFunc <- function(g) {
   smry <- t(sapply(locNames(g), function(l) {
     summary(unstrat[, l, , drop = TRUE])$strata.smry[1, ]
   }))
+  smry <- smry[, -grep("num.missing", colnames(smry))]
   dvsty <- sapply(nucleotideDiversity(g), mean, na.rm = TRUE)
   Fs <- fusFs(g)
   tD <- tajimasD(g)[, "D"]
@@ -251,8 +262,8 @@ locusAnalysisHaplotypes <- function(g) {
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genet.dist
 #'
-calcChordDist <- function(dat, is.diploid) {
-  chord.dist <- genet.dist(dat, diploid = is.diploid, method = "Dch")
+calcChordDist <- function(dat) {
+  chord.dist <- genet.dist(dat, diploid = TRUE, method = "Dch")
   chord.dist <- as.matrix(chord.dist)
   rownames(chord.dist) <- colnames(chord.dist) <- levels(dat$pop)
   pop.pairs <- data.frame(combn(levels(dat$pop), 2), stringsAsFactors = FALSE)
@@ -326,13 +337,12 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
   } else NULL
 
   # chord distance
-  cd <- if(ploidy(g) %in% 1:2) {
+  cd <- if(ploidy(g) == 2) {
     dat <- genind2hierfstat(gtypes2genind(g))
-    is.diploid <- ploidy(g) == 2
-    chord.dist <- calcChordDist(dat, is.diploid)
+    chord.dist <- calcChordDist(dat)
     # chord.dist by locus
     chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
-      result <- calcChordDist(dat[, c("pop", l)], is.diploid)
+      result <- calcChordDist(dat[, c("pop", l)])
       cbind(result[, 1:2], Locus = l, result[, 3])
     }))
     colnames(chord.dist.locus)[4] <- "chord.dist"

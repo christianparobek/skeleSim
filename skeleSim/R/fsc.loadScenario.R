@@ -5,8 +5,8 @@
 #' @param pop.size a vector giving size of each populaiton.
 #' @param sample.size a vector giving the number of samples to take from each
 #'   population.
-#' @param migration a \code{num.pop} x \code{num.pop} matrix giving the
-#'   migration rates between each population.
+#' @param migration a \code{num.pop} x \code{num.pop} matrix or list of matrices
+#'   giving the migration rates between each population.
 #' @param locus.type a character representation of what type of marker to simulate.
 #'   Can be "dna", "msat", or "snp".
 #' @param num.loci \code{msat, snp}: number of loci to simulate.
@@ -74,7 +74,11 @@ fsc.loadScenario <- function(
   sc@sequence.length <- sequence.length
   sc@num.loci <- num.loci
   sc@mut.rate <- mut.rate
-  sc@migration <- migration
+  sc@migration <- if(is.matrix(migration)) {
+    list(migration)
+  } else if(is.list(migration)) {
+    migration
+  } else NULL
 
   # function to create a data.frame for fastsimcoal locus parameters
   #   this data.frame is properly parsed and written by the fsc.write function

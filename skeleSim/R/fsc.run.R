@@ -43,6 +43,7 @@ fsc.run <- function(params) {
     num.cores <- min(num.cores, min(detectCores(), 12))
     paste(c("-c", "-B"), num.cores, collapse = " ")
   } else "-c 0 -B 12"
+  cores.spec <- ""
   cmd.line <- paste(
     sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
     ifelse(params@quiet, "-q", ""), "-S", cores.spec
@@ -171,6 +172,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
 #'
 #' @import strataG
 #' @importFrom stringi stri_extract_last_regex
+#' @importFrom swfscMisc zero.pad
 #'
 fsc.read <- function(file, chrom.pos, ploidy) {
   formatGenotypes <- function(x, ploidy) {
@@ -185,7 +187,7 @@ fsc.read <- function(file, chrom.pos, ploidy) {
       c(id, pop, loci)
     }))
     # rename loci
-    locus_names <- paste("Locus", 1:nloci, sep = "_")
+    locus_names <- paste("Locus", zero.pad(1:nloci), sep = "_")
     locus_names <- paste(rep(locus_names, each = ploidy), 1:ploidy, sep = ".")
     colnames(gen.data) <- c("id", "pop", locus_names)
     gen.data

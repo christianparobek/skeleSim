@@ -21,8 +21,8 @@ population.}
 
 \item{mut.rate}{\code{dna, msat}: per base pair or locus mutation rate.}
 
-\item{migration}{a \code{num.pop} x \code{num.pop} matrix giving the
-migration rates between each population.}
+\item{migration}{a \code{num.pop} x \code{num.pop} matrix or list of matrices
+giving the migration rates between each population.}
 
 \item{sample.times}{a vector giving the number of generations in the past
 at which samples are taken.}
