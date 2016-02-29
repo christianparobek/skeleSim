@@ -22,9 +22,6 @@ analysisFunc <- function(params) {
   }
 
   results.gtype <- params@rep.sample
-# -->> REMOVE FOR RELEASE: SAVING gtypes OBJECT FOR TESTING <<--
-  save(results.gtype, file = "results.gtype.rdata")
-# ---
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
 
@@ -144,6 +141,19 @@ locusAnalysisGenotypes <- function(g) {
   ]
   rownames(smry) <- NULL
 
+  theta.hwe <- function(g) {
+    cbind(theta = theta(g), hwe.p = hweTest(g, use.genepop = FALSE))
+  }
+  th.locus <- data.frame(theta.hwe(g))
+  th.locus <- cbind(Pop = NA, Locus = rownames(th.locus),
+                         th.locus, stringsAsFactors = FALSE)
+  th.pop <- do.call(rbind, lapply(strataSplit(g), function(st.g) {
+    df <- data.frame(theta.hwe(st.g))
+    cbind(Pop = strataNames(st.g), Locus = rownames(df), df, stringsAsFactors = FALSE)
+  }))
+  th.all <- rbind(th.locus, th.pop)
+  rownames(th.all) <- NULL
+
   # mratio on gtypes object, function needs genetic data as a gtype
   mratio.locus <- mRatio(g, by.strata = FALSE, rpt.size = 1)
   mratio.all <- melt(t(mRatio(g, rpt.size = 1)))
@@ -199,22 +209,24 @@ locusAnalysisGenotypes <- function(g) {
   # sorted by Loci across all populaitons,
   #   then Locus.1/Pop.1:Pop.num_pops ... Locus.num_loci/Pop.1:Pop.num_pops
 
-  locus.final <- merge(smry, mratio.all, by = c("Pop", "Locus"), all = TRUE)
-  locus.final <- merge(locus.final, num.priv.allele, by = c("Pop", "Locus"), all = TRUE)
-  locus.final <- merge(locus.final, FST.all, by = c("Pop", "Locus"), all = TRUE)
-  locus.final$Pop <- as.character(locus.final$Pop)
-  locus.final$Locus <- as.character(locus.final$Locus)
-  locus.final <- locus.final[order(locus.final$Pop, locus.final$Locus), ]
-  rownames(locus.final) <- sapply(1:nrow(locus.final), function(i) {
-    if(is.na(locus.final$Pop[i])) {
-      locus.final$Locus[i]
+  by.cols <- c("Pop", "Locus")
+  smry <- merge(smry, th.all, by = by.cols, all = TRUE)
+  smry <- merge(smry, mratio.all, by = by.cols, all = TRUE)
+  smry <- merge(smry, num.priv.allele, by = by.cols, all = TRUE)
+  smry <- merge(smry, FST.all, by = by.cols, all = TRUE)
+  smry$Pop <- as.character(smry$Pop)
+  smry$Locus <- as.character(smry$Locus)
+  smry <- smry[order(smry$Pop, smry$Locus), ]
+  rownames(smry) <- sapply(1:nrow(smry), function(i) {
+    if(is.na(smry$Pop[i])) {
+      smry$Locus[i]
     } else {
-      paste(locus.final$Locus[i], locus.final$Pop[i], sep = "_")
+      paste(smry$Locus[i], smry$Pop[i], sep = "_")
     }
   })
-  locus.final$Pop <- locus.final$Locus <- NULL
+  smry$Pop <- smry$Locus <- NULL
 
-  return(as.matrix(locus.final))
+  return(as.matrix(smry))
 }
 
 

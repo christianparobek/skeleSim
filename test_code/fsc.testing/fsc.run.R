@@ -36,9 +36,16 @@ fsc.run <- function(params) {
   )
 
   # Run fastsimcoal
+#   num.cores <- params@num.cores
+#   cores.spec <- if(!is.null(num.cores)) {
+#     num.cores <- max(1, num.cores)
+#     num.cores <- min(num.cores, min(detectCores(), 12))
+#     paste(c("-c", "-B"), num.cores, collapse = " ")
+#   } else "-c 0 -B 12"
+  cores.spec <- ""
   cmd.line <- paste(
     sc@simulator.params@fastsimcoal.exec, "-i", file, "-n 1",
-    ifelse(params@quiet, "-q", ""), "-S -c0"
+    ifelse(params@quiet, "-q", ""), "-S", cores.spec
   )
   err <- if(.Platform$OS.type == "unix") {
     system(cmd.line, intern = F)
@@ -85,6 +92,8 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
                       hist.ev = NULL, num.chrom = NULL,
                       locus.params = NULL, ploidy = NULL, label = NULL) {
 
+  opt <- options(scipen = 999)
+
   if(is.null(ploidy)) {
     pl <- attr(locus.params, "ploidy")
     ploidy <- if(is.null(pl)) 1 else pl
@@ -94,7 +103,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
 
   if(is.null(label)) label <- "fastsimcoal.skeleSim"
   file <- paste(label, ".par", sep = "")
-  mig.rates <- if(is.list(mig.rates)) mig.rates else list(mig.rates)
+  mig.rates <- if(!is.null(mig.rates)) if(is.list(mig.rates)) mig.rates else list(mig.rates)
   hist.ev <- if(is.list(hist.ev)) do.call(rbind, hist.ev) else rbind(hist.ev)
 
   # Write input file
@@ -148,6 +157,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
     }
   }
 
+  options(opt)
   invisible(file)
 }
 
@@ -161,6 +171,7 @@ fsc.write <- function(num.pops, Ne, sample.size = NULL, sample.times = NULL,
 #'
 #' @import strataG
 #' @importFrom stringi stri_extract_last_regex
+#' @importFrom swfscMisc zero.pad
 #'
 fsc.read <- function(file, chrom.pos, ploidy) {
   formatGenotypes <- function(x, ploidy) {
@@ -175,7 +186,7 @@ fsc.read <- function(file, chrom.pos, ploidy) {
       c(id, pop, loci)
     }))
     # rename loci
-    locus_names <- paste("Locus", 1:nloci, sep = "_")
+    locus_names <- paste("Locus", zero.pad(1:nloci), sep = "_")
     locus_names <- paste(rep(locus_names, each = ploidy), 1:ploidy, sep = ".")
     colnames(gen.data) <- c("id", "pop", locus_names)
     gen.data

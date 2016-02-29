@@ -1,7 +1,4 @@
-setClassUnion("logOrNULL", c("logical", "NULL"))
-setClassUnion("funcOrNULL", c("function", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
-setClassUnion("dfOrNULL", c("data.frame", "NULL"))
 
 #' @title fastsimcoal Parameters Class
 #' @description An S4 class storing parameters specific to fastsimcoal
@@ -36,18 +33,3 @@ fastsimcoal.params <- setClass(
     return(TRUE)
   }
 )
-
-# setMethod("initialize", "fastsimcoal.params",
-#   function(.Object, fastsimcoal.exec = "fsc252", sample.times = NULL,
-#            growth.rate = NULL, hist.ev = NULL, num.chrom = NULL,
-#            locus.params = NULL
-#   ) {
-#     .Object@fastsimcoal.exec <- fastsimcoal.exec
-#     .Object@sample.times <- sample.times
-#     .Object@growth.rate <- growth.rate
-#     .Object@hist.ev <- hist.ev
-#     .Object@num.chrom <- num.chrom
-#     .Object@locus.params <- locus.params
-#     .Object
-#   }
-# )

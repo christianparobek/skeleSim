@@ -5,8 +5,8 @@
 #' @param pop.size a vector giving size of each populaiton.
 #' @param sample.size a vector giving the number of samples to take from each
 #'   population.
-#' @param migration a \code{num.pop} x \code{num.pop} matrix giving the
-#'   migration rates between each population.
+#' @param migration a \code{num.pop} x \code{num.pop} matrix or list of matrices
+#'   giving the migration rates between each population.
 #' @param locus.type a character representation of what type of marker to simulate.
 #'   Can be "dna", "msat", or "snp".
 #' @param num.loci \code{msat, snp}: number of loci to simulate.
@@ -49,7 +49,7 @@
 #' @export
 #'
 fsc.loadScenario <- function(
-  num.pops, pop.size, sample.size, migration, mut.rate, sample.times = NULL,
+  num.pops, pop.size, sample.size, mut.rate, migration = NULL, sample.times = NULL,
   growth.rate = NULL, hist.ev = NULL, locus.type = c("dna", "msat", "snp"),
   sequence.length = NULL, num.loci = NULL, transition.rate = NULL, gsm.param = NULL,
   range.constraint = NULL, min.freq = NULL, recomb.rate = NULL, chromosome = NULL,
@@ -65,48 +65,45 @@ fsc.loadScenario <- function(
   if(is.null(recomb.rate)) recomb.rate <- 0
   if(is.null(chromosome)) chromosome <- 1
 
+  pop.size <- rep(pop.size, length.out = num.pops)
+  sample.size <- rep(sample.size, length.out = num.pops)
+
   # load general scenario parameters
   sc <- new("scenario.params")
   sc@num.pops <- num.pops
-  sc@pop.size <- rep(pop.size, length.out = num.pops)
-  sc@sample.size <- rep(sample.size, length.out = num.pops)
-  sc@migration <- migration
+  sc@pop.size <- pop.size
+  sc@sample.size <- sample.size
   sc@locus.type <- locus.type
   sc@sequence.length <- sequence.length
   sc@num.loci <- num.loci
   sc@mut.rate <- mut.rate
-  sc@migration <- migration
-
-  # function to create a data.frame for fastsimcoal locus parameters
-  #   this data.frame is properly parsed and written by the fsc.write function
-  createLocusParams <- function(chr, type, num.markers, recomb.rate, param.4,
-                                param.5, param.6, ploidy) {
-    df <- data.frame(
-      chromosome = chr, type = type, num.markers = num.markers,
-      param.4 = param.4, param.5 = param.5, param.6 = param.6,
-      stringsAsFactors = FALSE
-    )
-    df <- df[order(df$chromosome), ]
-    attr(df, "ploidy") <- ploidy
-    return(df)
-  }
+  sc@migration <- if(is.matrix(migration)) {
+    list(migration)
+  } else if(is.list(migration)) {
+    migration
+  } else NULL
 
   # load fastsimcoal-specific parameters
   fsc <- new("fastsimcoal.params")
-  fsc@sample.times <- rep(sample.times, length.out = num.pops)
-  fsc@growth.rate <- rep(growth.rate, length.out = num.pops)
+  fsc@pop.info = fscPopInfo(
+    pop.size = pop.size,
+    sample.size = sample.size,
+    sample.times = rep(sample.times, length.out = num.pops),
+    growth.rate = rep(growth.rate, length.out = num.pops)
+  )
   fsc@hist.ev <- hist.ev
-  fsc@num.chrom <- num.chrom
-  fsc@locus.params <- switch(match.arg(locus.type),
-    dna = createLocusParams(
-      chromosome, "DNA", sequence.length, recomb.rate, mut.rate, transition.rate, NA, 1
-    ),
-    msat = createLocusParams(
-      chromosome, "MICROSAT", num.loci, recomb.rate, mut.rate, gsm.param, range.constraint, 2
-    ),
-    snp = createLocusParams(
-      chromosome, "SNP", num.loci, recomb.rate, min.freq, NA, NA, 2
-    )
+  fsc@locus.params <- fscLocusParams(
+    locus.type = locus.type,
+    sequence.length = sequence.length,
+    num.loci = num.loci,
+    mut.rate = mut.rate,
+    transition.rate = transition.rate,
+    gsm.param = gsm.param,
+    range.constraint = range.constraint,
+    recomb.rate = recomb.rate,
+    chromosome = chromosome,
+    num.chrom = num.chrom,
+    ploidy = ploidy
   )
 
   sc@simulator.params <- fsc

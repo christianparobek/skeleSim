@@ -8,8 +8,8 @@ fsc.loadScenario(num.pops, pop.size, sample.size, mut.rate, migration = NULL,
   sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
   locus.type = c("dna", "msat", "snp"), sequence.length = NULL,
   num.loci = NULL, transition.rate = NULL, gsm.param = NULL,
-  range.constraint = NULL, min.freq = NULL, recomb.rate = NULL,
-  chromosome = NULL, num.chrom = NULL)
+  range.constraint = NULL, recomb.rate = NULL, chromosome = NULL,
+  num.chrom = NULL, fastsimcoal.exec = "fsc252")
 }
 \arguments{
 \item{num.pops}{number of populations.}
@@ -49,8 +49,6 @@ strict Stepwise Mutation Model (SMM).}
 \item{range.constraint}{\code{msat}: Range constraint (number of different
 alleles allowed). A value of 0 means no range constraint.}
 
-\item{min.freq}{\code{snp}: minimum frequency for the derived allele.}
-
 \item{recomb.rate}{recombination rate between adjacent markers.}
 
 \item{chromosome}{number or character identifying which chromosome the marker
@@ -61,6 +59,8 @@ is on.}
 \code{NULL}, then chromosome assignment is taken from the
 \code{chromosome} column in \code{locus.params}. Any non-\code{NULL}
 integer will cause the \code{chromosome} column to be ignored.}
+
+\item{fastsimcoal.exec}{executable}
 }
 \value{
 a \linkS4class{scenario.params} object to be loaded into a list in the

@@ -5,29 +5,24 @@ setClassUnion("matrOrNULL", c("matrix", "NULL"))
 #'
 #' @slot fastsimcoal.exec character string for the fastsimcoal command line
 #'   executable.
-#' @slot sample.times a vector giving the number of generations in the past
-#'   at which samples are taken.
-#' @slot growth.rate a vector giving the growth rate of each population.
-#' @slot hist.ev a matrix describing historical events.
-#' @slot num.chrom a value giving the number of chromosomes that the
-#'   \code{locus.params} marker specifications should be copied for. If
-#'   \code{NULL}, then chromosome assignment is taken from the
-#'   \code{chromosome} column in \code{locus.params}. Any non-\code{NULL}
-#'   integer will cause the \code{chromosome} column to be ignored.
-#' @slot locus.params a data.frame giving the parameters for each locus.
+#' @slot pop.info matrix of population sampling information created by the
+#'   \code{\link{fscPopInfo}} function.
+#' @slot locus.params data.frame specifying loci to simulate created by the
+#'   \code{\link{fscLocusParams}} function.
+#' @slot hist.ev matrix of historical events created by the
+#'   \code{\link{fscHistEv}} function.
 #'
 #' @export
 #'
 fastsimcoal.params <- setClass(
   Class = "fastsimcoal.params",
   slots = c(
-    fastsimcoal.exec = "character", sample.times = "intOrNum",
-    growth.rate = "intOrNum", hist.ev = "matrOrNULL", num.chrom = "intOrNum",
-    locus.params = "dfOrNULL"
+    fastsimcoal.exec = "character", pop.info = "matrOrNULL",
+    hist.ev = "matrOrNULL", locus.params = "dfOrNULL"
   ),
   prototype = list(
-    fastsimcoal.exec = "fsc252", sample.times = NULL, growth.rate = NULL,
-    hist.ev = NULL, num.chrom = NULL, locus.params = NULL
+    fastsimcoal.exec = "fsc252", pop.info = NULL, hist.ev = NULL,
+    locus.params = NULL
   ),
   validity = function(object) {
     return(TRUE)
