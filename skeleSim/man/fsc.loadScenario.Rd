@@ -5,11 +5,13 @@
 \title{Load skeleSim scenario parameters for fastsimcoal}
 \usage{
 fsc.loadScenario(num.pops, pop.size, sample.size, mut.rate, migration = NULL,
-  sample.times = NULL, growth.rate = NULL, hist.ev = NULL,
-  locus.type = c("dna", "msat", "snp"), sequence.length = NULL,
-  num.loci = NULL, transition.rate = NULL, gsm.param = NULL,
-  range.constraint = NULL, recomb.rate = NULL, chromosome = NULL,
-  num.chrom = NULL, fastsimcoal.exec = "fsc252")
+  sample.times = NULL, growth.rate = NULL, locus.type = c("dna", "msat",
+  "snp"), sequence.length = NULL, num.loci = NULL, transition.rate = NULL,
+  gsm.param = NULL, range.constraint = NULL, recomb.rate = NULL,
+  chromosome = NULL, num.chrom = NULL, num.gen = NULL,
+  source.deme = NULL, sink.deme = NULL, prop.migrants = NULL,
+  new.sink.size = NULL, new.sink.growth = NULL, new.mig.mat = NULL,
+  fastsimcoal.exec = "fsc252")
 }
 \arguments{
 \item{num.pops}{number of populations.}
@@ -28,8 +30,6 @@ giving the migration rates between each population.}
 at which samples are taken.}
 
 \item{growth.rate}{a vector giving the growth rate of each population.}
-
-\item{hist.ev}{a matrix describing historical events.}
 
 \item{locus.type}{a character representation of what type of marker to simulate.
 Can be "dna", "msat", or "snp".}
@@ -59,6 +59,22 @@ is on.}
 \code{NULL}, then chromosome assignment is taken from the
 \code{chromosome} column in \code{locus.params}. Any non-\code{NULL}
 integer will cause the \code{chromosome} column to be ignored.}
+
+\item{num.gen}{Number of generations, t, before present at which the
+historical event happened.}
+
+\item{source.deme}{Source deme (the first listed deme has index 0)}
+
+\item{sink.deme}{Sink deme}
+
+\item{prop.migrants}{Expected proportion of migrants to move from source to sink.}
+
+\item{new.sink.size}{New size for the sink deme, relative to its size at
+generation t.}
+
+\item{new.sink.growth}{New growth rate for the sink deme.}
+
+\item{new.mig.mat}{New migration matrix to be used further back in time.}
 
 \item{fastsimcoal.exec}{executable}
 }
