@@ -47,10 +47,10 @@ runSim <- function(params, num.secs = NULL) {
       # analyzes params@rep.sample and loads results into params@rep.result
       params <- params@rep.analysis.func(params)
 # -->> REMOVE FOR RELEASE: SAVING params OBJECT FOR TESTING <<--
-#       label <- currentLabel(params)
-#       file <- paste(label, ".params.rdata", sep = "")
-#       if(!dir.exists(label)) dir.create(label)
-#       save(params, file = file.path(label, file))
+      label <- currentLabel(params)
+      file <- paste(label, ".params.rdata", sep = "")
+      if(!dir.exists(label)) dir.create(label)
+      save(params, file = file.path(label, file))
 #-----
       # check timing
       results$timing$end.time <- Sys.time()

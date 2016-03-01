@@ -20,7 +20,7 @@ fsc.scenarioCheck <- function(params) {
       num.mig.mats = length(sc@migration)
     )
   })
-  results <- cbind(results)
+  results <- rbind(results)
   rownames(results) <- "hist.ev.good"
   colnames(results) <- paste("scenario", 1:ncol(results), sep = ".")
   return(results)

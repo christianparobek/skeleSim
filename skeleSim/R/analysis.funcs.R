@@ -22,6 +22,11 @@ analysisFunc <- function(params) {
   }
 
   results.gtype <- params@rep.sample
+# -->> REMOVE FOR RELEASE: SAVING gtypes OBJECT FOR TESTING <<--
+  label <- currentLabel(params)
+  file <- paste(label, ".results.gtype.rdata", sep = "")
+  save(results.gtype, file = file)
+#-----
   num.perm.reps <- params@num.perm.reps
   num.cores <- params@num.cores
 
@@ -349,17 +354,18 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
   } else NULL
 
   # chord distance
-  cd <- if(ploidy(g) == 2) {
-    dat <- genind2hierfstat(gtypes2genind(g))
-    chord.dist <- calcChordDist(dat)
-    # chord.dist by locus
-    chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
-      result <- calcChordDist(dat[, c("pop", l)])
-      cbind(result[, 1:2], Locus = l, result[, 3])
-    }))
-    colnames(chord.dist.locus)[4] <- "chord.dist"
-    chord.dist.locus
-  } else NULL
+  cd <- NULL
+#   cd <- if(ploidy(g) == 2) {
+#     dat <- genind2hierfstat(gtypes2genind(g))
+#     chord.dist <- calcChordDist(dat)
+#     # chord.dist by locus
+#     chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
+#       result <- calcChordDist(dat[, c("pop", l)])
+#       cbind(result[, 1:2], Locus = l, result[, 3])
+#     }))
+#     colnames(chord.dist.locus)[4] <- "chord.dist"
+#     chord.dist.locus
+#   } else NULL
 
   # combine results into single matrix
   by.cols <- c("strata.1", "strata.2", "Locus")
