@@ -6,7 +6,6 @@
 #' @param params a \linkS4class{skeleSim.params} object.
 #' @param g a gtypes object.
 #' @param num.perm.reps number of permutation replicates.
-#' @param num.cores number of CPU cores to use.
 #' @param mat results matrix to be loaded into params object.
 #' @param label analysis type label ("Global", "Locus", or "Pairwise").
 #' @param dat data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).
@@ -28,12 +27,11 @@ analysisFunc <- function(params) {
   save(results.gtype, file = file)
 #-----
   num.perm.reps <- params@num.perm.reps
-  num.cores <- params@num.cores
 
   opt <- options(warn = -1)
 
   if(params@analyses.requested["Global"]) {
-    mat <- globalAnalysis(results.gtype, num.perm.reps, num.cores)
+    mat <- globalAnalysis(results.gtype, num.perm.reps)
     params <- loadResultsMatrix(params, mat, "Global")
   }
 
@@ -47,7 +45,7 @@ analysisFunc <- function(params) {
   }
 
   if(params@analyses.requested["Pairwise"]) {
-    mat <- pairwiseAnalysis(results.gtype, num.perm.reps, num.cores)
+    mat <- pairwiseAnalysis(results.gtype, num.perm.reps)
     params <- loadResultsMatrix(params, mat, "Pairwise")
   }
 
@@ -75,9 +73,9 @@ loadResultsMatrix <- function(params, mat, label) {
 
 #' @rdname analysis.funcs
 #'
-formatOverallStats <- function(g, num.perm.reps, num.cores) {
+formatOverallStats <- function(g, num.perm.reps) {
   result <- overallTest(
-    g, nrep = num.perm.reps, num.cores = num.cores, quietly = TRUE
+    g, nrep = num.perm.reps, quietly = TRUE
   )$result
   result <- result[complete.cases(result), ]
   result.names <- paste(
@@ -91,12 +89,12 @@ formatOverallStats <- function(g, num.perm.reps, num.cores) {
 
 #' @rdname analysis.funcs
 #'
-globalAnalysis <- function(g, num.perm.reps, num.cores) {
+globalAnalysis <- function(g, num.perm.reps) {
   loc_names <- locNames(g)
 
   # run by locus analysis across all populations
   r.m <- lapply(loc_names, function(l) {
-    formatOverallStats(g[, l, ], num.perm.reps, num.cores)
+    formatOverallStats(g[, l, ], num.perm.reps)
   })
   # find complete list of column names
   analysis.names <- unique(unlist(lapply(r.m, names)))
@@ -108,7 +106,7 @@ globalAnalysis <- function(g, num.perm.reps, num.cores) {
   })
   results.matrix.l <- do.call(rbind, r.m)
   results.matrix <- rbind(
-    formatOverallStats(g, num.perm.reps, num.cores), results.matrix.l
+    formatOverallStats(g, num.perm.reps), results.matrix.l
   )
   analyses <- colnames(results.matrix)
   num_analyses <- length(analyses)
@@ -299,7 +297,7 @@ calcChordDist <- function(dat) {
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genind2hierfstat
 #'
-pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
+pairwiseAnalysis <- function(g, num.perm.reps) {
   # pairwise population structure test
   stats <- if(ploidy(g) == 1) {
     list(statChi2, statFst, statPhist)
@@ -308,14 +306,12 @@ pairwiseAnalysis <- function(g, num.perm.reps, num.cores) {
          statGstDblPrime, statFis)
   }
   pws.all <- pairwiseTest(
-    g, nrep = num.perm.reps, stats = stats,
-    quietly = TRUE, num.cores = num.cores
+    g, nrep = num.perm.reps, stats = stats, quietly = TRUE
   )$result
   pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
   pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = num.perm.reps, stats = stats,
-      quietly = TRUE, num.cores = num.cores
+      g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result), drop = FALSE])

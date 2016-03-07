@@ -17,9 +17,9 @@ analysisFunc(params)
 
 loadResultsMatrix(params, mat, label)
 
-formatOverallStats(g, num.perm.reps, num.cores)
+formatOverallStats(g, num.perm.reps)
 
-globalAnalysis(g, num.perm.reps, num.cores)
+globalAnalysis(g, num.perm.reps)
 
 locusAnalysisGenotypes(g)
 
@@ -29,7 +29,7 @@ locusAnalysisHaplotypes(g)
 
 calcChordDist(dat)
 
-pairwiseAnalysis(g, num.perm.reps, num.cores)
+pairwiseAnalysis(g, num.perm.reps)
 }
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}
@@ -41,8 +41,6 @@ pairwiseAnalysis(g, num.perm.reps, num.cores)
 \item{g}{a gtypes object.}
 
 \item{num.perm.reps}{number of permutation replicates.}
-
-\item{num.cores}{number of CPU cores to use.}
 
 \item{dat}{data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).}
 }
