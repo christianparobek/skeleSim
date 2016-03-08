@@ -381,7 +381,7 @@ analysis_func <- function(params){
       pairwise.final <- cbind(dA.all,psw.all,sA)
       analysis_names <- names(pairwise.final)[-c(1:2)]
       row.names(pairwise.final) <- apply(expand.grid(c(apply(combn(strata_names,2),2,
-                                           function(x) paste(x[1],x[2],sep="_"))),loc_names),1,
+                                                             function(x) paste(x[1],x[2],sep="_"))),loc_names),1,
                                          function(x) paste(x[2],x[1],sep=""))
 
       #Data.frame of summary data into simulation replicate
@@ -437,9 +437,9 @@ analysis_func <- function(params){
       #### check order of 3+ populations ####
       row.names(pws.final) <- c(apply(combn(1:num_pops,2),2,function(x){
         paste(x[1],x[2],sep="_")
-        }),apply(expand.grid(loc_names,
-                             apply(combn(1:num_pops,2),2,function(x) paste(x[1],x[2],sep="_"))),
-                 1,paste,collapse="."))
+      }),apply(expand.grid(loc_names,
+                           apply(combn(1:num_pops,2),2,function(x) paste(x[1],x[2],sep="_"))),
+               1,paste,collapse="."))
 
       #Data.frame of summary data into simulation replicate
       # Create the data array first time through
