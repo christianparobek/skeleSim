@@ -1,10 +1,4 @@
-setClassUnion("logOrNULL", c("logical", "NULL"))
-setClassUnion("listOrNULL", c("list","NULL"))
-#setClassUnion("charOrNULL", c("character", "NULL"))
 setClassUnion("matrOrNULL", c("matrix", "NULL"))
-#setClassUnion("intOrNum", c("integer","numeric", "NULL"))
-setClassUnion("funcOrNULL", c("function", "NULL"))
-setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 
 #' @title rmetasim Parameters Class
 #' @description An S4 class storing parameters specific to rmetasim
@@ -31,7 +25,7 @@ setClass(
             num.alleles = "intOrNum", allele.freqs = "listOrNULL",
             num.gen = "intOrNum"
   ),
-  prototype = c(num.stgs = NULL, selfing = NULL,
+  prototype = list(num.stgs = NULL, selfing = NULL,
             surv.matr = NULL, repr.matr = NULL,
             male.matr = NULL, carrying = NULL,
             init.pop.sizes = NULL,

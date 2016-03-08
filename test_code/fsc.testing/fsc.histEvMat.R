@@ -1,35 +1,45 @@
-#' @title Check parameters for fastsimcoal
-#' @description Check parameters for fastsimcoal
+#' @title Create fastsimcoal historical event matrices
+#' @description Create fastsimcoal historical event matrices
 #'
-#' @param params a \linkS4class{skeleSim.params} object.
+#' @param num.gen Number of generations, t, before present at which the
+#'   historical event happened.
+#' @param source.deme Source deme (the first listed deme has index 0)
+#' @param sink.deme Sink deme
+#' @param prop.migrants Expected proportion of migrants to move from source to sink.
+#' @param new.sink.size New size for the sink deme, relative to its size at
+#'   generation t.
+#' @param new.sink.growth New growth rate for the sink deme.
+#' @param new.mig.mat New migration matrix to be used further back in time.
 #' @param hist.ev a matrix describing historical events, with one row per event.
 #' @param pop.size numerical vector giving size of each population.
 #' @param growth.rate numerical vector giving growth rate of each population.
 #' @param num.mig.mats number of migration matrices.
 #'
+#' @return a blank fastsimcoal historical event matrices that can be
+#'   filled in later
+#'
 #' @export
 #'
-fsc.scenarioCheck <- function(params) {
-  # check that sample times and growth rates are of length number of populations, and
-  #   that historical events matrix converges
-  results <- sapply(params@scenarios, function(sc) {
-    fsc.histEvCheck(
-      hist.ev = sc@simulator.params@hist.ev,
-      pop.size = sc@simulator.params@pop.info[, "pop.size"],
-      growth.rate = sc@simulator.params@pop.info[, "growth.rate"],
-      num.mig.mats = length(sc@migration)
-    )
-  })
-  results <- rbind(results)
-  rownames(results) <- "hist.ev.good"
-  colnames(results) <- paste("scenario", 1:ncol(results), sep = ".")
-  return(results)
+fsc.histEvMat <- function(num.gen = 0, source.deme = 0, sink.deme = 0,
+                          prop.migrants = 1, new.sink.size = 1,
+                          new.sink.growth = 0, new.mig.mat = 0) {
+  cbind(
+    num.gen = num.gen, source.deme = source.deme, sink.deme = sink.deme,
+    prop.migrants = prop.migrants, new.sink.size = new.sink.size,
+    new.sink.growth = new.sink.growth, new.mig.mat = new.mig.mat
+  )
 }
 
-#' @rdname fsc.scenarioCheck
+
+#' @rdname fsc.histEvMat
 #'
 fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
+  if(length(growth.rate) == 1) growth.rate <- rep(growth.rate, length(pop.size))
+  if(length(pop.size) != length(growth.rate)) {
+    cat("'pop.size' and 'growth.rate' vectors must be same size.\n")
+    return(FALSE)
+  }
   hist.ev <- hist.ev[order(hist.ev[, 1], hist.ev[, 2], hist.ev[, 3]), , drop = FALSE]
   for(i in 1:nrow(hist.ev)) {
     gen <- hist.ev[i, 1]
@@ -47,7 +57,7 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
 }
 
 
-#' @rdname fsc.scenarioCheck
+#' @rdname fsc.histEvMat
 #'
 fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)

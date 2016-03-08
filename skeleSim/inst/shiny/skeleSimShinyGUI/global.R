@@ -42,10 +42,10 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
 #            params
 #        }
 ##############################################
-    ssClass@rep.analysis.func <-  analysis_funcs
+    ssClass@rep.analysis.func <- analysisFunc
 
 #    ssClass@simulator.type <- "f"
-    
+
     ssClass@scenarios <- list(new("scenario.params"))
 
     #default values for ssClass@scenarios  (could be set in class definition)

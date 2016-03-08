@@ -26,23 +26,3 @@ currentLabel <- function(params) {
   )
   gsub("[[:punct:]]", ".", label)
 }
-
-#' @rdname skeleSim.internals
-#' @importFrom strataG genind2gtypes sequence2gtypes labelHaplotypes
-#'
-results2gtypes <- function(params) {
-  #params@rep.sample is either a genind or a list of DNAbin objects
-  if(inherits(params@rep.sample, "genind")) {
-    return(genind2gtypes(params@rep.sample))
-  } else if(inherits(params@rep.sample, "gtypes")) {
-    return(params@rep.sample)
-  } else if(is.list(params@rep.sample)) {
-    # Convert the list of DNAbin objects to gtypes
-    genes <- params@rep.sample
-    g <- sequence2gtypes(genes$dna.seqs, strata = genes$strata)
-    return(labelHaplotypes(g)$gtype)
-  } else {
-    warning("cannot convert results in params to gtypes, returning NULL")
-  }
-  return(NULL)
-}

@@ -9,17 +9,18 @@
 #'
 runSim <- function(params, num.secs = NULL) {
   # check parameters
-  params<-overall.check(params)
+  params <- overall.check(params)
+  print(params@other.checks)
+  print(params@sim.scen.checks)
   if(!all(params@other.checks, params@sim.scen.checks)) {
     filewr <- "error.log"
-    write.csv(params@sim.scen.checks, file=filewr)
+    write.csv(params@sim.scen.checks, file = filewr)
     print(params@other.checks)
-    write("\n",file=filewr,append=T)
-    write.table(params@other.checks, file=filewr,append=T)
-
+    write("\n", file = filewr, append = T)
+    write.table(params@other.checks, file = filewr, append = T)
     stop("parameters do not pass checks; see error log for details")
   }
-print("params checked")
+  cat("\nparameter check complete\n\n")
 
   # Check/setup folder structure
   if(file.exists(params@wd)) unlink(params@wd, recursive = TRUE, force = TRUE)
@@ -28,12 +29,11 @@ print("params checked")
 
   results <- list(timing = list())
   params@analysis.results <- NULL
+  params@analyses.requested <- analyses.check(params@analyses.requested)
   tryCatch({
     num.sc <- length(params@scenarios)
     num.reps <- params@num.reps
-    sc.vec <- rep(1:num.sc, num.reps)
-    rep.vec <- rep(1:num.reps, each = num.sc)
-    params@scenario.reps <- cbind(scenario = sc.vec, replicate = rep.vec)
+    params@scenario.reps <- as.matrix(expand.grid(scenario = 1:num.sc, replicate = 1:num.reps))
     quit <- FALSE
     # loop through replicates for scenarios
     num.iter <- nrow(params@scenario.reps)
