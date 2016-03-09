@@ -68,7 +68,7 @@ samp.times <- function()
 
 output$samptime <- renderUI({
     print("creating st vector")
-    matrixInput("stvec","Vector of sampling times (corresponds to populations) (please don't use +/- buttons at right [temporary])",
+    matrixInput("stvec","Vector of sampling times (corresponds to populations)",
                 as.data.frame(samp.times()))
 })
 
@@ -88,7 +88,7 @@ growth.rates <- function()
 
 output$growthrate <- renderUI({
     print("creating growthrate vector")
-    matrixInput("grvec","Vector of growth rates (corresponds to populations) (please don't use +/- buttons at right [temporary])",
+    matrixInput("grvec","Vector of growth rates (corresponds to populations)",
                 as.data.frame(growth.rates()))
 })
 

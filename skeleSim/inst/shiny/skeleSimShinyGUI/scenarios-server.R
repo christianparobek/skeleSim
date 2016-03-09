@@ -100,7 +100,7 @@ mig.mat <- function(){
 
 
 output$migmat <- renderUI({
-    matrixInput("migmat","Migration Matrix (please don't use +/- buttons at right [temporary])",
+    matrixInput("migmat","Migration Matrix",
                 as.data.frame(mig.mat()))
 #                as.data.frame(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
 })
@@ -121,7 +121,7 @@ pop.sizes <- function()
 
 output$popsize <- renderUI({
     print("creating popsize vector")
-    matrixInput("psvec","Vector of population sizes (please don't use +/- buttons at right [temporary])",
+    matrixInput("psvec","Vector of population sizes",
                 as.data.frame(pop.sizes()))
 })
 
@@ -141,7 +141,7 @@ samp.sizes <- function()
 
 output$sampsize <- renderUI({
     print("creating popsize vector")
-    matrixInput("ssvec","Vector of sample sizes (please don't use +/- buttons at right [temporary])",
+    matrixInput("ssvec","Vector of sample sizes",
                 as.data.frame(samp.sizes()))
 })
 
@@ -160,7 +160,7 @@ mut.rates <- function()
     }
 
 output$mutrate <- renderUI({
-    matrixInput("mutvec","Vector of mutation rates (please don't use +/- buttons at right [temporary])",
+    matrixInput("mutvec","Vector of mutation rates",
                 as.data.frame(mut.rates()))
 #                as.data.frame(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
 })

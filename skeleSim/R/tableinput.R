@@ -26,21 +26,11 @@ matrixInput <- function(inputId, label, data) {
       )
     ),
     
-    tags$div(
-      class = 'control-group tableinput-container',
+#    tags$div(
+#      class = 'control-group tableinput-container',
       tags$label(
         class = "control-label",
-        label,
-        tags$div(
-          class = 'tableinput-buttons',
-          tags$button(
-            type = 'button', class = 'btn btn-mini tableinput-settings hide',
-            tags$i(class = 'glyphicon glyphicon-cog icon-cog')
-          ),
-          HTML('<a href="#" class="tableinput-plusrow"><i class="glyphicon glyphicon-plus-sign icon-plus-sign"></i></a>'),
-          HTML('<a href="#" class="tableinput-minusrow"><i class="glyphicon glyphicon-minus-sign icon-minus-sign"></i></a>')
-        )
-      ),
+        label),
       tags$table(
         id = inputId,
         class = 'tableinput data table table-bordered table-condensed',
@@ -109,5 +99,5 @@ matrixInput <- function(inputId, label, data) {
         )
       )
     )
-  )
+#  )
 }
