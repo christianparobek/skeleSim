@@ -32,7 +32,7 @@ rms.convert <- function(Rland, locus.type) {
         seq <- seq[order(seq$pop),]
         dna.seq <- strsplit(as.character(tolower(seq$state)),"")
         this.rep.result <- list(strata=data.frame(seq$pop),
-                                dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
+                                dna.seq=new("multidna",as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),"")))))
     }
     else if (ltype=="SNP")
     {
