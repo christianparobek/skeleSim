@@ -208,26 +208,28 @@ shinyUI(
     tabPanel(
        "Current ssClass",
        tableOutput("ssClass")
-      ),
-    tabPanel("Visualize",
-         sidebarLayout(
-              sidebarPanel(
-                selectInput("scenario", label = h3("Choose Scenario to Visualize:"),
-                            choice = c("Scenario #1" = 1,
-                                       "Scenario #2" = 2,
-                                       "Scenario #3" = 3)),
-                actionButton("newplot", "New plot")),
-              mainPanel(
-                tabsetPanel(
-                  tabPanel("Global Statistics",
-                           uiOutput("plot_global"),
-                           fluidRow(column(3, verbatimTextOutput("sometext")))
-                           ),
-                  tabPanel("Locus Statistics",
-                           plotOutput("testViz1")),
-                  tabPanel("Pairwise Statistics",
-                           plotOutput("testViz2"))))
-      )
+      )#,
+      ##### MAKE THIS TAB REACTIVE SOMEHOW... EITHER NOT SHOW BEFORE THERE ARE RESULTS, OR SAY "NOTHING TO SEE HERE"
+#     tabPanel("Visualize",
+#          sidebarLayout(
+#               sidebarPanel(
+#                 selectInput("scenario", label = h3("Choose Scenario to Visualize:"),
+#                             choice = c("Scenario #1" = 1,
+#                                        "Scenario #2" = 2,
+#                                        "Scenario #3" = 3)),
+#                             ### NEED TO MAKE THIS REACTIVE TO NUMBER OF SCENARIOS THERE ARE; CAN HAVE > 3
+#                 actionButton("newplot", "New plot")),
+#               mainPanel(
+#                 tabsetPanel(
+#                   tabPanel("Global Statistics",
+#                            uiOutput("plot_global"),
+#                            fluidRow(column(3, verbatimTextOutput("sometext")))
+#                            ),
+#                   tabPanel("Locus Statistics",
+#                            plotOutput("testViz1")),
+#                   tabPanel("Pairwise Statistics",
+#                            plotOutput("testViz2"))))
+#       )
     )
   )
 )

@@ -50,7 +50,7 @@ shinyServer(function(input, output, session) {
     source("make-skelesim-class.R",local=T)
   
 ##################visualization
-    source("visualize.R", local = T)
+    #source("visualize.R", local = T)
 
 
 ####navbar header
