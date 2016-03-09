@@ -208,15 +208,17 @@ shinyUI(
     tabPanel("Visualize",
          sidebarLayout(
               sidebarPanel(
-                actionButton("newplot", "New plot"),
-                checkboxInput("stat1", label = "Statistic #1", value = TRUE),
-                checkboxInput("stat2", label = "Statistic #2", value = TRUE)),
+                selectInput("scenario", label = h3("Choose Scenario to Visualize:"),
+                            choice = c("Scenario #1" = 1,
+                                       "Scenario #2" = 2,
+                                       "Scenario #3" = 3)),
+                actionButton("newplot", "New plot")),
               mainPanel(
                 tabsetPanel(
                   tabPanel("Global Statistics",
+                           plotOutput("fst")),
+                  tabPanel("Locus Statistics",
                            plotOutput("plot")),
-                  tabPanel("Local Statistics",
-                           plotOutput("testViz1")),
                   tabPanel("Pairwise Statistics",
                            plotOutput("testViz2"))))
       )
