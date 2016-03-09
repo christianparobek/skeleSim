@@ -44,10 +44,14 @@ shinyServer(function(input, output,session) {
 
 
   ##################### parameter loading and saving
-    source("runSim.R", local = TRUE)
+    source("runSim.R", local = T)
 
 ######################## skeleSim class setup
     source("make-skelesim-class.R",local=T)
+  
+##################visualization
+    source("visualize.R", local = T)
+
 
 ####navbar header
     output$simtext <- renderText({

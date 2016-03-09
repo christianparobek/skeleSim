@@ -2,6 +2,7 @@
 % Please edit documentation in R/fsc.classes.R
 \docType{class}
 \name{fastsimcoal.params-class}
+\alias{fastsimcoal.params}
 \alias{fastsimcoal.params-class}
 \title{fastsimcoal Parameters Class}
 \description{
@@ -11,15 +12,15 @@ An S4 class storing parameters specific to fastsimcoal
 
 \describe{
 \item{\code{fastsimcoal.exec}}{character string for the fastsimcoal command line
-executable}
+executable.}
 
-\item{\code{sample.times}}{a vector giving the number of generations in the past
-at which samples are taken}
+\item{\code{pop.info}}{matrix of population sampling information created by the
+\code{\link{fscPopInfo}} function.}
 
-\item{\code{growth.rate}}{a vector giving the growth rate of each population}
+\item{\code{locus.params}}{data.frame specifying loci to simulate created by the
+\code{\link{fscLocusParams}} function.}
 
-\item{\code{hist.ev}}{a matrix describing historical events}
-
-\item{\code{locus.params}}{a list giving the parameters for each locus.}
+\item{\code{hist.ev}}{matrix of historical events created by the
+\code{\link{fscHistEv}} function.}
 }}
 

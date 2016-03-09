@@ -201,9 +201,27 @@ shinyUI(
             )
  , #don't forget the comma
    
-   tabPanel(
+    tabPanel(
        "Current ssClass",
        tableOutput("ssClass")
-   )
+      ),
+    tabPanel("Visualize",
+         sidebarLayout(
+              sidebarPanel(
+                selectInput("scenario", label = h3("Choose Scenario to Visualize:"),
+                            choice = c("Scenario #1" = 1,
+                                       "Scenario #2" = 2,
+                                       "Scenario #3" = 3)),
+                actionButton("newplot", "New plot")),
+              mainPanel(
+                tabsetPanel(
+                  tabPanel("Global Statistics",
+                           plotOutput("fst")),
+                  tabPanel("Locus Statistics",
+                           plotOutput("plot")),
+                  tabPanel("Pairwise Statistics",
+                           plotOutput("testViz2"))))
+      )
+    )
   )
 )

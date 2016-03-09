@@ -1,5 +1,6 @@
 rm(list = ls())
 library(skeleSim)
+set.seed(1)
 
 # ---- Load parameters ---
 
@@ -11,58 +12,75 @@ test.params@quiet <- FALSE
 test.params@question <- "n"
 test.params@simulator.type <- "c"
 test.params@simulator <- "fsc"
-test.params@num.reps <- 10
+test.params@num.reps <- 5
 test.params@num.perm.reps <- 100
 test.params@num.cores <- 1
 test.params@sim.func <- fsc.run
 test.params@wd <- "testRun.wd"
 
-# create a base scenario parameters object. It will be copied and modified
-#   later for different scenarios
-base.scenario <- new("scenario.params")
-base.scenario@num.pops <- 3
-base.scenario@pop.size <- c(50, 100, 500)
-base.scenario@sample.size <- c(25, 50, 25)
-base.scenario@migration <- list(matrix(
-  c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0),
-  nrow = base.scenario@num.pops
-))
-base.scenario@locus.type <- "microsat"
-base.scenario@num.loci <- 3
-base.scenario@sequence.length <- 10
-base.scenario@mut.rate <- 1e-3
-
-# create fastsimcoal params object to load into base scenario
-fsc.params <- new("fastsimcoal.params")
-# to change the executable, either explicitly set the @fastsimcoal.exec slot or
-# initialize with:
-#   fsc.params <- new("fastsimcoal.params", fastsimcoal.exec = "fsc252")
-fsc.params@sample.times <- c(0, 0, 0)
-fsc.params@growth.rate <- c(0, 0, 0)
-fsc.params@hist.ev <- fsc.histEvMat(0)
-#fsc.params@hist.ev[, "num.gen"] <- 100
-#fsc.params@hist.ev[, "sink.deme"] <- 1
-fsc.params@locus.params <- fsc.locusParamsMat(base.scenario)
-fsc.params@inf.site.model <- FALSE
-# load fastsimcoal params
-base.scenario@simulator.params <- fsc.params
-
-# create list of scenarios and modify
-scenario.list <- lapply(1:3, function(i) base.scenario)
-#  decrease the mutation rate in scenario 2...
-scenario.list[[2]]@mut.rate <- 1e-5
-scenario.list[[2]]@simulator.params@locus.params <- fsc.locusParamsMat(scenario.list[[2]])
-#  decrease the migration rate in scenario 3...
-scenario.list[[3]]@migration[[1]] <- scenario.list[[3]]@migration[[1]] * 0.1
-
-# load scenarios
-test.params@scenarios <- scenario.list
+# create and load scenarios
+test.params@scenarios <- list(
+  fsc.loadScenario(
+    num.pops = 3,
+    pop.size = c(20000, 5000, 10000),
+    sample.size = c(20, 20, 6),
+    sample.times = c(0, 0, 1500),
+    locus.type = "dna",
+    sequence.length = 100,
+    mut.rate = runif(3, 1e-6, 1e-3),
+    chromosome = 1:3,
+    migration = matrix(
+      c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
+    ),
+    num.gen = c(2000, 2980, 3000, 15000),
+    source.deme = c(1, 1, 1, 0),
+    sink.deme = c(2, 1, 0, 2),
+    prop.migrants = c(0.05, 0, 1, 1),
+    new.sink.size = c(1, 0.04, 1, 3)
+  ),
+  fsc.loadScenario(
+    num.pops = 3,
+    pop.size = c(20000, 5000, 10000),
+    sample.size = c(20, 20, 6),
+    sample.times = c(0, 0, 1500),
+    locus.type = "msat",
+    num.loci = 1,
+    mut.rate = runif(10, 1e-9, 1e-3),
+    migration = matrix(
+      c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
+    ),
+    num.gen = c(2000, 2980, 3000, 15000),
+    source.deme = c(1, 1, 1, 0),
+    sink.deme = c(2, 1, 0, 2),
+    prop.migrants = c(0.05, 0, 1, 1),
+    new.sink.size = c(1, 0.04, 1, 3)
+  ),
+  fsc.loadScenario(
+    num.pops = 3,
+    pop.size = c(20000, 5000, 10000),
+    sample.size = c(20, 20, 6),
+    sample.times = c(0, 0, 1500),
+    locus.type = "snp",
+    num.loci = 50,
+    mut.rate = 1e-5,
+    migration = matrix(
+      c(0, 0.01, 0.05, 0.025, 0, 0.025, 0.05, 0.01, 0), nrow = 3
+    ),
+    num.gen = c(2000, 2980, 3000, 15000),
+    source.deme = c(1, 1, 1, 0),
+    sink.deme = c(2, 1, 0, 2),
+    prop.migrants = c(0.05, 0, 1, 1),
+    new.sink.size = c(1, 0.04, 1, 3)
+  )
+)
 
 # set fastsimcoal check
 test.params@sim.check.func <- fsc.scenarioCheck
 
 # ---- Set analysis function ----
-test.params@rep.analysis.func <- skeleSim::analysis_funcs
+test.params@rep.analysis.func <- skeleSim::analysisFunc
 
 # ---- Run replicates ----
-test.params <- runSim(test.params)
+result <- runSim(test.params)
+
+save(result, file = paste(result$params@title, "result.rdata"))
