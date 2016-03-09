@@ -16,7 +16,6 @@ LazyData: true
 Depends:
     R (>= 3.2.0),
     shiny (>= 0.13.0),
-    shinyIncubator,
     shinyFiles,
     igraph,
     strataG (>= 1.0),

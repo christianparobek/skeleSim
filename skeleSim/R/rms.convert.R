@@ -22,7 +22,7 @@ rms.convert <- function(Rland, locus.type) {
     this.rep.result=NULL
     if (ltype%in%c("microsatellite","MICROSAT","microsat"))
     {
-        this.rep.result <- landscape.make.genind(Rland)
+        this.rep.result <- genind2gtypes(landscape.make.genind(Rland))
     }
     else if (ltype=="sequence")
     {
@@ -32,8 +32,8 @@ rms.convert <- function(Rland, locus.type) {
         seq <- merge(genos,states,all.x=T)
         seq <- seq[order(seq$pop),]
         dna.seq <- strsplit(as.character(tolower(seq$state)),"")
-        this.rep.result <- list(strata=data.frame(seq$pop),
-                                dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
+        this.rep.result <- sequence2gtypes(strata=data.frame(seq$pop),
+                                           x=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
     }
     else if (ltype=="SNP")
     {
