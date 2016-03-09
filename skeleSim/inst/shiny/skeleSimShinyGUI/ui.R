@@ -201,9 +201,25 @@ shinyUI(
             )
  , #don't forget the comma
    
-   tabPanel(
+    tabPanel(
        "Current ssClass",
        tableOutput("ssClass")
-   )
+      ),
+    tabPanel("Visualize",
+         sidebarLayout(
+              sidebarPanel(
+                actionButton("newplot", "New plot"),
+                checkboxInput("stat1", label = "Statistic #1", value = TRUE),
+                checkboxInput("stat2", label = "Statistic #2", value = TRUE)),
+              mainPanel(
+                tabsetPanel(
+                  tabPanel("Global Statistics",
+                           plotOutput("plot")),
+                  tabPanel("Local Statistics",
+                           plotOutput("testViz1")),
+                  tabPanel("Pairwise Statistics",
+                           plotOutput("testViz2"))))
+      )
+    )
   )
 )
