@@ -75,11 +75,6 @@ shinyUI(
                      numericInput("scenarioNumber", "Which scenario",value=1),
                      textInput("numpopsTxt", "Number of Populations",
                                value = "1"),
-                     numericInput("numloci", "Number of loci",
-                                  value = 1),
-                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
-                     conditionalPanel(condition = "input.loctype == 'sequence'",
-                                      numericInput("seqlen","Sequence length",value=100)),
                      br(),
                      numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
                      selectInput("migModel", "Migration Model",
@@ -89,7 +84,15 @@ shinyUI(
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("rows", "Rows in a grid-shaped landscape",1)),
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",1)),
                      conditionalPanel(condition = "input.migModel == 'distance'",
-                                      selectInput("distfun", "Distance function (must be an R function)",c("dexp")))
+                                      selectInput("distfun", "Distance function (must be an R function)",c("dexp"))),
+                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
+                     conditionalPanel(condition = "input.loctype != 'sequence'", 
+                                      numericInput("numloci", "Number of loci",
+                                                   value = 1)),
+                     
+                     conditionalPanel(condition = "input.loctype == 'sequence'",
+                                      numericInput("seqlen","Sequence length",value=100))
+                     
                  )
                , #don't forget comma
                  mainPanel(
