@@ -216,9 +216,11 @@ shinyUI(
               mainPanel(
                 tabsetPanel(
                   tabPanel("Global Statistics",
-                           plotOutput("fst")),
+                           uiOutput("plot_global"),
+                           fluidRow(column(3, verbatimTextOutput("sometext")))
+                           ),
                   tabPanel("Locus Statistics",
-                           plotOutput("plot")),
+                           plotOutput("testViz1")),
                   tabPanel("Pairwise Statistics",
                            plotOutput("testViz2"))))
       )
