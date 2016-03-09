@@ -43,7 +43,7 @@ numal.react <- reactive({
         if (!is.null(req(nal)))
         {
             nal[is.na(nal)] <- 1
-            vf <- callModule(vectorIn,"numall",label="numalleles",
+            vf <- callModule(vectorIn,"numall",label="Num. Alleles per locus (each element of vector corresponds to a locus)",
                              vec=nal)()
         }
     }

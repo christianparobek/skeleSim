@@ -70,9 +70,11 @@ if (loc.type == "sequence") rms.locus.type = 2
     for (l in 1:num.loc)
         if (rms.locus.type==2)
         {
-            skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=2, mutationrate=mut.rate[l],
-                                              transmission=0, numalleles=num.alleles[l],
-                                              frequencies=allele.freqs[[l]]) #temp remove allele size
+            if (l==1) #only one sequence locus possible and it creates a maternally inherited haploid locus
+                skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=1, mutationrate=mut.rate[l],
+                                                  transmission=1, numalleles=num.alleles[l],
+                                                  frequencies=allele.freqs[[l]]) #temp remove allele size
+            
         }
         else
         {
