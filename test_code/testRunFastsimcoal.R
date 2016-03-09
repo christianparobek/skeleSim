@@ -14,7 +14,6 @@ test.params@simulator.type <- "c"
 test.params@simulator <- "fsc"
 test.params@num.reps <- 5
 test.params@num.perm.reps <- 100
-test.params@num.cores <- 1
 test.params@sim.func <- fsc.run
 test.params@wd <- "testRun.wd"
 

@@ -24,7 +24,7 @@ fsc.run <- function(params) {
     label = label,
     quiet = params@quiet,
     exec = sc@simulator.params@fastsimcoal.exec,
-    num.cores = params@num.cores
+    num.cores = 1
   )
 
   return(params)

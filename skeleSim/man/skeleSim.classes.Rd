@@ -49,8 +49,6 @@ simulation replicate.}
 \item{\code{num.perm.reps}}{number of permutation replicates to run for population structure
 statistics.}
 
-\item{\code{num.cores}}{number of cores to use for multithreading.}
-
 \item{\code{rep.result}}{result from last call to \code{rep.analysis.func}.}
 
 \item{\code{analysis.results}}{a matrix containing result of all replicate analyses.}

@@ -30,7 +30,6 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'   simulation replicate.
 #' @slot num.perm.reps number of permutation replicates to run for population structure
 #'   statistics.
-#' @slot num.cores number of cores to use for multithreading.
 #' @slot rep.result result from last call to \code{rep.analysis.func}.
 #' @slot analysis.results a matrix containing result of all replicate analyses.
 #' @slot sim.summary.func a function to summarize \code{rep.analysis}.
@@ -56,7 +55,7 @@ skeleSim.params <- setClass(
     num.reps = "intOrNum",  sim.func = "funcOrNULL",
     current.scenario = "intOrNum", current.replicate = "intOrNum",
     rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
-    num.perm.reps = "intOrNum", num.cores = "intOrNum", rep.result = "intOrNum",
+    num.perm.reps = "intOrNum", rep.result = "intOrNum",
     analysis.results = "ANY", sim.summary.func = "funcOrNULL",
     summary.results = "listOrNULL", sim.check.func = "funcOrNULL",
     sim.scen.checks = "matrOrNULL", other.checks = "logOrNULL",
@@ -67,7 +66,7 @@ skeleSim.params <- setClass(
     simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
     num.reps = NULL, sim.func = NULL, current.scenario = 1,
     current.replicate = NULL, rep.sample = NULL, rep.analysis.func = NULL,
-    num.perm.reps = NULL, num.cores = NULL, rep.result = NULL,
+    num.perm.reps = NULL, rep.result = NULL,
     analysis.results = NULL, sim.summary.func = NULL, summary.results = NULL,
     sim.check.func = NULL, sim.scen.checks = NULL, other.checks = NULL,
     scenario.reps = NULL,
