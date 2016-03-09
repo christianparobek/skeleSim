@@ -191,7 +191,7 @@ shinyUI(
                                      ),
                              tabPanel("rmetasim locus details",
                                      includeMarkdown("helpfiles/rmetasim-loci.md"),
-                                     radioButtons("numfreq",NULL,c("use allele numbers","specify full allele frequency distribution")),
+                                     radioButtons("numfreq",NULL,c("numbers of alleles")),
                                      vectorInUI("numall"),
                                      textOutput("afreqs")
                                      )
