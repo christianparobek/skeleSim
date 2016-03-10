@@ -77,8 +77,16 @@ loadResultsMatrix <- function(params, mat, label) {
 #' @rdname analysis.funcs
 #'
 formatOverallStats <- function(g, num.perm.reps) {
+  stats <- if(ploidy(g) == 1) {
+    list(statChi2, statFst, statPhist)
+  } else {
+    list(statChi2, statFst, statFstPrime, statGst, statGstPrime,
+         statGstDblPrime, statFis)
+  }
+
   result <- overallTest(
-    g, nrep = num.perm.reps, quietly = TRUE, max.cores = 1
+    g, nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1,
+    model = "raw"
   )$result
   result.names <- paste(
     rep(rownames(result), each = 2), c("", ".pval"), sep = ""
@@ -308,12 +316,14 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
          statGstDblPrime, statFis)
   }
   pws.all <- pairwiseTest(
-    g, nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1
+    g, nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1,
+    model = "raw"
   )$result
   pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
   pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1
+      g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE,
+      max.cores = 1, model = "raw"
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result), drop = FALSE])
@@ -353,17 +363,17 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
 
   # chord distance
   cd <- NULL
-#   cd <- if(ploidy(g) == 2) {
-#     dat <- genind2hierfstat(gtypes2genind(g))
-#     chord.dist <- calcChordDist(dat)
-#     # chord.dist by locus
-#     chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
-#       result <- calcChordDist(dat[, c("pop", l)])
-#       cbind(result[, 1:2], Locus = l, result[, 3])
-#     }))
-#     colnames(chord.dist.locus)[4] <- "chord.dist"
-#     chord.dist.locus
-#   } else NULL
+  cd <- if(ploidy(g) == 2) {
+    dat <- genind2hierfstat(gtypes2genind(g))
+    chord.dist <- calcChordDist(dat)
+    # chord.dist by locus
+    chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
+      result <- calcChordDist(dat[, c("pop", l)])
+      cbind(result[, 1:2], Locus = l, result[, 3])
+    }))
+    colnames(chord.dist.locus)[4] <- "chord.dist"
+    chord.dist.locus
+  } else NULL
 
   # combine results into single matrix
   by.cols <- c("strata.1", "strata.2", "Locus")
