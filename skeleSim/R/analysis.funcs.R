@@ -31,11 +31,13 @@ analysisFunc <- function(params) {
   opt <- options(warn = -1)
 
   if(params@analyses.requested["Global"]) {
+    cat("  Global analysis...\n")
     mat <- globalAnalysis(results.gtype, num.perm.reps)
     params <- loadResultsMatrix(params, mat, "Global")
   }
 
   if(params@analyses.requested["Locus"]) {
+    cat("  Locus analysis...\n")
     mat <- if(ploidy(results.gtype) > 1) {
       locusAnalysisGenotypes(results.gtype)
     } else {
@@ -45,6 +47,7 @@ analysisFunc <- function(params) {
   }
 
   if(params@analyses.requested["Pairwise"]) {
+    cat("  Pairwise analysis...\n")
     mat <- pairwiseAnalysis(results.gtype, num.perm.reps)
     params <- loadResultsMatrix(params, mat, "Pairwise")
   }
@@ -75,9 +78,8 @@ loadResultsMatrix <- function(params, mat, label) {
 #'
 formatOverallStats <- function(g, num.perm.reps) {
   result <- overallTest(
-    g, nrep = num.perm.reps, quietly = TRUE
+    g, nrep = num.perm.reps, quietly = TRUE, max.cores = 1
   )$result
-  result <- result[complete.cases(result), ]
   result.names <- paste(
     rep(rownames(result), each = 2), c("", ".pval"), sep = ""
   )
@@ -306,12 +308,12 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
          statGstDblPrime, statFis)
   }
   pws.all <- pairwiseTest(
-    g, nrep = num.perm.reps, stats = stats, quietly = TRUE
+    g, nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1
   )$result
   pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
   pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
-      g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE
+      g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1
     )$result
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result), drop = FALSE])

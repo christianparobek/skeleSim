@@ -12,8 +12,8 @@ test.params@quiet <- FALSE
 test.params@question <- "n"
 test.params@simulator.type <- "c"
 test.params@simulator <- "fsc"
-test.params@num.reps <- 5
-test.params@num.perm.reps <- 100
+test.params@num.reps <- 4
+test.params@num.perm.reps <- 5
 test.params@sim.func <- fsc.run
 test.params@wd <- "testRun.wd"
 
