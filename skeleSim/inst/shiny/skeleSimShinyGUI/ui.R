@@ -77,7 +77,7 @@ shinyUI(
     tabPanel("Scenario Conf",
              sidebarLayout(
                  sidebarPanel(
-                     numericInput("scenarioNumber", "Which scenario",value=1),
+                     numericInput("scenarioNumber", "Which scenario",value=1,min=1),
                      textInput("numpopsTxt", "Number of Populations",
                                value = "1"),
                      br(),
@@ -126,7 +126,7 @@ shinyUI(
    tabPanel(textOutput("simtext"),
             sidebarLayout(
                 sidebarPanel(
-                    numericInput("specScenNumber","Scenario number",1),
+                    numericInput("specScenNumber","Scenario number",value=1,min=1),
 
 ##################### simcoal specific
                     conditionalPanel(
