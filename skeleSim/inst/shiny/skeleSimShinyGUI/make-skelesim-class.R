@@ -265,10 +265,10 @@ observeEvent(rValues$ssClass,{
 ####  this is the fastsimcoal updater
     if (input$coalescent)
         {
-            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
-                {
-                    updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
-                }
+#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
+#                {
+#                    updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
+#                }
         } else { ########this is for rmetasim
 #            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing))
 #                updateNumericInput(session,"self",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing)
