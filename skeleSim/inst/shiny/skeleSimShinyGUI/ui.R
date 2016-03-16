@@ -62,7 +62,7 @@ shinyUI(
                                   value = 1),
                      checkboxGroupInput("analysesReq","Type of analyses for each rep",
                                         c("Global"="Global", "Pairwise"="Pairwise", "Locus"="Locus")),
-                     numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=1),
+                     numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=100),
                      textInput("wd", "Subdirectory for actual simulation",
                                value = "wdTest")
                      
@@ -120,8 +120,6 @@ shinyUI(
              ))
     
  ,  ##comma is critical between panels
-
-   
 
    tabPanel(textOutput("simtext"),
             sidebarLayout(
