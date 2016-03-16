@@ -8,11 +8,14 @@ shinyUI(
         shinyFilesButton("fileParams","Read skelesim file","Select saved skelesim file", FALSE),
         uiOutput("uiSelectParamObj"),
         h5(textOutput("txtObjLabel")),
-        shinySaveButton("ssClassSave","Save skelesim parameters to file","Save parameter file",filetype=list(ssClass=c("rdata","Rdata","rda"))),
+        shinySaveButton("ssClassSave","Save skelesim parameters to file","Save parameter file",
+                        filetype=list(ssClass=c("rdata","Rdata","rda"))),
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
         shinyDirButton("workFolder","Select Simulation Root Directory","Set Simulation Root Directory",FALSE),
         br(),
+#        h4("Debug the parameter object created during this session"),
+#        checkboxInput("debug","Debug parameter object",TRUE),
         actionButton("btnRun","Run simulation"),
         br(),
         h4("Post simulation"),
@@ -31,9 +34,10 @@ shinyUI(
                      checkboxInput("demography", label = "Do you want to include demography?", value = FALSE),
                      checkboxInput("management", label = "Does your question involve management decisions?", value = FALSE),
                      checkboxInput("completion.time", label = "Do you need a short completion time", value = FALSE),
-                     checkboxInput("computer", label = "Do you have large computer capacity?", value = FALSE),
+                     checkboxInput("computer", label = "Do you have large computer capacity?", value = FALSE)
+#                    ,
                                         # for the file uploader
-                     fileInput("file", label = h3("OR choose file to upload"))
+#                     fileInput("file", label = h3("OR choose file to upload"))
                  ),
                  
                  mainPanel(
@@ -58,6 +62,7 @@ shinyUI(
                                   value = 1),
                      checkboxGroupInput("analysesReq","Type of analyses for each rep",
                                         c("Global"="Global", "Pairwise"="Pairwise", "Locus"="Locus")),
+                     numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=1),
                      textInput("wd", "Subdirectory for actual simulation",
                                value = "wdTest")
                      
@@ -115,7 +120,9 @@ shinyUI(
              ))
     
  ,  ##comma is critical between panels
+
    
+
    tabPanel(textOutput("simtext"),
             sidebarLayout(
                 sidebarPanel(
@@ -125,10 +132,10 @@ shinyUI(
                     conditionalPanel(
                         condition = "input.coalescent == true",
                         h4("Fastsimcoal parameters")),
-                    conditionalPanel(
-                        condition = "input.coalescent == true",
-                        checkboxInput("infSiteModel", "Infinite site model",
-                                      value = FALSE)),
+#                    conditionalPanel(
+#                        condition = "input.coalescent == true",
+#                        checkboxInput("infSiteModel", "Infinite site model",
+#                                      value = FALSE)),
                     conditionalPanel(
                         condition = "input.coalescent == true",
                         uiOutput("simexec")
@@ -202,13 +209,14 @@ shinyUI(
                     
                 )
             )
-            )
- , #don't forget the comma
-   
-    tabPanel(
+            ) ,
+   tabPanel(
        "Current ssClass",
        tableOutput("ssClass")
-      )#,
+   )
+# , #don't forget the comma
+
+
       ##### MAKE THIS TAB REACTIVE SOMEHOW... EITHER NOT SHOW BEFORE THERE ARE RESULTS, OR SAY "NOTHING TO SEE HERE"
 #     tabPanel("Visualize",
 #          sidebarLayout(

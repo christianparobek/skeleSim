@@ -38,6 +38,10 @@ observeEvent(input$reps, {
     rValues$ssClass@num.reps <- input$reps
 })
 
+observeEvent(input$NumPermReps,{
+    rValues$ssClass@num.perm.reps <- input$NumPermReps
+})
+
 observeEvent(input$analysesReq, {
     vec <- input$analysesReq
     if (length(vec)>0)
@@ -142,11 +146,11 @@ observeEvent(input$specScenNumber,
                  rValues$scenarioNumber <- input$specScenNumber
              })
 
-observeEvent(input$infSiteModel,
-             {
-                 if (rValues$ssClass@simulator.type=="c")
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
-             })
+#observeEvent(input$infSiteModel,
+#             {
+#                 if (rValues$ssClass@simulator.type=="c")
+#                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
+#             })
 
 observeEvent(input$fscexec,
              {
@@ -205,6 +209,8 @@ observeEvent(rValues$ssClass,{
         updateTextInput(session,"title",value=rValues$ssClass@title)
     if (!is.null(rValues$ssClass@date))
         updateDateInput(session,"date",value=rValues$ssClass@date)
+    if (!is.null(rValues$ssClass@num.perm.reps))
+        updateNumericInput(session,"NumPermReps",value=rValues$ssClass@num.perm.reps)
     if (!is.null(rValues$ssClass@quiet))
         updateCheckboxInput(session,"quiet",value=rValues$ssClass@quiet)
     if (!is.null(rValues$ssClass@simulator.type)){##sets a bunch of downstream parameters based on simulation type

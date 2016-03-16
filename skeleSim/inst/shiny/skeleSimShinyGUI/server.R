@@ -69,7 +69,7 @@ shinyServer(function(input, output, session) {
     observeEvent(input$quitbtn,{stopApp()})
     
 #############debugging
-    output$ssClass <- renderTable({data.frame(item=(capture.output(str(rValues$ssClass))))})
+source("debug.R",local=T)
 
 ####### this needs to be replaced with Eric's loading code
 #
