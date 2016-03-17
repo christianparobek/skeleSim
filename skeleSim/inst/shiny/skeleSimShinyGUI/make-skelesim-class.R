@@ -16,7 +16,7 @@ observeEvent(input$date, {
 observeEvent(input$quiet, {
     rValues$ssClass@quiet <- input$quiet
 })
-             
+
 observeEvent(input$coalescent,{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
     rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rmw")
@@ -35,7 +35,7 @@ observeEvent(input$coalescent,{
 })
 
 observeEvent(input$reps, {
-    rValues$ssClass@num.reps <- input$reps
+    rValues$ssClass@num.sim.reps <- as.numeric(input$reps)
 })
 
 observeEvent(input$NumPermReps,{
@@ -53,7 +53,7 @@ observeEvent(input$analysesReq, {
         rValues$ssClass@analyses.requested<- c("Global"=F,"Pairwise"=F,"Locus"=F)
     }
 
-    
+
 })
 
 observeEvent(input$wd, {
@@ -79,7 +79,7 @@ observeEvent(input$scenarioNumber,
 observeEvent(input$numpopsTxt,
              {
                  numpop <- suppressWarnings(as.numeric(input$numpopsTxt))
-                 if (!is.na(numpop)) 
+                 if (!is.na(numpop))
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
                  mig.mat()
              })
@@ -93,7 +93,7 @@ observeEvent(input$numloci,
                      navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
                      print(navec)
                      #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
-                     if (length(navec)!=input$numloci) 
+                     if (length(navec)!=input$numloci)
                          navec <- rep(1,input$numloci)
                      print(navec)
                      navec[is.na(navec)] <- 1
@@ -182,7 +182,7 @@ observeEvent(input$stages,
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr <- matrix(0,input$stages,input$stages)
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@male.matr <- matrix(0,input$stages,input$stages)
         }
-    
+
     }
 })
 
@@ -199,7 +199,7 @@ observeEvent(input$self,
 
 ##############################################################################################
 
-#### this section updates the input boxes if a rValues$ssClass updates 
+#### this section updates the input boxes if a rValues$ssClass updates
 ####
 #######this observer is intended to run any time ssClass changes
 ####### it needs to be able to update inputs
@@ -219,15 +219,15 @@ observeEvent(rValues$ssClass,{
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.func <- fsc.run else rValues$ssClass@sim.func <- rms.run
         output$simfunc <- renderText({paste("Simulator function:",ifelse(rValues$ssClass@simulator.type=="c","fsc.run","rms.run"))})
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.check.func <- fsc.scenarioCheck else rValues$ssClass@sim.check.func <- rms.scenarioCheck
-        
+
     }
-    if (!is.null(rValues$ssClass@num.reps))
-        updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
+    if (!is.null(rValues$ssClass@num.sim.reps))
+        updateNumericInput(session,"reps",value=rValues$ssClass@num.sim.reps)
 
     if (!is.null(rValues$ssClass@analyses.requested))
         updateCheckboxGroupInput(session,"analysesReq",
                                  names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested])
-        
+
 
         if (!is.null(rValues$ssClass@wd))
         {
@@ -237,7 +237,7 @@ observeEvent(rValues$ssClass,{
                   })
         }
 ##scenarios #respect the scenarioNumber!
-    
+
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
         updateTextInput(session,"numpopsTxt",value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
 
@@ -284,14 +284,14 @@ observeEvent(rValues$ssClass,{
 ###
 observeEvent(rValues$scenarioNumber,
              {
-                 if (!scenario.exists()) 
+                 if (!scenario.exists())
                      {
                          rValues$ssClass@scenarios <- c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
-                     }                 
+                     }
 
 ################ migration
 ###################
-                 
+
                  if (input$coalescent) #simcoal
                      {
                          if (!is.null(rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params))
