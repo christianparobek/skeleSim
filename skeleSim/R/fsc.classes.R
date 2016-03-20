@@ -20,9 +20,10 @@ fastsimcoal.params <- setClass(
   Class = "fastsimcoal.params",
   slots = c(
     fastsimcoal.exec = "character", pop.info = "matrOrNULL",
-    hist.ev = "matrOrNULL", locus.params = "dfOrNULL",
-    growth.rate = "intOrNULL",
-    sample.times = "intOrNULL"
+    hist.ev = "matrOrNULL", locus.params = "dfOrNULL"
+#   ,
+#    growth.rate = "intOrNULL",
+#    sample.times = "intOrNULL"
   ),
   prototype = list(
     fastsimcoal.exec = "fsc252", pop.info = NULL, hist.ev = NULL,
