@@ -32,7 +32,7 @@ runSim <- function(params, num.secs = NULL) {
   params@analyses.requested <- analyses.check(params@analyses.requested)
   tryCatch({
     num.sc <- length(params@scenarios)
-    num.reps <- params@num.reps
+    num.reps <- params@num.sim.reps
     params@scenario.reps <- as.matrix(expand.grid(scenario = 1:num.sc, replicate = 1:num.reps))
     quit <- FALSE
     # loop through replicates for scenarios

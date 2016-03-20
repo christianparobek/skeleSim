@@ -52,7 +52,7 @@ skeleSim.params <- setClass(
     title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
     question = "charOrNULL", simulator.type = "charOrNULL",
     simulator = "charOrNULL", wd = "charOrNULL", scenarios = "listOrNULL",
-    num.reps = "intOrNum",  sim.func = "funcOrNULL",
+    num.sim.reps = "intOrNum",  sim.func = "funcOrNULL",
     current.scenario = "intOrNum", current.replicate = "intOrNum",
     rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
     num.perm.reps = "intOrNum", rep.result = "intOrNum",
@@ -64,7 +64,7 @@ skeleSim.params <- setClass(
   prototype = list(
     title = NULL, date = NULL, quiet = NULL, question = NULL,
     simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
-    num.reps = NULL, sim.func = NULL, current.scenario = 1,
+    num.sim.reps = NULL, sim.func = NULL, current.scenario = 1,
     current.replicate = NULL, rep.sample = NULL, rep.analysis.func = NULL,
     num.perm.reps = NULL, rep.result = NULL,
     analysis.results = NULL, sim.summary.func = NULL, summary.results = NULL,
