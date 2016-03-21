@@ -15,8 +15,8 @@ fsc.scenarioCheck <- function(params) {
   results <- sapply(params@scenarios, function(sc) {
     fsc.histEvCheck(
       hist.ev = sc@simulator.params@hist.ev,
-      pop.size = sc@simulator.params@pop.info[, "pop.size"],
-      growth.rate = sc@simulator.params@pop.info[, "growth.rate"],
+      pop.size = sc@pop.size, #simulator.params@pop.info[, "pop.size"],
+      growth.rate = sc@simulator.params@growth.rate,
       num.mig.mats = length(sc@migration)
     )
   })

@@ -61,7 +61,7 @@ analysisFunc <- function(params) {
 #'
 loadResultsMatrix <- function(params, mat, label) {
   curr_scn <- params@current.scenario
-  num_reps <- params@num.reps
+  num_reps <- params@num.sim.reps
   if(is.null(params@analysis.results[[curr_scn]][[label]])) {
     params@analysis.results[[curr_scn]][[label]] <- array(
       NA, dim = c(nrow(mat), ncol(mat), num_reps),

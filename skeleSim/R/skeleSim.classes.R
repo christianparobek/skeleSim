@@ -20,7 +20,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot simulator a three character code representing which simulator is being run.
 #'   Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.
 #' @slot scenarios a list of \code{scenario.params} objects.
-#' @slot num.reps number of replicates to run.
+#' @slot num.sim.reps number of replicates to run.
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
 #' @slot current.scenario number of current scenario being run.

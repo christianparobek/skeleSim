@@ -3,7 +3,6 @@
 ####### components at the bottom of this function
 #######
 shinyServer(function(input, output, session) {
-
 #################### load some initializations that need to be within shinyServer
     source("serverInit.R", local = TRUE)
   ##################### parameter loading and saving

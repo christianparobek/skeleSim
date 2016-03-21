@@ -39,35 +39,38 @@ create.new.history <- function(npop=3,
 simcoal.history.plot <- function(history
                          )
     {
+                        print("in shp")
         if (!is.null(history))
             {
-                npop <- max(c(history$source,history$sink))+1
+
+                history <- as.data.frame(history)
+                print(history)
+                npop <- max(c(history[,2],history[,3]))+1
                 pops <- 0:(npop-1)
-                
                 plot(1~1,type="n",
-                     ylim=c(0,max(history$time)*1.2),
+                     ylim=c(0,max(history[,1])*1.2),
                      xlim=c(-1,npop),axes=F,xlab="population",ylab="time")
                 axis(1,labels=pops,at=0:(npop-1))
                 axis(2)
                 for (p in 0:(npop-1))
                     {
                         x.source <- p
-                        p.hist <- history[history$source==p,]
+                        p.hist <- history[history[,2]==p,]
                         if (dim(p.hist)[1]>0)
                             for (e in 1:dim(p.hist)[1])
                                 {
-                                    x.sink <- p.hist$sink[e]
-                                    y <-  p.hist$time[e]
+                                    x.sink <- p.hist[e,3]
+                                    y <-  p.hist[e,1]
                                     points(x=c(x.source,x.source),
                                            y=c(0,y), type="l")
                                     arrows(x.source,y,x.sink,y)
                                 }
                     }
         ###now deal with the sink-only situations (should be one)
-                spops <- unique(history$sink[!history$sink%in%history$source])
+                spops <- unique(history[,3][!history[,3]%in%history[,2]])
                 for (i in spops)
                     {
-                        arrows(i,0,i,max(history$time)*1.2)
+                        arrows(i,0,i,max(history[,1])*1.2)
                     }
             }
     }
@@ -83,9 +86,9 @@ simcoal.history.change <- function(history,
                 {
                     oldhist <- history
                     src <- round(click$x)
-                    if (src %in% c(history$source,history$sink))
+                    if (src %in% c(history[,2],history[,3]))
                         {
-                            history <- history[history$source!=src,]
+                            history <- history[history[,2]!=src,]
                             history <- history[c(1:dim(history)[1],1),]
                             row <- dim(history)[1]
                             history[row,] <- c(abs(round(dblclick$y)),
@@ -98,13 +101,44 @@ simcoal.history.change <- function(history,
                             ##            history
                         }
                     ##check and make sure that the oldest sink does not sink into another deme
-                    history <- history[order(-history$time),]
+                    history <- history[order(-history[,1]),]
                     if (history[1,3] %in% history[,2]) {history <- history[-1,]}
                 }
             if (is.history(history)) history else oldhist
         } else {NULL}
 }
 
+
+all.coalesce <- function(history)
+{
+    ac = TRUE
+    pops <- unique(unlist(c(history[,2:3])))
+    if (length(pops)!=(max(pops)+1))
+    {
+        ac=FALSE
+    }
+    history <- history[order(history[,1]),]
+    popcoal <- rep(FALSE,length(pops))
+    for (i in 1:dim(history)[1])
+    {
+        if (history[i,2]!=history[i,3]) #migration event occured
+        {
+            popcoal[pops==history[i,2]] <- TRUE
+        }
+    }
+    if (sum(!popcoal)>0)
+    {
+        if (pops[!popcoal][1]%in%history[,3])
+            popcoal[!popcoal] <- TRUE
+    }
+    
+    if ((ac) & (sum(!popcoal)==0)) 
+        ac=TRUE
+    else
+        ac=FALSE
+    print(ac)
+    ac
+}
 
 is.history <- function(history)
     {
@@ -120,7 +154,7 @@ is.history <- function(history)
         ######## needs solving
         ##check to make sure that everybody coalesces
         ##first run through the sources
-        last.sink <- history$sink[history$time==max(history$time)]
+        last.sink <- history[history[,1]==max(history[,1]),3]
         if (length(unique(last.sink))>1) #multiple sinks at the "root"
             {
                 err <- T
@@ -128,10 +162,10 @@ is.history <- function(history)
             }
         last.sink <- last.sink[1]
         
-        history$coal <- FALSE
+#        history$coal <- FALSE
         for  (s in 1:dim(history)[1])
             {
-                snk <- history[s,"sink"]
+                snk <- history[s,3]
                 
             }
         

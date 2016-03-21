@@ -7,41 +7,96 @@ hst <- reactive({
     if (!is.null(input$histplotDblclick)) lstdblclick <<- input$histplotDblclick
     if (!is.null(input$histplotClick)) lstclick <<- input$histplotClick
 
-    if (!is.null(rValues$history))
+    print("in hst")
+#    history <- rValues$history
+    history <- NULL
+
+print(history)
+
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+    {
+        history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+        print("hist.ev exists")
+        print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
+    }
+    
+    
+    if (!is.null(history))
         {
-            plist <- unique(c(rValues$history[,2],rValues$history[,3]))
+            plist <- unique(c(history[,2],history[,3]))
 #            if (length(plist)!=input$numpops) {
             if (length(plist)!=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops) {
-                rValues$history <- NULL
+                history <- NULL
             }
+            print("past plist")
+            print(history)
         }
     
-    if (is.null(rValues$history))
+    if (is.null(history))
         {
 #            if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
             pops <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops
-            rValues$history <-create.new.history(npop=pops)
+            history <-create.new.history(npop=pops)
         }  else  {
-            h <- rValues$history
-            rValues$history <-simcoal.history.change(rValues$history,lstclick,
+            h <- history
+            print("about to change")
+            print(lstclick)
+            print(lstdblclick)
+            if (!is.null(lstclick))
+                if (!is.null(lstdblclick))
+                    history <-simcoal.history.change(history,lstclick,
                                                      lstdblclick)
-            if (!identical(h,rValues$history))
-                {
-                    lstdblclick <<- NULL
-                    lstclick <<- NULL
-                }
+            print("just ran change")
+            if (!identical(h,history)) #history changed
+            {
+                lstdblclick <<- NULL
+                lstclick <<- NULL
+            }
         }
-    rValues$history
+    print("returning from hst()")
+    history
 })
 
 output$simhistPlot <- renderPlot({
-            simcoal.history.plot(hst())
+    print("about to plot history")
+    h <- hst()
+    print(h)
+    simcoal.history.plot(h)
 })
 
 output$simhistTbl <- renderTable({
     df <- hst()
     rownames(df) <- 1:dim(df)[1]
     df
+})
+
+output$simhistEditTbl <- renderUI({
+    print("creating simhistEditTbl")
+    matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
+                as.data.frame(hst()))
+})
+
+
+observeEvent(input$simhist,{
+    print("simhist modified")
+    if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
+                          input$simhist)))
+    {
+      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+    }
+})
+
+observeEvent(input$addHistEvent,{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <-
+        rbind(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev,
+              c(1,0,0,1,0,0,0))
+})
+
+observeEvent(input$removeLastEvent,{
+    print("in observEvent removeLastEvent")
+    hist <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+    if (all.coalesce(hist[-dim(hist)[1],]))
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
 })
 
 

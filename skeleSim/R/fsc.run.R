@@ -17,7 +17,10 @@ fsc.run <- function(params) {
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
   params@rep.sample <- fastsimcoal(
-    pop.info = sc@simulator.params@pop.info,
+    pop.info = fscPopInfo(pop.size=sc@pop.size,
+                          sample.size=sc@sample.size,
+                          sample.times=sc@simulator.params@sample.times,
+                          growth.rate=sc@simulator.params@growth.rate),
     locus.params = sc@simulator.params@locus.params,
     mig.rates = sc@migration,
     hist.ev = sc@simulator.params@hist.ev,

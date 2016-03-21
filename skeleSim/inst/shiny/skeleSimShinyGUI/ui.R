@@ -18,14 +18,14 @@ shinyUI(
 #        checkboxInput("debug","Debug parameter object",TRUE),
         actionButton("btnRun","Run simulation"),
         br(),
-        h4("Post simulation"),
+        h4("After running a simulation..."),
         actionButton("quitbtn","Quit App")
     ),
     tabPanel("Intro questions",
              sidebarLayout(
                  sidebarPanel(
 ###                    textInput("simname", "Simulation Name:", "Sim Parameters #1"),
-                     checkboxInput("snps", label = "Do you have SNP data?", value = FALSE),
+#                     checkboxInput("snps", label = "Do you have SNP data?", value = FALSE),
                      checkboxInput("non.diploid", label = "Is your data other than diploid?", value = FALSE),
                      checkboxInput("marker.num", label = "Do you want to simulate many markers?", value = FALSE),
                      checkboxInput("pop.size", label = "Do you have large population sizes?", value = FALSE),
@@ -57,13 +57,15 @@ shinyUI(
                      checkboxInput("quiet", "Quiet?",
                                    value = FALSE),
                      checkboxInput("coalescent", "Coalescent simulator?",
-                                   value = FALSE),
+                                   value = TRUE),
                      numericInput("reps", "Number of simulation reps",
-                                  value = 1),
-                     checkboxGroupInput("analysesReq","Type of analyses for each rep",
-                                        c("Global"="Global", "Pairwise"="Pairwise", "Locus"="Locus")),
-                     numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=100),
-                     textInput("wd", "Subdirectory for actual simulation",
+                                  value = 1,min=1),
+                     br(),
+                     h5("Type of analyses requested for each replicate"),
+                     checkboxGroupInput("analysesReq",label="",choices=c("Global"="Global", "Pairwise"="Pairwise", "Locus"="Locus")),
+                     numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=0,min=0),
+                     br(),
+                     textInput("wd", "Temporary subdirectory for simulation reps",
                                value = "wdTest")
                      
                  ),
@@ -168,11 +170,14 @@ shinyUI(
                         condition = "input.coalescent == true",
                         tabsetPanel(
                             tabPanel("Simcoal History",
-                                     includeMarkdown("helpfiles/help-history.md"),
+                           #          includeMarkdown("helpfiles/help-history.md"),
                                      plotOutput("simhistPlot",
                                                 click = "histplotClick",
                                                 dblclick = "histplotDblclick"),
-                                     tableOutput("simhistTbl")
+                                     uiOutput("simhistEditTbl")
+                                    ,
+                                     actionButton("addHistEvent","Add a new historical event"),
+                                     actionButton("removeLastEvent","Remove the last row")
                                      )
                            ,
                             tabPanel("Growth rates",

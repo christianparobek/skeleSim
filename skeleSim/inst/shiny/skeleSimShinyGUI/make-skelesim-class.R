@@ -146,12 +146,6 @@ observeEvent(input$specScenNumber,
                  rValues$scenarioNumber <- input$specScenNumber
              })
 
-#observeEvent(input$infSiteModel,
-#             {
-#                 if (rValues$ssClass@simulator.type=="c")
-#                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
-#             })
-
 observeEvent(input$fscexec,
              {
                  if (rValues$ssClass@simulator.type=="c")
@@ -265,13 +259,9 @@ observeEvent(rValues$ssClass,{
 ####  this is the fastsimcoal updater
     if (input$coalescent)
         {
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
-#                {
-#                    updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
-#                }
+
         } else { ########this is for rmetasim
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing))
-#                updateNumericInput(session,"self",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing)
+
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
                 updateNumericInput(session,"gens",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen)
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
@@ -294,16 +284,18 @@ observeEvent(rValues$scenarioNumber,
 
                  if (input$coalescent) #simcoal
                      {
-                         if (!is.null(rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params))
-                             rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params@hist.ev <- rValues$history
+#                         if (!is.null(rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params))
+#                             rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params@hist.ev <- rValues$history
 
                          if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                              {
 #                                 print ("maybe should rewrite history?")
-                                rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+#                                rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
                              } else {
-                                   rValues$history <- NULL
+#                                   rValues$history <- NULL
                              }
+                     } else { #rmetasim stuff
+                         
                      }
 
 
@@ -337,7 +329,8 @@ observeEvent(input$mutvec,{
 
 ### simcoal history updating
 observeEvent(hst(),{
-#    print("hst() observEvent")
     if (rValues$ssClass@simulator.type=="c")
+    {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
+    }
 })

@@ -21,13 +21,13 @@ fastsimcoal.params <- setClass(
   slots = c(
     fastsimcoal.exec = "character", pop.info = "matrOrNULL",
     hist.ev = "matrOrNULL", locus.params = "dfOrNULL"
-#   ,
-#    growth.rate = "intOrNULL",
-#    sample.times = "intOrNULL"
+   ,
+    growth.rate = "intOrNULL",
+    sample.times = "intOrNULL"
   ),
   prototype = list(
     fastsimcoal.exec = "fsc252", pop.info = NULL, hist.ev = NULL,
-    locus.params = NULL, inf.site.model=T,growth.rate=0,sample.times=NULL
+    locus.params = NULL, growth.rate=0,sample.times=NULL
   ),
   validity = function(object) {
     return(TRUE)
