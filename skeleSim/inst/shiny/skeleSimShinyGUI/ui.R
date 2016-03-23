@@ -54,8 +54,8 @@ shinyUI(
                      textInput("title", "Title",
                                value = ""),
                      dateInput("date","Date"),
-                     checkboxInput("quiet", "Quiet?",
-                                   value = FALSE),
+#                     checkboxInput("quiet", "Quiet?",
+#                                   value = FALSE),
                      checkboxInput("coalescent", "Coalescent simulator?",
                                    value = TRUE),
                      numericInput("reps", "Number of simulation reps",
@@ -66,8 +66,8 @@ shinyUI(
                      numericInput("NumPermReps","Number of permutations for significance tests during analysis",value=0,min=0),
                      br(),
                      textInput("wd", "Temporary subdirectory for simulation reps",
-                               value = "wdTest")
-                     
+                               value = "wdTest"),
+                     width=3 #width of general questions tab                    
                  ),
                  mainPanel(h3("Parameters automatically set:"),
                            h4(textOutput("simulator")),
@@ -88,18 +88,19 @@ shinyUI(
                                            "stepping.stone.circular","twoD","twoDwDiagonal","distance","user"),
                                  selected=1),
                      numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
-                     conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("rows", "Rows in a grid-shaped landscape",1)),
-                     conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",1)),
+                     conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("rows", "Rows in a grid-shaped landscape",value=1)),
+                     conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",value=1)),
                      conditionalPanel(condition = "input.migModel == 'distance'",
-                                      selectInput("distfun", "Distance function (must be an R function)",c("dexp"))),
+                                      selectInput("distfun", "Distance function (must be an R function)",choices=c("dexp"))),
                      selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
                      conditionalPanel(condition = "input.loctype != 'sequence'", 
                                       numericInput("numloci", "Number of loci",
                                                    value = 1)),
                      
                      conditionalPanel(condition = "input.loctype == 'sequence'",
-                                      numericInput("seqlen","Sequence length",value=100))
-                     
+                                      numericInput("seqlen","Sequence length",value=100)),
+
+                     width=3 #number between 1-12 for sidebar width on scenarios tab                     
                  )
                , #don't forget comma
                  mainPanel(
@@ -113,7 +114,8 @@ shinyUI(
                                   includeMarkdown("helpfiles/help-migration.md"),
                                   br(),
                                   h4(textOutput("msg")), #potential error messages
-                                  numericInput("mignum","Migration matrix number",min=0,value=0,width='80px'),
+                                  fluidRow(column(3,numericInput("mignum","Migration matrix number",min=0,value=0,width='100px')),
+                                           column(4,textOutput("numMigMats"))),
                                   uiOutput("migmat"),
                                   plotOutput("networkPlot")
                                   ),
@@ -163,9 +165,8 @@ shinyUI(
                         condition = "input.coalescent != true",
                         numericInput("gens", "generations to simulate",
                                      value = 50)
-                    )
-
-                    
+                    ),
+                    width=3 #width 1-12 of simulator specific tab                    
                 ),
                 mainPanel(
                     conditionalPanel(
@@ -195,8 +196,10 @@ shinyUI(
                         tabsetPanel(
                             tabPanel("Within-population Lefkovitch Matrix",
                                      includeMarkdown("helpfiles/lefkovitch.md"),
-                                     textOutput("leading"),
                                      tableOutput("lefkovitch"),
+                                     h5(textOutput("leading")),
+                                     br(),
+                                     h4("Edit elements below to change matrix above"),
                                      matrixInUI("survmat"),
                                      matrixInUI("repmat"),
                                      matrixInUI("malemat")

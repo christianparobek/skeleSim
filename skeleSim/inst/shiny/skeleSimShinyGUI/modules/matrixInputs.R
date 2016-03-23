@@ -146,7 +146,7 @@ matrixIn <- function(input,output,session,mat,label="Matrix")
 
     return(
         reactive({
-            print("in reactive from matrixIn")
+#            print("in reactive from matrixIn")
             input$mat
         }))
     

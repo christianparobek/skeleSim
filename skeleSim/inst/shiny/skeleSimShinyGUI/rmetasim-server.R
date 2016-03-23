@@ -22,14 +22,18 @@ observeEvent(callModule(matrixIn,"malemat",label="From col to row male contribut
 
 ########## 
 output$lefkovitch <- renderTable({
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
+    mat <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr
+    mat <- as.data.frame(mat)
+    names(mat) <- paste0("From.",1:dim(mat)[2])
+    rownames(mat) <- paste0("To.",1:dim(mat)[1])
+    mat
 })
 
 output$leading <- renderText({
     ev <- eigen(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr)$values
-    paste("lambda",round(ev[1],2))
+    paste("discrete-time growth rate (lambda) implied by matrix above:",round(ev[1],2))
 })
 
 

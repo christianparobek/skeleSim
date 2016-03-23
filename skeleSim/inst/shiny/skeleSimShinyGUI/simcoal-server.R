@@ -3,50 +3,52 @@
 #
 
 hst <- reactive({
-
-    history <- NULL
-
-    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+    if (rValues$ssClass@simulator=="fsc")
     {
-        history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
-        print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
-    }
-    
-    if (!is.null(history))
+        history <- NULL
+        
+        if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+        {
+            history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+ #           print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
+        }
+        
+        if (!is.null(history))
         {
             plist <- unique(c(history[,2],history[,3]))
             if (length(plist)!=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops) {
                 history <- NULL
             }
-            print("past plist")
+ #           print("past plist")
             print(history)
         }
-    
-    if (is.null(history))
+        
+        if (is.null(history))
         {
             pops <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops
             history <-create.new.history(npop=pops)
         }  else  {
             h <- history
-            print("about to change")
-             if (!is.null(pointValues$dblclick))
+#            print("about to change")
+            if (!is.null(pointValues$dblclick))
                 if (!is.null(pointValues$click))
                 {
-                    print("altering history")
+#                    print("altering history")
                     print(pointValues$click$x)
                     print(paste(pointValues$dblclick$x,pointValues$dblclick$y))
                     history <-simcoal.history.change(history,pointValues$click,
-                                                    pointValues$dblclick)
+                                                     pointValues$dblclick)
                     print(history)
                 }
-            print("just ran change")
-
-                pointValues$click <- NULL
-                pointValues$dblclick <- NULL
-
+#            print("just ran change")
+            
+            pointValues$click <- NULL
+            pointValues$dblclick <- NULL
+            
         }
-    print("returning from hst()")
-    history
+#        print("returning from hst()")
+        history
+    }
 })
 
 output$simhistPlot <- renderPlot({
@@ -63,7 +65,7 @@ output$simhistTbl <- renderTable({
 })
 
 output$simhistEditTbl <- renderUI({
-    print("creating simhistEditTbl")
+#    print("creating simhistEditTbl")
     matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
                 as.data.frame(hst()))
 })
@@ -177,7 +179,7 @@ samp.times <- function()
     }
 
 output$samptime <- renderUI({
-    print("creating st vector")
+#    print("creating st vector")
     matrixInput("stvec","Vector of sampling times (corresponds to populations)",
                 as.data.frame(samp.times()))
 })
@@ -197,7 +199,7 @@ growth.rates <- function()
     }
 
 output$growthrate <- renderUI({
-    print("creating growthrate vector")
+#    print("creating growthrate vector")
     matrixInput("grvec","Vector of growth rates (corresponds to populations)",
                 as.data.frame(growth.rates()))
 })

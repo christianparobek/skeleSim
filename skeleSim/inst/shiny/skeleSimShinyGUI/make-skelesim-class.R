@@ -348,12 +348,19 @@ observeEvent(input$mignum,{
     }
 })
 
+output$numMigMats <- renderText({
+    req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
+    if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)==1) mtxt <- "matrix" else mtxt <- "matrices"
+    paste(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration),"migration",mtxt,"defined currently (indexed from '0')")
+    })
 
 
 ### Simcoal history updating
 observeEvent(hst(),{
-    if (rValues$ssClass@simulator.type=="c")
+    if (req(rValues$ssClass@simulator.type)=="c")
     {
+        print("about to assign hist.ev.  Current value:")
+        print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
     }
 })
