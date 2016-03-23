@@ -23,8 +23,8 @@ source("modules/matrixInputs.R")
 
 ###these two globals record a record of the last
 ###click on the history graphs
-lstclick <- NULL    #last click
-lstdblclick <- NULL #last double click
+#lstclick <- NULL    #last click
+#lstdblclick <- NULL #last double click
 
 
 

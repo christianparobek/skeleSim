@@ -83,11 +83,11 @@ shinyUI(
                      textInput("numpopsTxt", "Number of Populations",
                                value = "1"),
                      br(),
-                     numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
                      selectInput("migModel", "Migration Model",
                                  choices=c("island","stepping.stone.linear",
                                            "stepping.stone.circular","twoD","twoDwDiagonal","distance","user"),
                                  selected=1),
+                     numericInput("migRate", "Migration rate multiplier (no effect for model 'user')",value=1),
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("rows", "Rows in a grid-shaped landscape",1)),
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",1)),
                      conditionalPanel(condition = "input.migModel == 'distance'",
@@ -109,9 +109,11 @@ shinyUI(
                                   uiOutput("sampsize")
                                   ),
                          tabPanel("Among population migration",
-                                  h4(textOutput("msg")), #potential error messages
-                                  br(),
+                                  
                                   includeMarkdown("helpfiles/help-migration.md"),
+                                  br(),
+                                  h4(textOutput("msg")), #potential error messages
+                                  numericInput("mignum","Migration matrix number",min=0,value=0,width='80px'),
                                   uiOutput("migmat"),
                                   plotOutput("networkPlot")
                                   ),
@@ -173,7 +175,7 @@ shinyUI(
                            #          includeMarkdown("helpfiles/help-history.md"),
                                      plotOutput("simhistPlot",
                                                 click = "histplotClick",
-                                                dblclick = "histplotDblclick"),
+                                                dblclick = "histplotDblClick"),
                                      uiOutput("simhistEditTbl")
                                     ,
                                      actionButton("addHistEvent","Add a new historical event"),

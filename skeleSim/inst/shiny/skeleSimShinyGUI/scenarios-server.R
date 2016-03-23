@@ -60,9 +60,9 @@ mig.mat <- function(){
 
     if (mmod=="user")
         {
-            if (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]])[1]==numpop)
+            if (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]])[1]==numpop)
                 { #use existing user matrix (proportional to migRate)
-                    ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]]
+                    ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]]
                 } else { #make new user matrix
                     ret <- scenario.mig.matrix(
                         h=numpop,
@@ -74,11 +74,11 @@ mig.mat <- function(){
                     if ((mmod %in% c("distance","twoD","twoDwDiagonal"))&(numpop!=rws*cls))#make sure 2d extent is correct
                         {
                             rValues$msg <- "Spatial model with non-rectangular extent: make sure rows*columns equals the number of pops"
-                            ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]]
+                            ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]]
                         } else if ((mmod %in% c("twoD","twoDwDiagonal"))&(min(rws,cls)<2))
                             {# not really a 2d landscape if all the pops are lined up....
                                 rValues$msg <- "Spatial model 2D, but the landscape has either row or cols == 1"
-                                ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]]
+                                ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]]
                             } else { #looks good to proceed
                             rValues$msg <- NULL
                             mat <- scenario.mig.matrix(
@@ -102,7 +102,6 @@ mig.mat <- function(){
 output$migmat <- renderUI({
     matrixInput("migmat","Migration Matrix",
                 as.data.frame(mig.mat()))
-#                as.data.frame(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
 })
 
 pop.sizes <- function()
@@ -162,8 +161,8 @@ mut.rates <- function()
 output$mutrate <- renderUI({
     matrixInput("mutvec","Vector of mutation rates",
                 as.data.frame(mut.rates()))
-#                as.data.frame(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
 })
+
 
 output$scenario <- renderText({
     cat(str(rValues$ssClass@scenarios[[rValues$scenarioNumber]]))

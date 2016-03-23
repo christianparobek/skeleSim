@@ -311,7 +311,7 @@ observeEvent(rValues$scenarioNumber,
 ###this observeEvent makes sure that the migration matrix stored in the reactive class is updated continuously
 ###very important!!!
 observeEvent(input$migmat,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- input$migmat
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]] <- input$migmat
 })
 
 observeEvent(input$psvec,{
@@ -326,11 +326,35 @@ observeEvent(input$mutvec,{
     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec)
 })
 
+#this is a change in the migration matrix number
+#changing will require 1) making sure the new one exists or 2) create it, and 3) set variables
+observeEvent(input$mignum,{
+    mn <- input$mignum
+    if (mn!=rValues$migrationNumber)
+    {
+        migs <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration
+        if (length(migs)<(mn+1)) #need another x matrices
+        {
+            migs <- c(migs,rep(migs[length(migs)],(mn+1)-length(migs))) #create new ones out of the last matrix
+        }
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration <- migs
+        rValues$migrationNumber <- mn
+        if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
+        {
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- "user"
+            updateSelectInput(session,"migModel",selected="user")
+        }
 
-### simcoal history updating
+    }
+})
+
+
+
+### Simcoal history updating
 observeEvent(hst(),{
     if (rValues$ssClass@simulator.type=="c")
     {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
     }
 })
+

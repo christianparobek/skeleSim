@@ -39,15 +39,15 @@ create.new.history <- function(npop=3,
 simcoal.history.plot <- function(history
                          )
     {
-                        print("in shp")
+#                        print("in shp")
         if (!is.null(history))
             {
 
                 history <- as.data.frame(history)
-                print(history)
+#                print(history)
                 npop <- max(c(history[,2],history[,3]))+1
                 pops <- 0:(npop-1)
-                plot(1~1,type="n",
+                plot(x=0,y=0,type="n",
                      ylim=c(0,max(history[,1])*1.2),
                      xlim=c(-1,npop),axes=F,xlab="population",ylab="time")
                 axis(1,labels=pops,at=0:(npop-1))
@@ -67,8 +67,9 @@ simcoal.history.plot <- function(history
                                 }
                     }
         ###now deal with the sink-only situations (should be one)
-                spops <- unique(history[,3][!history[,3]%in%history[,2]])
-                for (i in spops)
+                spops <- history[history[,2]!=history[,3],]
+                spopvec <- unique(spops[,3][!spops[,3]%in%spops[,2]])
+                for (i in spopvec)
                     {
                         arrows(i,0,i,max(history[,1])*1.2)
                     }
@@ -104,6 +105,8 @@ simcoal.history.change <- function(history,
                     history <- history[order(-history[,1]),]
                     if (history[1,3] %in% history[,2]) {history <- history[-1,]}
                 }
+
+            print(paste("test of is.history",is.history(history)))
             if (is.history(history)) history else oldhist
         } else {NULL}
 }
@@ -136,7 +139,7 @@ all.coalesce <- function(history)
         ac=TRUE
     else
         ac=FALSE
-    print(ac)
+#    print(ac)
     ac
 }
 
@@ -146,9 +149,9 @@ is.history <- function(history)
         err <- F
         msg <- NULL
         ##check for names
-        if (prod(names(history) %in% c("time", "source", "sink", "migrants", "new.size", "growth.rate", "migr.matrix"))!=1) err <- T
-        if (prod(c("time", "source", "sink", "migrants", "new.size", "growth.rate", "migr.matrix")%in%names(history))!=1) err <- T
-        if (err) msg <- c(msg,"problem with names")
+#        if (prod(names(history) %in% c("time", "source", "sink", "migrants", "new.size", "growth.rate", "migr.matrix"))!=1) err <- T
+#        if (prod(c("time", "source", "sink", "migrants", "new.size", "growth.rate", "migr.matrix")%in%names(history))!=1) err <- T
+#        if (err) msg <- c(msg,"problem with names")
 
         ######## this code is essentially worthless, but the problem
         ######## needs solving
@@ -166,13 +169,31 @@ is.history <- function(history)
         for  (s in 1:dim(history)[1])
             {
                 snk <- history[s,3]
-                
             }
         
         if (err)
-            {
-                FALSE
-            } else {
-                TRUE
-            }
+        {
+            print(paste("in simcoal is.history, value of err:",err) )
+            print(msg)
+            print(history)
+            
+            FALSE
+        } else {
+            TRUE
+        }
     }
+
+
+historiesEqual <- function(h1,h2)
+{
+    eq <- T
+    if (dim(h1)[1]!=dim(h2)[1]) eq <- F
+    if ((eq))
+    {
+        h1 <- h1[order(h1[,1]),]
+        h2 <- h2[order(h2[,1]),]
+        eq <- identical(h1,h2)
+    }
+    print(paste("histories equal?",eq))
+    eq
+}

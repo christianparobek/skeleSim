@@ -4,27 +4,17 @@
 
 hst <- reactive({
 
-    if (!is.null(input$histplotDblclick)) lstdblclick <<- input$histplotDblclick
-    if (!is.null(input$histplotClick)) lstclick <<- input$histplotClick
-
-    print("in hst")
-#    history <- rValues$history
     history <- NULL
-
-print(history)
 
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
     {
         history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
-        print("hist.ev exists")
         print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
     }
-    
     
     if (!is.null(history))
         {
             plist <- unique(c(history[,2],history[,3]))
-#            if (length(plist)!=input$numpops) {
             if (length(plist)!=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops) {
                 history <- NULL
             }
@@ -34,24 +24,26 @@ print(history)
     
     if (is.null(history))
         {
-#            if (is.null(input$numpops)) {pops <- 4} else {pops <- input$numpops}
             pops <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops
             history <-create.new.history(npop=pops)
         }  else  {
             h <- history
             print("about to change")
-            print(lstclick)
-            print(lstdblclick)
-            if (!is.null(lstclick))
-                if (!is.null(lstdblclick))
-                    history <-simcoal.history.change(history,lstclick,
-                                                     lstdblclick)
+             if (!is.null(pointValues$dblclick))
+                if (!is.null(pointValues$click))
+                {
+                    print("altering history")
+                    print(pointValues$click$x)
+                    print(paste(pointValues$dblclick$x,pointValues$dblclick$y))
+                    history <-simcoal.history.change(history,pointValues$click,
+                                                    pointValues$dblclick)
+                    print(history)
+                }
             print("just ran change")
-            if (!identical(h,history)) #history changed
-            {
-                lstdblclick <<- NULL
-                lstclick <<- NULL
-            }
+
+                pointValues$click <- NULL
+                pointValues$dblclick <- NULL
+
         }
     print("returning from hst()")
     history
@@ -75,6 +67,69 @@ output$simhistEditTbl <- renderUI({
     matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
                 as.data.frame(hst()))
 })
+
+
+#ob1 <- observe({
+#    pointValues$click <- input$histplotClick
+#    pointValues$dblclick <- input$histplotDblClick
+#    print("in observevent pointValues")
+#    if (!is.null(pointValues$click))
+#        if (!is.null(pointValues$dblclick))
+#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+#            {
+#                print("inside observer, inside all not nulls")
+#                h=hst()
+#                pointValues$click <- NULL
+#                pointValues$dblclick <- NULL
+#                if (!historiesEqual(h,
+#                                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+#                {
+#                    print("histories are not equal")
+#                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
+#                }
+#            }
+#})
+
+
+observeEvent(input$histplotClick,
+{
+    pointValues$click <- input$histplotClick
+})
+
+observeEvent(input$histplotDblClick,
+{
+    pointValues$dblclick <- input$histplotDblClick
+    if (!is.null(pointValues$click))
+        if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+            {
+                print("inside observe event dblclick, inside all not nulls")
+                h=hst()
+                if (!historiesEqual(h,
+                                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+                {
+                    print("histories are not equal")
+                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
+                }
+            }
+
+})
+
+                                        #
+#observeEvent(pointValues,{
+#    print("in observevent pointValues")
+#    if (!is.null(pointValues$click))
+#            if (!is.null(pointValues$dblclick))
+#                if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+#            {
+#                h=hst()
+#                if (!historiesEqual(h,
+#                                   rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
+#                {
+#                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
+#                }
+#            }
+#    
+#})
 
 
 observeEvent(input$simhist,{
