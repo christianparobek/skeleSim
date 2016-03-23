@@ -5,23 +5,24 @@
 #' @param locus.type character giving type of locus (\code{microsat} or
 #'   \code{sequence})
 #'
-#' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind
+#' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind landscape.locus.states
+#' @importFrom ape as.DNAbin
 #' @export
 rms.convert <- function(Rland, locus.type) {
-    
+
     ltype <- locus.type
 
     print("in rms.convert")
     print(paste("locustype:",ltype))
-    
+
     if (!is.landscape(Rland)) {stop("incoming landscape problem in rms.convert")}
-    
-    
-    
+
+
+
     this.rep.result=NULL
     if (ltype%in%c("microsatellite","MICROSAT","microsat"))
     {
-        this.rep.result <- landscape.make.genind(Rland)
+        this.rep.result <- genind2gtypes(landscape.make.genind(Rland))
     }
     else if (ltype=="sequence")
     {
@@ -31,14 +32,14 @@ rms.convert <- function(Rland, locus.type) {
         seq <- merge(genos,states,all.x=T)
         seq <- seq[order(seq$pop),]
         dna.seq <- strsplit(as.character(tolower(seq$state)),"")
-        this.rep.result <- list(strata=data.frame(seq$pop),
-                                dna.seq=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
+        this.rep.result <- sequence2gtypes(strata=data.frame(seq$pop),
+                                           x=as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),""))))
     }
     else if (ltype=="SNP")
     {
         this.rep.result <- landscape.make.genind(landscape.snp.convert(Rland))
     }
-    
+
 
     this.rep.result
 }

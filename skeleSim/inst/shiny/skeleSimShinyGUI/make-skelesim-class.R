@@ -16,10 +16,10 @@ observeEvent(input$date, {
 observeEvent(input$quiet, {
     rValues$ssClass@quiet <- input$quiet
 })
-             
+
 observeEvent(input$coalescent,{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
-    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rmw")
+    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rms")
     for (s in 1:length(rValues$ssClass@scenarios))
         if (rValues$ssClass@simulator.type=="c")
             {
@@ -35,7 +35,11 @@ observeEvent(input$coalescent,{
 })
 
 observeEvent(input$reps, {
-    rValues$ssClass@num.reps <- input$reps
+    rValues$ssClass@num.sim.reps <- as.numeric(input$reps)
+})
+
+observeEvent(input$NumPermReps,{
+    rValues$ssClass@num.perm.reps <- input$NumPermReps
 })
 
 observeEvent(input$analysesReq, {
@@ -49,7 +53,7 @@ observeEvent(input$analysesReq, {
         rValues$ssClass@analyses.requested<- c("Global"=F,"Pairwise"=F,"Locus"=F)
     }
 
-    
+
 })
 
 observeEvent(input$wd, {
@@ -75,7 +79,7 @@ observeEvent(input$scenarioNumber,
 observeEvent(input$numpopsTxt,
              {
                  numpop <- suppressWarnings(as.numeric(input$numpopsTxt))
-                 if (!is.na(numpop)) 
+                 if (!is.na(numpop))
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
                  mig.mat()
              })
@@ -89,7 +93,7 @@ observeEvent(input$numloci,
                      navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
                      print(navec)
                      #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
-                     if (length(navec)!=input$numloci) 
+                     if (length(navec)!=input$numloci)
                          navec <- rep(1,input$numloci)
                      print(navec)
                      navec[is.na(navec)] <- 1
@@ -142,12 +146,6 @@ observeEvent(input$specScenNumber,
                  rValues$scenarioNumber <- input$specScenNumber
              })
 
-observeEvent(input$infSiteModel,
-             {
-                 if (rValues$ssClass@simulator.type=="c")
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model <- input$infSiteModel
-             })
-
 observeEvent(input$fscexec,
              {
                  if (rValues$ssClass@simulator.type=="c")
@@ -178,7 +176,7 @@ observeEvent(input$stages,
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr <- matrix(0,input$stages,input$stages)
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@male.matr <- matrix(0,input$stages,input$stages)
         }
-    
+
     }
 })
 
@@ -195,7 +193,7 @@ observeEvent(input$self,
 
 ##############################################################################################
 
-#### this section updates the input boxes if a rValues$ssClass updates 
+#### this section updates the input boxes if a rValues$ssClass updates
 ####
 #######this observer is intended to run any time ssClass changes
 ####### it needs to be able to update inputs
@@ -205,6 +203,8 @@ observeEvent(rValues$ssClass,{
         updateTextInput(session,"title",value=rValues$ssClass@title)
     if (!is.null(rValues$ssClass@date))
         updateDateInput(session,"date",value=rValues$ssClass@date)
+    if (!is.null(rValues$ssClass@num.perm.reps))
+        updateNumericInput(session,"NumPermReps",value=rValues$ssClass@num.perm.reps)
     if (!is.null(rValues$ssClass@quiet))
         updateCheckboxInput(session,"quiet",value=rValues$ssClass@quiet)
     if (!is.null(rValues$ssClass@simulator.type)){##sets a bunch of downstream parameters based on simulation type
@@ -213,25 +213,25 @@ observeEvent(rValues$ssClass,{
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.func <- fsc.run else rValues$ssClass@sim.func <- rms.run
         output$simfunc <- renderText({paste("Simulator function:",ifelse(rValues$ssClass@simulator.type=="c","fsc.run","rms.run"))})
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.check.func <- fsc.scenarioCheck else rValues$ssClass@sim.check.func <- rms.scenarioCheck
-        
+
     }
-    if (!is.null(rValues$ssClass@num.reps))
-        updateNumericInput(session,"reps",value=rValues$ssClass@num.reps)
+    if (!is.null(rValues$ssClass@num.sim.reps))
+        updateNumericInput(session,"reps",value=rValues$ssClass@num.sim.reps)
 
     if (!is.null(rValues$ssClass@analyses.requested))
         updateCheckboxGroupInput(session,"analysesReq",
                                  names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested])
-        
+
 
         if (!is.null(rValues$ssClass@wd))
         {
             if (is.null(supportValues$simroot)) {supportValues$simroot <- "."}
             output$simpath <- renderText({
-                paste("Complete path for simulations to be executed:",paste(supportValues$simroot,rValues$ssClass@wd,sep="/"))
+                paste("Complete path for simulation 'scratch' directory:",paste(supportValues$simroot,rValues$ssClass@wd,sep="/"))
                   })
         }
 ##scenarios #respect the scenarioNumber!
-    
+
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
         updateTextInput(session,"numpopsTxt",value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
 
@@ -259,13 +259,9 @@ observeEvent(rValues$ssClass,{
 ####  this is the fastsimcoal updater
     if (input$coalescent)
         {
-            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model))
-                {
-                    updateCheckboxInput(session,"infSiteModel",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@inf.site.model)
-                }
+
         } else { ########this is for rmetasim
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing))
-#                updateNumericInput(session,"self",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@selfing)
+
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
                 updateNumericInput(session,"gens",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen)
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
@@ -278,26 +274,28 @@ observeEvent(rValues$ssClass,{
 ###
 observeEvent(rValues$scenarioNumber,
              {
-                 if (!scenario.exists()) 
+                 if (!scenario.exists())
                      {
                          rValues$ssClass@scenarios <- c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
-                     }                 
+                     }
 
 ################ migration
 ###################
-                 
+
                  if (input$coalescent) #simcoal
                      {
-                         if (!is.null(rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params))
-                             rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params@hist.ev <- rValues$history
+#                         if (!is.null(rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params))
+#                             rValues$ssClass@scenarios[[rValues$lstScenario]]@simulator.params@hist.ev <- rValues$history
 
                          if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                              {
 #                                 print ("maybe should rewrite history?")
-                                rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
+#                                rValues$history <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
                              } else {
-                                   rValues$history <- NULL
+#                                   rValues$history <- NULL
                              }
+                     } else { #rmetasim stuff
+                         
                      }
 
 
@@ -313,7 +311,7 @@ observeEvent(rValues$scenarioNumber,
 ###this observeEvent makes sure that the migration matrix stored in the reactive class is updated continuously
 ###very important!!!
 observeEvent(input$migmat,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[1]] <- input$migmat
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]] <- input$migmat
 })
 
 observeEvent(input$psvec,{
@@ -328,10 +326,42 @@ observeEvent(input$mutvec,{
     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec)
 })
 
+#this is a change in the migration matrix number
+#changing will require 1) making sure the new one exists or 2) create it, and 3) set variables
+observeEvent(input$mignum,{
+    mn <- input$mignum
+    if (mn!=rValues$migrationNumber)
+    {
+        migs <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration
+        if (length(migs)<(mn+1)) #need another x matrices
+        {
+            migs <- c(migs,rep(migs[length(migs)],(mn+1)-length(migs))) #create new ones out of the last matrix
+        }
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration <- migs
+        rValues$migrationNumber <- mn
+        if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
+        {
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- "user"
+            updateSelectInput(session,"migModel",selected="user")
+        }
 
-### simcoal history updating
-observeEvent(hst(),{
-#    print("hst() observEvent")
-    if (rValues$ssClass@simulator.type=="c")
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
+    }
 })
+
+output$numMigMats <- renderText({
+    req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
+    if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)==1) mtxt <- "matrix" else mtxt <- "matrices"
+    paste(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration),"migration",mtxt,"defined currently (indexed from '0')")
+    })
+
+
+### Simcoal history updating
+observeEvent(hst(),{
+    if (req(rValues$ssClass@simulator.type)=="c")
+    {
+        print("about to assign hist.ev.  Current value:")
+        print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
+    }
+})
+

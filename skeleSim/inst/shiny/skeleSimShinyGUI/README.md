@@ -14,7 +14,7 @@ To use,
   1. load devtools package -- library(devtools)
   2. install_github("rstudio/shiny-incubator")
 3. install the package from github, then
-  1. type library(skelesim)
+  1. type library(skeleSim)
   2. type skeleSimGUI()
 
 **INSTALLING fastSimcoal2**
