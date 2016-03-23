@@ -27,6 +27,7 @@ fsc.scenarioCheck <- function(params) {
 }
 
 #' @rdname fsc.scenarioCheck
+#' @export
 #'
 fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
@@ -48,6 +49,7 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
 
 
 #' @rdname fsc.scenarioCheck
+#' @export
 #'
 fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
