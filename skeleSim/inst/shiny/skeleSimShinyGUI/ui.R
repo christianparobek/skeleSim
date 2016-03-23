@@ -52,7 +52,7 @@ shinyUI(
                  sidebarPanel(
                                         #                     actionButton("readss","Read SS object"),
                      textInput("title", "Title",
-                               value = ""),
+                               value = "title"),
                      dateInput("date","Date"),
 #                     checkboxInput("quiet", "Quiet?",
 #                                   value = FALSE),
@@ -69,10 +69,11 @@ shinyUI(
                                value = "wdTest"),
                      width=3 #width of general questions tab                    
                  ),
-                 mainPanel(h3("Parameters automatically set:"),
-                           h4(textOutput("simulator")),
-                           h4(textOutput("simfunc")),
-                           h4(textOutput("simpath"))
+                 mainPanel(h3("SkeleSim general parameters:"),
+                           includeMarkdown("helpfiles/skelesim-general-help.md")
+#                           h4(textOutput("simulator")),
+#                           h4(textOutput("simfunc")),
+#                           h4(textOutput("simpath"))
                            )
              )),  ##comma is critical between panels
                                         #     

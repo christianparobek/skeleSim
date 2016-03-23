@@ -19,7 +19,7 @@ observeEvent(input$quiet, {
 
 observeEvent(input$coalescent,{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
-    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rmw")
+    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rms")
     for (s in 1:length(rValues$ssClass@scenarios))
         if (rValues$ssClass@simulator.type=="c")
             {
@@ -227,7 +227,7 @@ observeEvent(rValues$ssClass,{
         {
             if (is.null(supportValues$simroot)) {supportValues$simroot <- "."}
             output$simpath <- renderText({
-                paste("Complete path for simulations to be executed:",paste(supportValues$simroot,rValues$ssClass@wd,sep="/"))
+                paste("Complete path for simulation 'scratch' directory:",paste(supportValues$simroot,rValues$ssClass@wd,sep="/"))
                   })
         }
 ##scenarios #respect the scenarioNumber!
