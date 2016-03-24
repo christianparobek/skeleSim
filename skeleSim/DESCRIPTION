@@ -1,10 +1,15 @@
 Package: skeleSim
 Type: Package
-Title: What the package does (short line)
+Title: Genetic simulation engine
 Version: 0.9
-Date: 2015-11-23
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Authors@R: c(
+  EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
+  MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
+  SH = person("Sean", "Hoban", email = "shoban@alumni.nd.edu", role = c("aut")),
+  LL = person("Libby", "Liggins", email = "L.Liggins@massey.ac.nz", role = c("aut")),
+  CP = person("Christian", "Parobek", email = "christian.parobek@gmail.com", role = c("aut", "cre")),
+  AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut")))
+BugReports: https://github.com/christianparobek/skelesim/issues
 Description: SkeleSim is a tool to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
     statistics, and organizing data output, all within the R environment.
@@ -26,6 +31,7 @@ Imports:
     ggplot2,
     hierfstat,
     pegas,
+    markdown,
     methods,
     reshape2,
     stringi,

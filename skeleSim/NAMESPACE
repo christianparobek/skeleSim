@@ -2,6 +2,8 @@
 
 export(analyses.check)
 export(analysisFunc)
+export(fsc.histEvCheck)
+export(fsc.histEvConverges)
 export(fsc.loadScenario)
 export(fsc.run)
 export(fsc.scenarioCheck)

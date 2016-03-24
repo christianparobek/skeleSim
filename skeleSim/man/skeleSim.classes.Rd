@@ -32,7 +32,7 @@ Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.}
 
 \item{\code{scenarios}}{a list of \code{scenario.params} objects.}
 
-\item{\code{num.reps}}{number of replicates to run.}
+\item{\code{num.sim.reps}}{number of replicates to run.}
 
 \item{\code{sim.func}}{a function that runs one replicate of the simulator.
 Must take and return only a \code{skeleSim.params} object.}
