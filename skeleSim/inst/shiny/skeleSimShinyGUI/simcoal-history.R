@@ -143,6 +143,20 @@ all.coalesce <- function(history)
     ac
 }
 
+is.history.new <- function(hist,ps,gr,mmats)
+{
+    err <- fsc.histEvCheck(hist,ps,gr,length(mmats))
+    if (err)
+    {
+        if (sum(!(unique(hist[,7])%in%((1:length(mmats))-1)))>0) #asking for matrices that dont exist 
+        {
+            err <- FALSE
+        }
+    }
+    
+    err
+}
+
 is.history <- function(history)
     {
         

@@ -70,29 +70,6 @@ output$simhistEditTbl <- renderUI({
                 as.data.frame(hst()))
 })
 
-
-#ob1 <- observe({
-#    pointValues$click <- input$histplotClick
-#    pointValues$dblclick <- input$histplotDblClick
-#    print("in observevent pointValues")
-#    if (!is.null(pointValues$click))
-#        if (!is.null(pointValues$dblclick))
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
-#            {
-#                print("inside observer, inside all not nulls")
-#                h=hst()
-#                pointValues$click <- NULL
-#                pointValues$dblclick <- NULL
-#                if (!historiesEqual(h,
-#                                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
-#                {
-#                    print("histories are not equal")
-#                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
-#                }
-#            }
-#})
-
-
 observeEvent(input$histplotClick,
 {
     pointValues$click <- input$histplotClick
@@ -139,22 +116,28 @@ observeEvent(input$simhist,{
     mnum <- 0
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
         mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
-#    print("assigned mnum")
+    print("assigned mnum")
     ps <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size
-#    print(paste("got popsize",paste(ps,collapse=",")))
+    print(paste("got popsize",paste(ps,collapse=",")))
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
                           input$simhist)))
     {
-#        print("hist modified to new value")
-#        print(input$simhist)
-#        hevck <- fsc.histEvCheck(input$simhist,
-#                            ps,
+        print("hist modified to new value")
+        print(input$simhist)
+        hevck <- fsc.histEvCheck(input$simhist,
+                            ps,
 #                            0,
-#                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
-#                            mnum)
-#        if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
-#        if (hevck)
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+                            num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
+        if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
+        if (hevck)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+        else
+            output$simhistEditTbl <- renderUI({ #redraw matrix with stored values, the input$simhist values are not legal
+                matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
+                            as.data.frame(hst()))
+            })
+
     }
 })
 
@@ -167,8 +150,16 @@ observeEvent(input$addHistEvent,{
 observeEvent(input$removeLastEvent,{
     print("in observEvent removeLastEvent")
     hist <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
-    if (all.coalesce(hist[-dim(hist)[1],]))
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
+    if (fsc.histEvCheck(hist[-1,],
+                   rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size,
+                   rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+                   num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)))
+        if ((dim(hist)[2]-1)>=max(c(hist[,2:3]))) #if the dimensions of the matrix are large enough for every pop to coalesce
+        {
+            print("changing hsit.ev as a consequence of removing a row")
+            print(hist)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
+        }
 })
 
 
