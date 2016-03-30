@@ -24,14 +24,14 @@ Depends:
     shinyFiles,
     igraph,
     strataG (>= 1.0),
-    rmetasim (>= 3.0.0)
+    rmetasim (>= 3.0.0),
+    markdown
 Imports:
     adegenet,
     ape,
     ggplot2,
     hierfstat,
     pegas,
-    markdown,
     methods,
     reshape2,
     stringi,
