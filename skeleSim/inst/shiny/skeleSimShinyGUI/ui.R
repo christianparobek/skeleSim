@@ -175,9 +175,10 @@ shinyUI(
                         tabsetPanel(
                             tabPanel("Simcoal History",
                            #          includeMarkdown("helpfiles/help-history.md"),
-                                     plotOutput("simhistPlot",
-                                                click = "histplotClick",
-                                                dblclick = "histplotDblClick"),
+#                                     plotOutput("simhistPlot",
+#                                                click = "histplotClick",
+#                                                dblclick = "histplotDblClick"),
+                                     plotOutput("simhistPlot"),
                                      uiOutput("simhistEditTbl")
                                     ,
                                      actionButton("addHistEvent","Add a new historical event"),

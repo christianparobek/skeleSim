@@ -135,11 +135,26 @@ observeEvent(input$histplotDblClick,
 
 
 observeEvent(input$simhist,{
-    print("simhist modified")
+    print("input$simhist modified")
+    mnum <- 0
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
+        mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
+#    print("assigned mnum")
+    ps <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size
+#    print(paste("got popsize",paste(ps,collapse=",")))
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
                           input$simhist)))
     {
-      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+#        print("hist modified to new value")
+#        print(input$simhist)
+#        hevck <- fsc.histEvCheck(input$simhist,
+#                            ps,
+#                            0,
+#                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+#                            mnum)
+#        if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
+#        if (hevck)
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
     }
 })
 

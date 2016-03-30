@@ -63,7 +63,7 @@ simcoal.history.plot <- function(history
                                     y <-  p.hist[e,1]
                                     points(x=c(x.source,x.source),
                                            y=c(0,y), type="l")
-                                    arrows(x.source,y,x.sink,y)
+                                    arrows(x.source,y,x.sink,y,length=0)
                                 }
                     }
         ###now deal with the sink-only situations (should be one)
