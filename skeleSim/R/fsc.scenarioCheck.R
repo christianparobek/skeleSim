@@ -31,6 +31,7 @@ fsc.scenarioCheck <- function(params) {
 #'
 fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
+  growth.rate <- rep(growth.rate, length.out = length(pop.size))
   hist.ev <- hist.ev[order(hist.ev[, 1], hist.ev[, 2], hist.ev[, 3]), , drop = FALSE]
   for(i in 1:nrow(hist.ev)) {
     gen <- hist.ev[i, 1]
