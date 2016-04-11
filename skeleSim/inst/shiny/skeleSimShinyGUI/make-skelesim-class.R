@@ -35,11 +35,13 @@ observeEvent(input$coalescent,{
 })
 
 observeEvent(input$reps, {
-    rValues$ssClass@num.sim.reps <- as.numeric(input$reps)
+    rValues$ssClass@num.sim.reps <- as.numeric(floor(input$reps))
+    updateNumericInput(session,"reps",value = rValues$ssClass@num.sim.reps)
 })
 
 observeEvent(input$NumPermReps,{
-    rValues$ssClass@num.perm.reps <- input$NumPermReps
+    rValues$ssClass@num.perm.reps <- floor(input$NumPermReps)
+    updateNumericInput(session,"NumPermReps",value = rValues$ssClass@num.perm.reps)
 })
 
 observeEvent(input$analysesReq, {
@@ -67,7 +69,11 @@ observeEvent(input$wd, {
 
 observeEvent(input$scenarioNumber,
              {
-                 rValues$scenarioNumber <- input$scenarioNumber
+                 if (req(input$scenarioNumber)>0)
+                 {
+                     rValues$scenarioNumber <- floor(input$scenarioNumber)
+                 }
+                 updateNumericInput(session,"scenarioNumber",value=rValues$scenarioNumber)
              })
 
 #observeEvent(input$migrationNumber,
@@ -78,24 +84,27 @@ observeEvent(input$scenarioNumber,
 
 observeEvent(input$numpopsTxt,
              {
-                 numpop <- suppressWarnings(as.numeric(input$numpopsTxt))
+                 numpop <- suppressWarnings(floor(as.numeric(input$numpopsTxt)))
+                 updateTextInput(session,"numpopsTxt",value=numpop)
                  if (!is.na(numpop))
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
                  mig.mat()
              })
 observeEvent(input$numloci,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- input$numloci
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(input$numloci)
+                 updateNumericInput(session,"numloci",
+                                    value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
                  #### rmetasim addition
                  if (rValues$ssClass@simulator.type=="f")
                  {
                      print("resetting the number of alleles per locus vector")
                      navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
-                     print(navec)
+#                     print(navec)
                      #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
-                     if (length(navec)!=input$numloci)
-                         navec <- rep(1,input$numloci)
-                     print(navec)
+                     if (length(navec)!=floor(input$numloci))
+                         navec <- rep(1,floor(input$numloci))
+#                     print(navec)
                      navec[is.na(navec)] <- 1
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
                  }
@@ -108,7 +117,8 @@ observeEvent(input$loctype,
 
 observeEvent(input$seqlen,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length <- input$seqlen
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length <- floor(input$seqlen)
+                 updateNumericInput(session,"seqlen",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length)
              })
 
 observeEvent(input$migModel,
@@ -125,13 +135,15 @@ observeEvent(input$migRate,
 
 observeEvent(input$rows,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows <- input$rows
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows <- floor(input$rows)
+                 updateNumericInput(session,"rows",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
                  mig.mat()
              })
 
 observeEvent(input$cols,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols <- input$cols
+                 updateNumericInput(session,"cols",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
                  mig.mat()
              })
 observeEvent(input$distfun,
@@ -144,6 +156,7 @@ observeEvent(input$distfun,
 observeEvent(input$specScenNumber,
              {
                  rValues$scenarioNumber <- input$specScenNumber
+                 updateNumericInput(session,"specScenNumber",value=rValues$scenarioNumber)
              })
 
 observeEvent(input$fscexec,
@@ -155,13 +168,14 @@ observeEvent(input$fscexec,
 observeEvent(input$stvec,
              {
                  if (rValues$ssClass@simulator.type=="c")
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(input$stvec)
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(floor(input$stvec))
              })
 
 observeEvent(input$grvec,
              {
                  if (rValues$ssClass@simulator.type=="c")
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- c(input$grvec)
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <-
+                     c(input$grvec)
              })
 
 #######rmetasim parameters
@@ -169,12 +183,15 @@ observeEvent(input$stages,
 {
     if (rValues$ssClass@simulator.type=="f")
     {
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- input$stages
-        if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)) || (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)[1]!=input$stages))
+        
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- floor(input$stages)
+        updateNumericInput(session,"stages",
+                           value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
+        if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)) || (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)[1]!=floor(input$stages)))
         {
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr <- matrix(0,input$stages,input$stages)
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr <- matrix(0,input$stages,input$stages)
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@male.matr <- matrix(0,input$stages,input$stages)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr <- matrix(0,floor(input$stages),floor(input$stages))
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr <- matrix(0,floor(input$stages),floor(input$stages))
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@male.matr <- matrix(0,floor(input$stages),floor(input$stages))
         }
 
     }
@@ -276,7 +293,8 @@ observeEvent(rValues$scenarioNumber,
              {
                  if (!scenario.exists())
                      {
-                         rValues$ssClass@scenarios <- c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
+                         rValues$ssClass@scenarios <-
+                             c(rValues$ssClass@scenarios,rValues$ssClass@scenarios[1])
                      }
 
 ################ migration
@@ -329,7 +347,7 @@ observeEvent(input$mutvec,{
 #this is a change in the migration matrix number
 #changing will require 1) making sure the new one exists or 2) create it, and 3) set variables
 observeEvent(input$mignum,{
-    mn <- input$mignum
+    mn <- floor(input$mignum)
     if (mn!=rValues$migrationNumber)
     {
         migs <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration
@@ -339,6 +357,7 @@ observeEvent(input$mignum,{
         }
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration <- migs
         rValues$migrationNumber <- mn
+        updateNumericInput(session,"mignum",value=mn)
         if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
         {
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- "user"

@@ -1,7 +1,7 @@
 
 shinyUI(
   navbarPage(
-    "skelesim",
+    "skeleSim",
     tabPanel(
         "Actions",
         h4("File operations" ),
@@ -187,10 +187,11 @@ shinyUI(
                            ,
                             tabPanel("Growth rates",
                                      uiOutput("growthrate")
-                                     ),
-                            tabPanel("Sample times",
-                                     uiOutput("samptime")
                                      )
+#                           ,
+#                            tabPanel("Sample times",
+#                                     uiOutput("samptime")
+#                                     )
                         )
                     ),
                     conditionalPanel(
