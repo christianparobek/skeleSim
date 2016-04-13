@@ -12,11 +12,11 @@ shinyUI(
                         filetype=list(ssClass=c("rdata","Rdata","rda"))),
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
-        shinyDirButton("workFolder","Select Simulation Root Directory","Set Simulation Root Directory",FALSE),
+        shinyDirButton("workFolder","Set Simulation Root Directory (required before proceeding below)","Set Simulation Root Directory",FALSE),
+        br(),br(),
+    actionButton("btnSave","Save example inputs for each scenario"),
         br(),
-#        h4("Debug the parameter object created during this session"),
-#        checkboxInput("debug","Debug parameter object",TRUE),
-        actionButton("btnRun","Run simulation"),
+    actionButton("btnRun","Run simulation"),
         br(),
         h4("After running a simulation..."),
         actionButton("quitbtn","Quit App")
@@ -188,10 +188,10 @@ shinyUI(
                             tabPanel("Growth rates",
                                      uiOutput("growthrate")
                                      )
-#                           ,
-#                            tabPanel("Sample times",
-#                                     uiOutput("samptime")
-#                                     )
+                           ,
+                            tabPanel("Sample times",
+                                     uiOutput("samptime")
+                                     )
                         )
                     ),
                     conditionalPanel(
