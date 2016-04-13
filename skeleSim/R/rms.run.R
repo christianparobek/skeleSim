@@ -80,7 +80,7 @@ rms.write <- function(params)
     numsc <- length(params@scenarios)
     for (i in 1:numsc)
         {
-            fn <- paste0(gsub(" ","",params@title),"-",sc,"-landscape-fun.R")
+            fn <- paste0(gsub(" ","",params@title),"-",i,"-landscape-fun.R")
             params@current.scenario <- i
             sc <- currentScenario(params)
             outfile <- rms.init.landscape.func(

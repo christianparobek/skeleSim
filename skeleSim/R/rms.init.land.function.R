@@ -71,17 +71,16 @@ listvecstrfun <- function(l)
               paste("rd=",0,","),
               paste("mp=",1,","),
               paste("dd=",0,","),
-              paste("dd=",0,","),
-              paste("surv.matr =",matstrfun(surv.matr)),
-              paste("repr.matr =",matstrfun(repr.matr)),
-              paste("repr.matr =",matstrfun(male.matr)),
-              paste("mig.rates =",matstrfun(mig.rates)),
-              paste("carrying =",vecstrfun(carrying)),
-              paste("mut.rate =",vecstrfun(mut.rate)),
-              paste("num.alleles =",vecstrfun(num.alleles)),
+              paste("surv.matr =",matstrfun(surv.matr),","),
+              paste("repr.matr =",matstrfun(repr.matr),","),
+              paste("repr.matr =",matstrfun(male.matr),","),
+              paste("mig.rates =",matstrfun(mig.rates),","),
+              paste("carrying =",vecstrfun(carrying),","),
+              paste("mut.rate =",vecstrfun(mut.rate),","),
+              paste("num.alleles =",vecstrfun(num.alleles),","),
               paste("allele.freqs =",listvecstrfun(allele.freqs))
               )
-
+    fstr <- c(fstr,")\n{")
               
 fstr <- c(fstr,"skeletonland<-landscape.new.empty()")
 #define selfing rate
@@ -129,7 +128,8 @@ if (loc.type == "sequence") rms.locus.type = 2
             fstr <- c(fstr,paste0("skeletonland<-landscape.new.locus(skeletonland, type=1, ploidy=2, mutationrate=mut.rate[",l,"], transmission=0, numalleles=num.alleles[",l,"], frequencies=allele.freqs[[",l,"]])"))
         }
 #assumes population initial sizes all defined nicely by user
-fstr <- c(fstr,"skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes")
+    fstr <- c(fstr,"skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)")
+    fstr <- c(fstr,"}")
 paste(fstr,collapse="\n")
 }
 
