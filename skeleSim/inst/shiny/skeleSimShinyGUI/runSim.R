@@ -1,8 +1,18 @@
+output$runButton <- renderUI({
+    if (!is.null(req(supportValues$simroot)))
+    actionButton("btnRun","Run simulation")
+})
+output$saveButton <- renderUI({
+    if (!is.null(req(supportValues$simroot)))
+    actionButton("btnSave","Save example inputs for each scenario")
+})
+
 observeEvent(input$btnRun, {
-    print("in run")
+    req(supportValues$simroot)
+#    print("in run")
     if(!is.null(supportValues$objLabel)) {
-        print("past first null test")
-        print("supportValues$objLabel")
+#        print("past first null test")
+#        print("supportValues$objLabel")
         ## create 'fnameLabel' and parameter filename (paramsFname)
         supportValues$fnameLabel <- paste(supportValues$objLabel, format(Sys.time(), "%Y%m%d.%H%M"),round(runif(1,min=0,max=10000)), sep = ".")
         paramsFname <- paste(supportValues$fnameLabel, "params.rdata", sep = ".")

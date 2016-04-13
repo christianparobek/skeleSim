@@ -168,7 +168,7 @@ observeEvent(input$fscexec,
 observeEvent(input$stvec,
              {
                  if (rValues$ssClass@simulator.type=="c")
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(floor(input$stvec))
+                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- c(as.integer(floor(input$stvec)))
              })
 
 observeEvent(input$grvec,

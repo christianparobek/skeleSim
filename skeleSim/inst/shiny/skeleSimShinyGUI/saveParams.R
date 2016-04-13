@@ -24,3 +24,23 @@ output$txtObjLabel <- renderText({
 })
 
 
+
+
+        
+observeEvent(input$btnSave,{
+    req(rValues$ssClass)
+    req(supportValues$simroot)
+    d <- getwd()
+    setwd(supportValues$simroot)
+    if (rValues$ssClass@simulator=="fsc")
+        {
+            print("running fsc.write")
+            fsc.write(rValues$ssClass)
+        }
+
+    if (rValues$ssClass@simulator=="rms")
+    {
+        rms.write(rValues$ssClass)
+    }
+    setwd(d)
+})

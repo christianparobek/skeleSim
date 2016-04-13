@@ -63,3 +63,45 @@ print(str(skeleland_samp))
   print("returned from convert; returning params obj")
   return(params)
 }
+
+
+#' @title Write metasim file
+#' @description Write metasim landscape script to disk (one per scenario)
+#'
+#' @param params a \linkS4class{skeleSim.params} object.
+#'
+#' @return Nothing
+#'
+#' @importFrom rmetasim is.landscape landscape.simulate landscape.sample landscape.make.genind
+#' @export
+#'
+rms.write <- function(params)
+{
+    numsc <- length(params@scenarios)
+    for (i in 1:numsc)
+        {
+            fn <- paste0(gsub(" ","",params@title),"-",i,"-landscape-fun.R")
+            params@current.scenario <- i
+            sc <- currentScenario(params)
+            outfile <- rms.init.landscape.func(
+                num.pops = sc@num.pops,
+                carrying = sc@pop.size,
+                mig.rates = sc@migration[[1]],
+                num.loc = sc@num.loci,
+                loc.type = sc@locus.type,
+                mut.rate = sc@mut.rate,
+                seq.length = sc@sequence.length,
+                num.stgs = sc@simulator.params@num.stgs,
+                selfing = sc@simulator.params@selfing,
+                surv.matr = sc@simulator.params@surv.matr,
+                repr.matr = sc@simulator.params@repr.matr,
+                male.matr = sc@simulator.params@male.matr,
+                                        #     init.pop.sizes = sc@simulator.params@init.pop.sizes,
+                init.pop.sizes = round(sum(sc@pop.size)*rep(1/(sc@num.pops*sc@simulator.params@num.stgs),
+                    sc@num.pops*sc@simulator.params@num.stgs)),
+                num.alleles = sc@simulator.params@num.alleles,
+                allele.freqs = sc@simulator.params@allele.freqs
+                )
+            cat(file=fn,outfile)
+        }
+}
