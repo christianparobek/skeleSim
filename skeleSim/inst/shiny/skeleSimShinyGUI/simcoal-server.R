@@ -116,9 +116,9 @@ observeEvent(input$simhist,{
     mnum <- 0
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
         mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
-    print("assigned mnum")
+    if (debug()) print("assigned mnum")
     ps <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size
-    print(paste("got popsize",paste(ps,collapse=",")))
+    if (debug()) print(paste("got popsize",paste(ps,collapse=",")))
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
                           input$simhist)))
     {

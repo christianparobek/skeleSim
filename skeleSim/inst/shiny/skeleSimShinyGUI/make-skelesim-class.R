@@ -162,6 +162,7 @@ observeEvent(input$specScenNumber,
 observeEvent(input$fscexec,
              {
                  if (rValues$ssClass@simulator.type=="c")
+                     print(input$fscexec)
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- c(input$fscexec)[1]
              })
 
