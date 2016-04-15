@@ -225,7 +225,7 @@ output$simexec <- renderUI({
                         sim.exec <- sim.exec[nchar(sim.exec)>2]
                         print("rendering UI for simexec")
                         print(sim.exec)
-                        ui <- selectInput("fscexec","Select fastsimcoal executable",choices=sim.exec)
+                        ui <- selectInput("fscexec","Select fastsimcoal executable",selected=sim.exec[1],choices=sim.exec)
                     }
     ui
 })
