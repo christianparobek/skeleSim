@@ -222,7 +222,7 @@ output$simexec <- renderUI({
                         sim.exec <- sim.exec[!is.null(sim.exec)]
                         sim.exec <- unique(sim.exec)
                         sim.exec <- basename(Sys.which(sim.exec))
-                        sim.exec <- sim.exec[nchar(sim.exec)>0]
+                        sim.exec <- sim.exec[nchar(sim.exec)>2]
                         print("rendering UI for simexec")
                         print(sim.exec)
                         ui <- selectInput("fscexec","Select fastsimcoal executable",choices=sim.exec)
