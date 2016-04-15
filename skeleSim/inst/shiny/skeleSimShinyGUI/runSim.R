@@ -17,7 +17,7 @@ observeEvent(input$btnRun, {
         supportValues$fnameLabel <- paste(supportValues$objLabel, format(Sys.time(), "%Y%m%d.%H%M"),round(runif(1,min=0,max=10000)), sep = ".")
         paramsFname <- paste(supportValues$fnameLabel, "params.rdata", sep = ".")
         paramsFname <- paste0(ifelse(is.null(supportValues$simroot),".",supportValues$simroot),"/",paramsFname)
-        print(paramsFname)
+        if (debug()) print(paramsFname)
         ## create parameter object based on user-defined 'objLabel' and save to file
         assign("ssClass", rValues$ssClass)
         save(list = "ssClass" , file = paramsFname) #this needs updating to be resiliant
@@ -82,8 +82,8 @@ observeEvent(input$btnRun, {
             write(line, file = scriptFname, append = TRUE)
             
             cond <- TRUE
-            print("about to run new R session")
-            print(ifelse(supportValues$OS=="unix","Unix-based system","Windows-based system"))
+            if (debug()) print("about to run new R session")
+            if (debug()) print(ifelse(supportValues$OS=="unix","Unix-based system","Windows-based system"))
             if (supportValues$OS=="unix") #
                 {
                     cmd <- paste("nohup R CMD BATCH --no-restore", scriptFname)
@@ -93,7 +93,7 @@ observeEvent(input$btnRun, {
                     cmd <- paste("start R CMD BATCH --no-restore", scriptFname)
                     shell(cmd,wait=F)
                 }
-            print("about to run system")
+            if (debug()) print("about to run system")
 
 ####            output$txtRunStatus <- renderText({
 #                if(cond) {

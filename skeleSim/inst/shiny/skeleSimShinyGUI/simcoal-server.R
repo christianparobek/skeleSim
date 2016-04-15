@@ -52,9 +52,9 @@ hst <- reactive({
 })
 
 output$simhistPlot <- renderPlot({
-    print("about to plot history")
+    if (debug()) print("about to plot history")
     h <- hst()
-    print(h)
+    if (debug()) print(h)
     simcoal.history.plot(h)
 })
 
@@ -112,7 +112,7 @@ observeEvent(input$histplotDblClick,
 
 
 observeEvent(input$simhist,{
-    print("input$simhist modified")
+    if (debug()) print("input$simhist modified")
     mnum <- 0
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
         mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
@@ -122,8 +122,8 @@ observeEvent(input$simhist,{
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
                           input$simhist)))
     {
-        print("hist modified to new value")
-        print(input$simhist)
+        if (debug()) print("hist modified to new value")
+        if (debug()) print(input$simhist)
         hevck <- fsc.histEvCheck(input$simhist,
                             ps,
 #                            0,
@@ -235,7 +235,7 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
         if (rValues$ssClass@simulator=="fsc")
             {
                 nl <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci
-                print (paste("numloci",nl))
+                if (debug()) print (paste("numloci",nl))
                 mat <- matrix("",nrow=nl,ncol=5)
                 for (l in 1:nl)
                     {

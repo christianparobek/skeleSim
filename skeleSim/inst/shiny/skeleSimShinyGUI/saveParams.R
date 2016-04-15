@@ -4,11 +4,11 @@ shinyFileSave(input, 'ssClassSave', filetypes=c("rdata","RData","RDATA","rData",
 
 observeEvent(input$ssClassSave,
              {
-                 print("parsing")
+                 if (debug()) print("parsing")
                  path <- as.character(parseSavePath(VolumeRoots,input$ssClassSave)$datapath)
-                 print(path)
-                 print(normalizePath(path))
-                 print("done parsing")
+                 if (debug()) print(path)
+                 if (debug()) print(normalizePath(path))
+                 if (debug()) print("done parsing")
                  assign("ssClass",rValues$ssClass)
                  save(file=normalizePath(path),list="ssClass")
              })
@@ -34,7 +34,7 @@ observeEvent(input$btnSave,{
     setwd(supportValues$simroot)
     if (rValues$ssClass@simulator=="fsc")
         {
-            print("running fsc.write")
+            if (debug()) print("running fsc.write")
             fsc.write(rValues$ssClass)
         }
 

@@ -36,3 +36,6 @@ pointValues <- reactiveValues(click=NULL,
                               dblclick=NULL,
                               hover=NULL,
                               brush=NULL)
+
+debug <- reactive({FALSE}) #set to true to create a bunch of messages to the console
+

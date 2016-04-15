@@ -69,14 +69,14 @@ anums <- reactive({  #allele numbers pulled from reactive value.  this allows ch
 
 observeEvent(anums(),
 {
-    print("running anums()")
+    if (debug()) print("running anums()")
     if (is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))
     {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
     } else {
         if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)!=length(anums()))
         {
-            print("setting allele freqs")
+            if (debug()) print("setting allele freqs")
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
         } else { #if there is a legitimate list and only changing the number of alleles for a locus be more smart
             aflst <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs #just to make easier to work with

@@ -98,7 +98,7 @@ observeEvent(input$numloci,
                  #### rmetasim addition
                  if (rValues$ssClass@simulator.type=="f")
                  {
-                     print("resetting the number of alleles per locus vector")
+                     if (debug()) print("resetting the number of alleles per locus vector")
                      navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
 #                     print(navec)
                      #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
@@ -378,8 +378,8 @@ output$numMigMats <- renderText({
 observeEvent(hst(),{
     if (req(rValues$ssClass@simulator.type)=="c")
     {
-        print("about to assign hist.ev.  Current value:")
-        print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
+        if (debug()) print("about to assign hist.ev.  Current value:")
+        if (debug()) print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev)
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- as.matrix(hst())
     }
 })
