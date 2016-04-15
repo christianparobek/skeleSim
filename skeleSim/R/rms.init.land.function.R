@@ -36,7 +36,7 @@ matstrfun <- function(mat)
     if (!is.null(mat))
         {
             ms <- "matrix(c("
-            ms <- c(ms,paste(mat,collapse=", "))
+            ms <- c(ms,paste(c(mat),collapse=", "))
             ms <- c(ms,paste0("), nrow=",dim(mat)[1],", ncol=",dim(mat)[2],")"))
             paste(ms,collapse="")
         } else {NULL}
@@ -58,27 +58,35 @@ listvecstrfun <- function(l)
                 paste0("list(",paste0(sapply(l,vecstrfun),collapse=", "),")")
             } else {NULL}
     }
+listmatstrfun <- function(l)
+    {
+        if (!is.null(l))
+            {
+                paste0("list(",paste0(sapply(l,matstrfun),collapse=", "),")")
+            } else {NULL}
+    }
 
     fstr <- c("create.land <- function(",
-              paste("num.pops=",num.pops,","),
-              paste("num.stgs=",num.stgs,","),
-              paste("cg=",0,","),
-              paste("ce=",0,","),
-              paste("totgen=",100000,","),
-              paste("maxland=",100000,","),
-              paste("selfing=",selfing,","),
-              paste("re=",0,","),
-              paste("rd=",0,","),
-              paste("mp=",1,","),
-              paste("dd=",0,","),
-              paste("surv.matr =",matstrfun(surv.matr),","),
-              paste("repr.matr =",matstrfun(repr.matr),","),
-              paste("repr.matr =",matstrfun(male.matr),","),
-              paste("mig.rates =",matstrfun(mig.rates),","),
-              paste("carrying =",vecstrfun(carrying),","),
-              paste("mut.rate =",vecstrfun(mut.rate),","),
-              paste("num.alleles =",vecstrfun(num.alleles),","),
-              paste("allele.freqs =",listvecstrfun(allele.freqs))
+              paste("\tnum.pops=",num.pops,","),
+              paste("\tnum.stgs=",num.stgs,","),
+              paste("\tcg=",0,","),
+              paste("\tce=",0,","),
+              paste("\ttotgen=",100000,","),
+              paste("\tmaxland=",100000,","),
+              paste("\tselfing=",selfing,","),
+              paste("\tre=",0,","),
+              paste("\trd=",0,","),
+              paste("\tmp=",1,","),
+              paste("\tdd=",0,","),
+              paste("\tsurv.matr =",matstrfun(surv.matr),","),
+              paste("\trepr.matr =",matstrfun(repr.matr),","),
+              paste("\tmale.matr =",matstrfun(male.matr),","), 
+              paste("\tmig.rates =",matstrfun(mig.rates),","),
+              paste("\tcarrying =",vecstrfun(carrying),","),
+              paste("\tmut.rate =",vecstrfun(mut.rate),","),
+              paste("\tnum.alleles =",vecstrfun(num.alleles),","),
+              paste("\tinit.pop.sizes =",vecstrfun(init.pop.sizes),","),
+              paste("\tallele.freqs =",listvecstrfun(allele.freqs))
               )
     fstr <- c(fstr,")\n{")
               
@@ -119,7 +127,7 @@ if (loc.type == "sequence") rms.locus.type = 2
         if (rms.locus.type==2)
         {
             if (l==1) #only one sequence locus possible and it creates a maternally inherited haploid locus
-                fstr <- c(fstr,paste0("skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=1, mutationrate=mut.rate[",l,"]",
+                fstr <- c(fstr,paste0("skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=1, mutationrate=mut.rate[",l,"],",
                                       "transmission=1, numalleles=num.alleles[",l,"], frequencies=,allele.freqs[[",l,"]])")) #temp remove allele size
             
         }

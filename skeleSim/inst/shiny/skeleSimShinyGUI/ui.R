@@ -21,7 +21,7 @@ shinyUI(
         h4("After running a simulation..."),
         actionButton("quitbtn","Quit App")
     ),
-    tabPanel("Intro questions",
+    tabPanel("Help Choosing Simulator",
              sidebarLayout(
                  sidebarPanel(
 ###                    textInput("simname", "Simulation Name:", "Sim Parameters #1"),
