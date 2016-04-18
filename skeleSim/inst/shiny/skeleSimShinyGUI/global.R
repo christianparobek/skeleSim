@@ -58,24 +58,26 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios[[1]]@num.loci <- 1
     ssClass@scenarios[[1]]@sequence.length <- 100
     ssClass@scenarios[[1]]@mut.rate <- 10e-5
-    ssClass@scenarios[[1]]@simulator.params <-
-        fastsimcoalInit() #this will be changed if necessary reactively
     ssClass@current.scenario <- 1
     ssClass@current.replicate <- 1
+    ssClass@scenarios[[1]]@simulator.params <-
+        fastsimcoalInit(1) #1 is the number of demes. this will be changed if necessary reactively
 
     ssClass
 }
 
-fastsimcoalInit <- function(){
+fastsimcoalInit <- function(np){ #np num populations
     parms <- new("fastsimcoal.params")
+    parms@growth.rate <- rep(0,np)
+    parms@sample.times <- rep(0L,np)
     parms
 }
 
-rmetasimInit <- function(){
+rmetasimInit <- function(np){ #np num pops
     parms <- new("rmetasim.params")
     parms@num.stgs <- 2
     parms@selfing <- 0
-    parms@init.pop.sizes <- c(100,100,100,100)
+    parms@init.pop.sizes <- rep(c(100,100),np)
     parms@surv.matr <- matrix(c(0.2,0,
                                0.4,0.1),nrow=2,byrow=T)
     parms@repr.matr <- matrix(c( 0 ,4,

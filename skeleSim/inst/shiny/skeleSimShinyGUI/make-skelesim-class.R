@@ -27,7 +27,7 @@ observeEvent(input$coalescent,{
                     fastsimcoalInit()
             } else {
                 rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    rmetasimInit()
+                    rmetasimInit(rValues$ssClass@scenarios[[s]]@num.pops)
                 rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- rep(1,rValues$ssClass@scenarios[[s]]@num.loci)
                 rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- vector("list",rValues$ssClass@scenarios[[s]]@num.loci)
                 rValues$ssClass@scenarios[[s]]@simulator.params@num.gen <- 50
@@ -88,6 +88,14 @@ observeEvent(input$numpopsTxt,
                  updateTextInput(session,"numpopsTxt",value=numpop)
                  if (!is.na(numpop))
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
+                 if (req(rValues$ssClass@simulator.type)=="c")
+                     {
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate <- rep(0,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
+                             
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- as.integer(floor(rep(0,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)))
+                             
+                     }
+                     
                  mig.mat()
              })
 observeEvent(input$numloci,
