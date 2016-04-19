@@ -63,6 +63,8 @@ running the simualtions}
 
 \item{\code{sim.scen.checks}}{a matrix containing results of 'checks' on scenario elements (T/F)}
 
+\item{\code{timing}}{list containing elapsed time for a simulation}
+
 \item{\code{other.checks}}{a vector containing results of 'checks' on other param object elements}
 
 \item{\code{scenario.reps}}{a two column matrix describing which iteration matches
