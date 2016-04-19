@@ -17,9 +17,6 @@ scenario.exists <- reactive({
 ###############################################
 ### functions that operate only in the server
 ##############################################
-### this one is a wrapper for the rmetasim function
-### landscape.mig.matrix (remapped to scenario.mig.matrix)
-### it has a lot of special-case handling built in.
 ###############################################
 mig.mat <- function(){
    if (debug()) print("in mig.mat")

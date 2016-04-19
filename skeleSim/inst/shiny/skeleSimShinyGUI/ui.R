@@ -82,7 +82,7 @@ shinyUI(
                  sidebarPanel(
                      numericInput("scenarioNumber", "Which scenario",value=1,min=1),
                      textInput("numpopsTxt", "Number of Populations",
-                               value = "1"),
+                               value = "2"),
                      br(),
                      selectInput("migModel", "Migration Model",
                                  choices=c("island","stepping.stone.linear",

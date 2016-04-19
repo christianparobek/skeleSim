@@ -24,7 +24,7 @@ observeEvent(input$coalescent,{
         if (rValues$ssClass@simulator.type=="c")
             {
                 rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    fastsimcoalInit()
+                    fastsimcoalInit(rValues$ssClass@scenarios[[s]]@num.pops)
             } else {
                 rValues$ssClass@scenarios[[s]]@simulator.params <-
                     rmetasimInit(rValues$ssClass@scenarios[[s]]@num.pops)
@@ -95,9 +95,9 @@ observeEvent(input$numpopsTxt,
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times <- as.integer(floor(rep(0,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)))
                              
                      }
-                     
-                 mig.mat()
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber +1]] <- mig.mat()
              })
+
 observeEvent(input$numloci,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(input$numloci)
@@ -267,7 +267,11 @@ observeEvent(rValues$ssClass,{
 ##scenarios #respect the scenarioNumber!
 
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
-        updateTextInput(session,"numpopsTxt",value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
+    {
+        updateTextInput(session,"numpopsTxt",
+                        value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber+1]] <- mig.mat()
+    }
 
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
         updateNumericInput(session,"numloci",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)

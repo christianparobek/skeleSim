@@ -49,10 +49,10 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios <- list(new("scenario.params"))
 
     #default values for ssClass@scenarios  (could be set in class definition)
-    ssClass@scenarios[[1]]@num.pops <- 1
-    ssClass@scenarios[[1]]@pop.size <- 100
-    ssClass@scenarios[[1]]@sample.size <- 10
-    ssClass@scenarios[[1]]@migration <- list(matrix(0,nrow=1,ncol=1))
+    ssClass@scenarios[[1]]@num.pops <- 2
+    ssClass@scenarios[[1]]@pop.size <- c(100,100)
+    ssClass@scenarios[[1]]@sample.size <- c(10,10)
+    ssClass@scenarios[[1]]@migration <- list(matrix(c(0, 0.1, 0.1, 0),nrow=2,ncol=2))
     ssClass@scenarios[[1]]@mig.helper <-
         list(migModel="island",migRate=1,rows=1,cols=1,distfun="dexp")
     ssClass@scenarios[[1]]@num.loci <- 1
@@ -61,7 +61,7 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@current.scenario <- 1
     ssClass@current.replicate <- 1
     ssClass@scenarios[[1]]@simulator.params <-
-        fastsimcoalInit(1) #1 is the number of demes. this will be changed if necessary reactively
+        fastsimcoalInit(2) #2 is the number of demes. this will be changed if necessary reactively
 
     ssClass
 }
@@ -69,7 +69,7 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
 fastsimcoalInit <- function(np){ #np num populations
     parms <- new("fastsimcoal.params")
     parms@growth.rate <- rep(0,np)
-    parms@sample.times <- rep(0L,np)
+    parms@sample.times <- rep(0L,np) #must be integer
     parms
 }
 
