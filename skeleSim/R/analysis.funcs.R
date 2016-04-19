@@ -46,12 +46,12 @@ analysisFunc <- function(params) {
     params <- loadResultsMatrix(params, mat, "Locus")
   }
 
-  if(params@analyses.requested["Pairwise"]) {
+  if(params@analyses.requested["Pairwise"] & currentScenario(params)@num.pops > 1) {
     cat("  Pairwise analysis...\n")
     mat <- pairwiseAnalysis(results.gtype, num.perm.reps)
 #    cat("Finished Pairwise\n")
     params <- loadResultsMatrix(params, mat, "Pairwise")
-    
+
   }
 
   options(opt)
@@ -325,7 +325,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
     model = "raw"
   )$result
 
-    
+
     pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
     pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
@@ -335,7 +335,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
     result$pair.label <- result$n.1 <- result$n.2 <- NULL
     cbind(result[, 1:2], Locus = l, result[, 3:ncol(result), drop = FALSE])
   }))
-    
+
   pws <- rbind(
     cbind(pws.all[, 1:2], Locus = NA, pws.all[, 3:ncol(pws.all), drop = FALSE]),
     pws
@@ -349,7 +349,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
   sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
              variable.name = "Locus", value.name = "shared.alleles")
   sA$Locus[sA$Locus == "mean"] <- NA
-    
+
   dA <- if(ploidy(g) == 1) {
     # nucleotide Divergence and mean.pct.between
     dA.locus <- lapply(nucleotideDivergence(g), function(x) x$between[, 1:4])
@@ -369,7 +369,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
     )
   } else NULL
 
-  
+
                                         # chord distance
     cd <- NULL
     cd <- if(ploidy(g) == 2) {
@@ -378,7 +378,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
 
               chord.dist <- calcChordDist(dat)
                                         # chord.dist by locus
-              
+
 
               chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
                   if (length(unique(dat[,l]))>1)
@@ -393,13 +393,13 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
                       }
                   cbind(result[, 1:2], Locus = l, result[, 3])
               }))
-              
+
               colnames(chord.dist.locus)[4] <- "chord.dist"
               chord.dist.locus
 
           } else NULL
 
-                                       
+
 
 
   # combine results into single matrix
