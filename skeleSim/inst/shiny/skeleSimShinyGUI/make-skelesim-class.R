@@ -163,8 +163,13 @@ observeEvent(input$distfun,
 ####simcoal parameters
 observeEvent(input$specScenNumber,
              {
-                 rValues$scenarioNumber <- input$specScenNumber
+                 if (!is.na(input$specScenNumber))
+                     if (input$specScenNumber>0)
+                     {
+                         rValues$scenarioNumber <- as.integer(floor(input$specScenNumber))
+                     }
                  updateNumericInput(session,"specScenNumber",value=rValues$scenarioNumber)
+
              })
 
 observeEvent(input$fscexec,
