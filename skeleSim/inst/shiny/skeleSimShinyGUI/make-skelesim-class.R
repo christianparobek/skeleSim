@@ -100,7 +100,11 @@ observeEvent(input$numpopsTxt,
 
 observeEvent(input$numloci,
              {
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(input$numloci)
+                 if (!is.na(input$numloci))
+                     if (input$numloci>0)
+                     {
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(input$numloci)
+                     }
                  updateNumericInput(session,"numloci",
                                     value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
                  #### rmetasim addition
