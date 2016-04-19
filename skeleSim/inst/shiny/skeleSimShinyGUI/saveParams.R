@@ -20,7 +20,7 @@ output$txtObjLabel <- renderText({
     make.names(rValues$ssClass@title)
   }
   if(is.null(supportValues$objLabel)) ret <- "<NONE>" else ret <- supportValues$objLabel
-  paste("Title of skelesim object running:",ret)
+  paste("Title of skelesim object currently in memory:",ret)
 })
 
 
