@@ -22,14 +22,18 @@ observeEvent(callModule(matrixIn,"malemat",label="From col to row male contribut
 
 ########## 
 output$lefkovitch <- renderTable({
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
+    mat <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr
+    mat <- as.data.frame(mat)
+    names(mat) <- paste0("From.",1:dim(mat)[2])
+    rownames(mat) <- paste0("To.",1:dim(mat)[1])
+    mat
 })
 
 output$leading <- renderText({
     ev <- eigen(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr +
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@repr.matr)$values
-    paste("lambda",round(ev[1],2))
+    paste("discrete-time growth rate (lambda) implied by matrix above:",round(ev[1],2))
 })
 
 
@@ -43,7 +47,7 @@ numal.react <- reactive({
         if (!is.null(req(nal)))
         {
             nal[is.na(nal)] <- 1
-            vf <- callModule(vectorIn,"numall",label="numalleles",
+            vf <- callModule(vectorIn,"numall",label="Num. Alleles per locus (each element of vector corresponds to a locus)",
                              vec=nal)()
         }
     }
@@ -65,14 +69,14 @@ anums <- reactive({  #allele numbers pulled from reactive value.  this allows ch
 
 observeEvent(anums(),
 {
-    print("running anums()")
+    if (debug()) print("running anums()")
     if (is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))
     {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
     } else {
         if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)!=length(anums()))
         {
-            print("setting allele freqs")
+            if (debug()) print("setting allele freqs")
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
         } else { #if there is a legitimate list and only changing the number of alleles for a locus be more smart
             aflst <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs #just to make easier to work with

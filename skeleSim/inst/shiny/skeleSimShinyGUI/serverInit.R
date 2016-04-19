@@ -5,11 +5,14 @@
     
 VolumeRoots = c(home="~",getVolumes()(),temp=tempdir(),wd="./")   #function from shinyFiles
 
+###
+### reactive values for skelesim class management 
+###
 rValues <- reactiveValues(ssClass=ssClassInit(),
                           scenarioNumber=1,
                           lstScenario=1,
-                          migrationNumber=1,
-                          lstMigration = 1,
+                          migrationNumber=0,
+                          lstMigration = 0,
                           localDemoNumber = 1,
                           lstLocalDemo = 1,
                           EpochNumber = 1,
@@ -25,3 +28,14 @@ supportValues <- reactiveValues(ssLoadEnv=new.env(),  #environment to load an rd
                                 OS = .Platform$OS.type, #used when setting up simulation runs
                                 simexec = c("fsc251","fsc252","fsc25221","fsc251.exe","fsc252.exe","fsc25221.exe")
                                 )
+
+###
+### reactive values for coordinates
+###
+pointValues <- reactiveValues(click=NULL,
+                              dblclick=NULL,
+                              hover=NULL,
+                              brush=NULL)
+
+debug <- reactive({FALSE}) #set to true to create a bunch of messages to the console
+

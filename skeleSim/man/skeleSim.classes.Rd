@@ -32,7 +32,7 @@ Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.}
 
 \item{\code{scenarios}}{a list of \code{scenario.params} objects.}
 
-\item{\code{num.reps}}{number of replicates to run.}
+\item{\code{num.sim.reps}}{number of replicates to run.}
 
 \item{\code{sim.func}}{a function that runs one replicate of the simulator.
 Must take and return only a \code{skeleSim.params} object.}
@@ -48,8 +48,6 @@ simulation replicate.}
 
 \item{\code{num.perm.reps}}{number of permutation replicates to run for population structure
 statistics.}
-
-\item{\code{num.cores}}{number of cores to use for multithreading.}
 
 \item{\code{rep.result}}{result from last call to \code{rep.analysis.func}.}
 

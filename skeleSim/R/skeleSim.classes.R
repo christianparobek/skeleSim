@@ -20,7 +20,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot simulator a three character code representing which simulator is being run.
 #'   Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.
 #' @slot scenarios a list of \code{scenario.params} objects.
-#' @slot num.reps number of replicates to run.
+#' @slot num.sim.reps number of replicates to run.
 #' @slot sim.func a function that runs one replicate of the simulator.
 #'   Must take and return only a \code{skeleSim.params} object.
 #' @slot current.scenario number of current scenario being run.
@@ -30,7 +30,6 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #'   simulation replicate.
 #' @slot num.perm.reps number of permutation replicates to run for population structure
 #'   statistics.
-#' @slot num.cores number of cores to use for multithreading.
 #' @slot rep.result result from last call to \code{rep.analysis.func}.
 #' @slot analysis.results a matrix containing result of all replicate analyses.
 #' @slot sim.summary.func a function to summarize \code{rep.analysis}.
@@ -39,6 +38,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot sim.check.func a function to check the parameters object prior to
 #'   running the simualtions
 #' @slot sim.scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
+#' @slot timing list containing elapsed time for a simulation
 #' @slot other.checks a vector containing results of 'checks' on other param object elements
 #' @slot scenario.reps a two column matrix describing which iteration matches
 #'   which scenario/replicate
@@ -53,25 +53,27 @@ skeleSim.params <- setClass(
     title = "charOrNULL", date = "posixOrNULL", quiet = "logOrNULL",
     question = "charOrNULL", simulator.type = "charOrNULL",
     simulator = "charOrNULL", wd = "charOrNULL", scenarios = "listOrNULL",
-    num.reps = "intOrNum",  sim.func = "funcOrNULL",
+    num.sim.reps = "intOrNum",  sim.func = "funcOrNULL",
     current.scenario = "intOrNum", current.replicate = "intOrNum",
     rep.sample = "ANY", rep.analysis.func = "funcOrNULL",
-    num.perm.reps = "intOrNum", num.cores = "intOrNum", rep.result = "intOrNum",
+    num.perm.reps = "intOrNum", rep.result = "intOrNum",
     analysis.results = "ANY", sim.summary.func = "funcOrNULL",
     summary.results = "listOrNULL", sim.check.func = "funcOrNULL",
     sim.scen.checks = "matrOrNULL", other.checks = "logOrNULL",
-    scenario.reps = "matrOrNULL", analyses.requested = "logOrNULL"
+    scenario.reps = "matrOrNULL", analyses.requested = "logOrNULL",
+    timing = "listOrNULL"
   ),
   prototype = list(
     title = NULL, date = NULL, quiet = NULL, question = NULL,
     simulator.type = NULL, simulator = NULL, wd = NULL, scenarios = NULL,
-    num.reps = NULL, sim.func = NULL, current.scenario = 1,
+    num.sim.reps = NULL, sim.func = NULL, current.scenario = 1,
     current.replicate = NULL, rep.sample = NULL, rep.analysis.func = NULL,
-    num.perm.reps = NULL, num.cores = NULL, rep.result = NULL,
+    num.perm.reps = NULL, rep.result = NULL,
     analysis.results = NULL, sim.summary.func = NULL, summary.results = NULL,
     sim.check.func = NULL, sim.scen.checks = NULL, other.checks = NULL,
     scenario.reps = NULL,
-    analyses.requested = c(Global = TRUE, Locus = TRUE, Pairwise = TRUE)
+    analyses.requested = c(Global = TRUE, Locus = TRUE, Pairwise = TRUE),
+    timing=NULL
   )
 )
 

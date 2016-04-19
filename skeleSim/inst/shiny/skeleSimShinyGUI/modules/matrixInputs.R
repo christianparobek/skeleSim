@@ -136,7 +136,7 @@ matrixInUI <- function(id)
 
 matrixIn <- function(input,output,session,mat,label="Matrix")
 {
-    print("in matrixIn")
+    #print("in matrixIn")
     output$mat <- renderUI({
         ns <- session$ns
         print(mat)
@@ -146,7 +146,7 @@ matrixIn <- function(input,output,session,mat,label="Matrix")
 
     return(
         reactive({
-            print("in reactive from matrixIn")
+#            print("in reactive from matrixIn")
             input$mat
         }))
     

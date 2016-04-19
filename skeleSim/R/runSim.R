@@ -32,7 +32,7 @@ runSim <- function(params, num.secs = NULL) {
   params@analyses.requested <- analyses.check(params@analyses.requested)
   tryCatch({
     num.sc <- length(params@scenarios)
-    num.reps <- params@num.reps
+    num.reps <- params@num.sim.reps
     params@scenario.reps <- as.matrix(expand.grid(scenario = 1:num.sc, replicate = 1:num.reps))
     quit <- FALSE
     # loop through replicates for scenarios
@@ -67,5 +67,6 @@ runSim <- function(params, num.secs = NULL) {
     results$params <- params
   }, finally = setwd(wd))
 
-  results
+    results[[2]]@timing <- results[[1]]  #make timing a sub portion of the ssClass object
+    results[[2]]
 }

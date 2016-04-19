@@ -11,7 +11,7 @@
                "Management Question",
                "Fast Completion",
                "Large Computer"),
-      Value = as.character(c(input$snps, 
+      Value = as.character(c(#input$snps, 
                              input$non.diploid,
                              input$marker.num,
                              input$pop.size,

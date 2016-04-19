@@ -2,8 +2,7 @@
 ####### sources most elements, though there are some
 ####### components at the bottom of this function
 #######
-shinyServer(function(input, output,session) {
-
+shinyServer(function(input, output, session) {
 #################### load some initializations that need to be within shinyServer
     source("serverInit.R", local = TRUE)
   ##################### parameter loading and saving
@@ -44,10 +43,14 @@ shinyServer(function(input, output,session) {
 
 
   ##################### parameter loading and saving
-    source("runSim.R", local = TRUE)
+    source("runSim.R", local = T)
 
 ######################## skeleSim class setup
     source("make-skelesim-class.R",local=T)
+  
+##################visualization
+    #source("visualize.R", local = T)
+
 
 ####navbar header
     output$simtext <- renderText({
@@ -65,7 +68,7 @@ shinyServer(function(input, output,session) {
     observeEvent(input$quitbtn,{stopApp()})
     
 #############debugging
-    output$ssClass <- renderTable({data.frame(item=(capture.output(str(rValues$ssClass))))})
+source("debug.R",local=T)
 
 ####### this needs to be replaced with Eric's loading code
 #

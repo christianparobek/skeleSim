@@ -23,8 +23,8 @@ source("modules/matrixInputs.R")
 
 ###these two globals record a record of the last
 ###click on the history graphs
-lstclick <- NULL    #last click
-lstdblclick <- NULL #last double click
+#lstclick <- NULL    #last click
+#lstdblclick <- NULL #last double click
 
 
 
@@ -49,33 +49,35 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
     ssClass@scenarios <- list(new("scenario.params"))
 
     #default values for ssClass@scenarios  (could be set in class definition)
-    ssClass@scenarios[[1]]@num.pops <- 1
-    ssClass@scenarios[[1]]@pop.size <- 100
-    ssClass@scenarios[[1]]@sample.size <- 10
-    ssClass@scenarios[[1]]@migration <- list(matrix(0,nrow=1,ncol=1))
+    ssClass@scenarios[[1]]@num.pops <- 2
+    ssClass@scenarios[[1]]@pop.size <- c(100,100)
+    ssClass@scenarios[[1]]@sample.size <- c(10,10)
+    ssClass@scenarios[[1]]@migration <- list(matrix(c(0, 0.1, 0.1, 0),nrow=2,ncol=2))
     ssClass@scenarios[[1]]@mig.helper <-
         list(migModel="island",migRate=1,rows=1,cols=1,distfun="dexp")
     ssClass@scenarios[[1]]@num.loci <- 1
     ssClass@scenarios[[1]]@sequence.length <- 100
     ssClass@scenarios[[1]]@mut.rate <- 10e-5
-    ssClass@scenarios[[1]]@simulator.params <-
-        fastsimcoalInit() #this will be changed if necessary reactively
     ssClass@current.scenario <- 1
     ssClass@current.replicate <- 1
+    ssClass@scenarios[[1]]@simulator.params <-
+        fastsimcoalInit(2) #2 is the number of demes. this will be changed if necessary reactively
 
     ssClass
 }
 
-fastsimcoalInit <- function(){
+fastsimcoalInit <- function(np){ #np num populations
     parms <- new("fastsimcoal.params")
+    parms@growth.rate <- rep(0,np)
+    parms@sample.times <- rep(0L,np) #must be integer
     parms
 }
 
-rmetasimInit <- function(){
+rmetasimInit <- function(np){ #np num pops
     parms <- new("rmetasim.params")
     parms@num.stgs <- 2
     parms@selfing <- 0
-    parms@init.pop.sizes <- c(100,100,100,100)
+    parms@init.pop.sizes <- rep(c(100,100),np)
     parms@surv.matr <- matrix(c(0.2,0,
                                0.4,0.1),nrow=2,byrow=T)
     parms@repr.matr <- matrix(c( 0 ,4,

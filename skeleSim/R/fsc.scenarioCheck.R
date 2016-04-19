@@ -15,8 +15,8 @@ fsc.scenarioCheck <- function(params) {
   results <- sapply(params@scenarios, function(sc) {
     fsc.histEvCheck(
       hist.ev = sc@simulator.params@hist.ev,
-      pop.size = sc@simulator.params@pop.info[, "pop.size"],
-      growth.rate = sc@simulator.params@pop.info[, "growth.rate"],
+      pop.size = sc@pop.size, #simulator.params@pop.info[, "pop.size"],
+      growth.rate = sc@simulator.params@growth.rate,
       num.mig.mats = length(sc@migration)
     )
   })
@@ -27,9 +27,11 @@ fsc.scenarioCheck <- function(params) {
 }
 
 #' @rdname fsc.scenarioCheck
+#' @export
 #'
 fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)
+  growth.rate <- rep(growth.rate, length.out = length(pop.size))
   hist.ev <- hist.ev[order(hist.ev[, 1], hist.ev[, 2], hist.ev[, 3]), , drop = FALSE]
   for(i in 1:nrow(hist.ev)) {
     gen <- hist.ev[i, 1]
@@ -48,6 +50,7 @@ fsc.histEvConverges <- function(hist.ev, pop.size, growth.rate, num.mig.mats = N
 
 
 #' @rdname fsc.scenarioCheck
+#' @export
 #'
 fsc.histEvCheck <- function(hist.ev, pop.size, growth.rate, num.mig.mats = NULL) {
   if(is.null(hist.ev)) return(TRUE)

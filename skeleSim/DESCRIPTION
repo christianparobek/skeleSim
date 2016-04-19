@@ -1,10 +1,15 @@
 Package: skeleSim
 Type: Package
-Title: What the package does (short line)
+Title: Genetic simulation engine
 Version: 0.9
-Date: 2015-11-23
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Authors@R: c(
+  EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
+  MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
+  SH = person("Sean", "Hoban", email = "shoban@alumni.nd.edu", role = c("aut")),
+  LL = person("Libby", "Liggins", email = "L.Liggins@massey.ac.nz", role = c("aut")),
+  CP = person("Christian", "Parobek", email = "christian.parobek@gmail.com", role = c("aut")),
+  AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut", "cre")))
+BugReports: https://github.com/christianparobek/skelesim/issues
 Description: SkeleSim is a tool to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
     statistics, and organizing data output, all within the R environment.
@@ -16,11 +21,11 @@ LazyData: true
 Depends:
     R (>= 3.2.0),
     shiny (>= 0.13.0),
-    shinyIncubator,
     shinyFiles,
     igraph,
     strataG (>= 1.0),
-    rmetasim (>= 3.0.0)
+    rmetasim (>= 3.0.0),
+    markdown
 Imports:
     adegenet,
     ape,
@@ -32,6 +37,7 @@ Imports:
     stringi,
     swfscMisc (>= 1.1)
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
