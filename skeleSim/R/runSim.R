@@ -67,5 +67,6 @@ runSim <- function(params, num.secs = NULL) {
     results$params <- params
   }, finally = setwd(wd))
 
-  results
+    results[[2]]@timing <- results[[1]]  #make timing a sub portion of the ssClass object
+    results[[2]]
 }

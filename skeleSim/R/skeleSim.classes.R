@@ -38,6 +38,7 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot sim.check.func a function to check the parameters object prior to
 #'   running the simualtions
 #' @slot sim.scen.checks a matrix containing results of 'checks' on scenario elements (T/F)
+#' @slot timing list containing elapsed time for a simulation
 #' @slot other.checks a vector containing results of 'checks' on other param object elements
 #' @slot scenario.reps a two column matrix describing which iteration matches
 #'   which scenario/replicate
@@ -59,7 +60,8 @@ skeleSim.params <- setClass(
     analysis.results = "ANY", sim.summary.func = "funcOrNULL",
     summary.results = "listOrNULL", sim.check.func = "funcOrNULL",
     sim.scen.checks = "matrOrNULL", other.checks = "logOrNULL",
-    scenario.reps = "matrOrNULL", analyses.requested = "logOrNULL"
+    scenario.reps = "matrOrNULL", analyses.requested = "logOrNULL",
+    timing = "listOrNULL"
   ),
   prototype = list(
     title = NULL, date = NULL, quiet = NULL, question = NULL,
@@ -70,7 +72,8 @@ skeleSim.params <- setClass(
     analysis.results = NULL, sim.summary.func = NULL, summary.results = NULL,
     sim.check.func = NULL, sim.scen.checks = NULL, other.checks = NULL,
     scenario.reps = NULL,
-    analyses.requested = c(Global = TRUE, Locus = TRUE, Pairwise = TRUE)
+    analyses.requested = c(Global = TRUE, Locus = TRUE, Pairwise = TRUE),
+    timing=NULL
   )
 )
 

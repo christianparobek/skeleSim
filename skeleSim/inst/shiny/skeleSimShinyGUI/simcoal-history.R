@@ -63,7 +63,7 @@ simcoal.history.plot <- function(history
                                     y <-  p.hist[e,1]
                                     points(x=c(x.source,x.source),
                                            y=c(0,y), type="l")
-                                    arrows(x.source,y,x.sink,y)
+                                    arrows(x.source,y,x.sink,y,length=0)
                                 }
                     }
         ###now deal with the sink-only situations (should be one)
@@ -141,6 +141,20 @@ all.coalesce <- function(history)
         ac=FALSE
 #    print(ac)
     ac
+}
+
+is.history.new <- function(hist,ps,gr,mmats)
+{
+    err <- fsc.histEvCheck(hist,ps,gr,length(mmats))
+    if (err)
+    {
+        if (sum(!(unique(hist[,7])%in%((1:length(mmats))-1)))>0) #asking for matrices that dont exist 
+        {
+            err <- FALSE
+        }
+    }
+    
+    err
 }
 
 is.history <- function(history)

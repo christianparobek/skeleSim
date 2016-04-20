@@ -52,9 +52,9 @@ hst <- reactive({
 })
 
 output$simhistPlot <- renderPlot({
-    print("about to plot history")
+    if (debug()) print("about to plot history")
     h <- hst()
-    print(h)
+    if (debug()) print(h)
     simcoal.history.plot(h)
 })
 
@@ -69,29 +69,6 @@ output$simhistEditTbl <- renderUI({
     matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
                 as.data.frame(hst()))
 })
-
-
-#ob1 <- observe({
-#    pointValues$click <- input$histplotClick
-#    pointValues$dblclick <- input$histplotDblClick
-#    print("in observevent pointValues")
-#    if (!is.null(pointValues$click))
-#        if (!is.null(pointValues$dblclick))
-#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
-#            {
-#                print("inside observer, inside all not nulls")
-#                h=hst()
-#                pointValues$click <- NULL
-#                pointValues$dblclick <- NULL
-#                if (!historiesEqual(h,
-#                                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
-#                {
-#                    print("histories are not equal")
-#                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
-#                }
-#            }
-#})
-
 
 observeEvent(input$histplotClick,
 {
@@ -135,11 +112,32 @@ observeEvent(input$histplotDblClick,
 
 
 observeEvent(input$simhist,{
-    print("simhist modified")
+    if (debug()) print("input$simhist modified")
+    mnum <- 0
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
+        mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
+    if (debug()) print("assigned mnum")
+    ps <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size
+    if (debug()) print(paste("got popsize",paste(ps,collapse=",")))
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
                           input$simhist)))
     {
-      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+        if (debug()) print("hist modified to new value")
+        if (debug()) print(input$simhist)
+        hevck <- fsc.histEvCheck(input$simhist,
+                            ps,
+#                            0,
+                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+                            num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
+        if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
+        if (hevck)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+        else
+            output$simhistEditTbl <- renderUI({ #redraw matrix with stored values, the input$simhist values are not legal
+                matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
+                            as.data.frame(hst()))
+            })
+
     }
 })
 
@@ -152,8 +150,16 @@ observeEvent(input$addHistEvent,{
 observeEvent(input$removeLastEvent,{
     print("in observEvent removeLastEvent")
     hist <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
-    if (all.coalesce(hist[-dim(hist)[1],]))
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
+    if (fsc.histEvCheck(hist[-1,],
+                   rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size,
+                   rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+                   num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)))
+        if ((dim(hist)[2]-1)>=max(c(hist[,2:3]))) #if the dimensions of the matrix are large enough for every pop to coalesce
+        {
+            print("changing hsit.ev as a consequence of removing a row")
+            print(hist)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
+        }
 })
 
 
@@ -214,10 +220,12 @@ output$simexec <- renderUI({
                         sim.exec <- c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,
                                       supportValues$simexec)
                         sim.exec <- sim.exec[!is.null(sim.exec)]
-                        sim.exec <- unique(sim.exec)
                         sim.exec <- basename(Sys.which(sim.exec))
-                        sim.exec <- sim.exec[nchar(sim.exec)>0]
-                        ui <- selectInput("fscexec","Select simcoal executable",choices=sim.exec)
+                        sim.exec <- unique(sim.exec)
+                        sim.exec <- sim.exec[nchar(sim.exec)>2]
+                        if (debug()) print("rendering UI for simexec")
+                        if (debug()) print(sim.exec)
+                        ui <- selectInput("fscexec","Select fastsimcoal executable",selected=sim.exec[1],choices=sim.exec)
                     }
     ui
 })
@@ -229,7 +237,7 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
         if (rValues$ssClass@simulator=="fsc")
             {
                 nl <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci
-                print (paste("numloci",nl))
+                if (debug()) print (paste("numloci",nl))
                 mat <- matrix("",nrow=nl,ncol=5)
                 for (l in 1:nl)
                     {

@@ -1,7 +1,7 @@
 
 shinyUI(
   navbarPage(
-    "skelesim",
+    "skeleSim",
     tabPanel(
         "Actions",
         h4("File operations" ),
@@ -12,16 +12,16 @@ shinyUI(
                         filetype=list(ssClass=c("rdata","Rdata","rda"))),
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
-        shinyDirButton("workFolder","Select Simulation Root Directory","Set Simulation Root Directory",FALSE),
+        shinyDirButton("workFolder","Set Simulation Root Directory (required before proceeding below)","Set Simulation Root Directory",FALSE),
+        br(),br(),
+    actionButton("btnSave","Save example inputs for each scenario"),
         br(),
-#        h4("Debug the parameter object created during this session"),
-#        checkboxInput("debug","Debug parameter object",TRUE),
-        actionButton("btnRun","Run simulation"),
+    actionButton("btnRun","Run simulation"),
         br(),
         h4("After running a simulation..."),
         actionButton("quitbtn","Quit App")
     ),
-    tabPanel("Intro questions",
+    tabPanel("Help Choosing Simulator",
              sidebarLayout(
                  sidebarPanel(
 ###                    textInput("simname", "Simulation Name:", "Sim Parameters #1"),
@@ -54,8 +54,8 @@ shinyUI(
                      textInput("title", "Title",
                                value = "title"),
                      dateInput("date","Date"),
-#                     checkboxInput("quiet", "Quiet?",
-#                                   value = FALSE),
+                     checkboxInput("quiet", "Quiet?",
+                                   value = FALSE),
                      checkboxInput("coalescent", "Coalescent simulator?",
                                    value = TRUE),
                      numericInput("reps", "Number of simulation reps",
@@ -82,7 +82,7 @@ shinyUI(
                  sidebarPanel(
                      numericInput("scenarioNumber", "Which scenario",value=1,min=1),
                      textInput("numpopsTxt", "Number of Populations",
-                               value = "1"),
+                               value = "2"),
                      br(),
                      selectInput("migModel", "Migration Model",
                                  choices=c("island","stepping.stone.linear",
@@ -175,9 +175,10 @@ shinyUI(
                         tabsetPanel(
                             tabPanel("Simcoal History",
                            #          includeMarkdown("helpfiles/help-history.md"),
-                                     plotOutput("simhistPlot",
-                                                click = "histplotClick",
-                                                dblclick = "histplotDblClick"),
+#                                     plotOutput("simhistPlot",
+#                                                click = "histplotClick",
+#                                                dblclick = "histplotDblClick"),
+                                     plotOutput("simhistPlot"),
                                      uiOutput("simhistEditTbl")
                                     ,
                                      actionButton("addHistEvent","Add a new historical event"),
@@ -186,7 +187,8 @@ shinyUI(
                            ,
                             tabPanel("Growth rates",
                                      uiOutput("growthrate")
-                                     ),
+                                     )
+                           ,
                             tabPanel("Sample times",
                                      uiOutput("samptime")
                                      )

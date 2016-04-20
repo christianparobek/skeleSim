@@ -17,12 +17,9 @@ scenario.exists <- reactive({
 ###############################################
 ### functions that operate only in the server
 ##############################################
-### this one is a wrapper for the rmetasim function
-### landscape.mig.matrix (remapped to scenario.mig.matrix)
-### it has a lot of special-case handling built in.
 ###############################################
 mig.mat <- function(){
-   print("in mig.mat")
+   if (debug()) print("in mig.mat")
     ##first check to see if there mig model is "user".  If so, and the matrix dimension has
     ##not changed, then multiply the matrix by migRate and return.  If the matrix dimension
     ##has changed, reset the matrix to an island model (but keep the scenario migration model
@@ -94,7 +91,7 @@ mig.mat <- function(){
                         ret <- matrix(0,1,1)
                     }
         }
-    print("about to return from mig.mat")
+    if (debug()) print("about to return from mig.mat")
     ret
 }
 
@@ -106,7 +103,7 @@ output$migmat <- renderUI({
 
 pop.sizes <- function()
     {
-        print("running popsize")
+        if (debug()) print("running popsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size))|
           (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)!=
            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
@@ -119,14 +116,14 @@ pop.sizes <- function()
     }
 
 output$popsize <- renderUI({
-    print("creating popsize vector")
+    if (debug()) print("creating popsize vector")
     matrixInput("psvec","Vector of population sizes",
                 as.data.frame(pop.sizes()))
 })
 
 samp.sizes <- function()
     {
-        print("running sampsize")
+      if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size))|
           (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size)!=
            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
@@ -139,14 +136,14 @@ samp.sizes <- function()
     }
 
 output$sampsize <- renderUI({
-    print("creating popsize vector")
+    if (debug()) print("creating popsize vector")
     matrixInput("ssvec","Vector of sample sizes",
                 as.data.frame(samp.sizes()))
 })
 
 mut.rates <- function()
     {
-        print("running sampsize")
+      if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))|
           (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)!=
            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))

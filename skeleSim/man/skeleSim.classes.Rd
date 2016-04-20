@@ -32,7 +32,7 @@ Currently codes for fastsimcoal(fsc) and rmetasim(rms) exist.}
 
 \item{\code{scenarios}}{a list of \code{scenario.params} objects.}
 
-\item{\code{num.reps}}{number of replicates to run.}
+\item{\code{num.sim.reps}}{number of replicates to run.}
 
 \item{\code{sim.func}}{a function that runs one replicate of the simulator.
 Must take and return only a \code{skeleSim.params} object.}
@@ -62,6 +62,8 @@ statistics.}
 running the simualtions}
 
 \item{\code{sim.scen.checks}}{a matrix containing results of 'checks' on scenario elements (T/F)}
+
+\item{\code{timing}}{list containing elapsed time for a simulation}
 
 \item{\code{other.checks}}{a vector containing results of 'checks' on other param object elements}
 
