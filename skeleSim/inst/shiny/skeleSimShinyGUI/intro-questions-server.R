@@ -1,7 +1,7 @@
   megalistValues <- reactive({
     # Compose data frame
     data.frame(
-      Name = c("SNPs", 
+      Name = c(#"SNPs", 
                "Non-Diploid",
                "Many Markers",
                "Large Pop Size",
