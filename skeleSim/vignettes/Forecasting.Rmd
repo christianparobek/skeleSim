@@ -22,10 +22,6 @@ launch the skeleSim GUI
 
 Skelesim involves several steps of operation.  First you will perform some basic setup tasks like setting a root directory, file naming, and choosing a simulator.  Then you will define your first scenario. Additional scenarios will be easy to add after that. Each step occurs through a GUI interface. At any time you can also see "under the hood" by looking at the skeleSim object, which has all parameters of all scenarios (and more).
 
-The following text will walk you through two examples: 
-
-1. forecasting outcomes
-2. power analysis.    
 
 **Objective: To create a forecast of possible outcomes for a population of interest, such as a rare species.**  Say the species has already been genotyped at its current state, and managers would like to know what will happen to the population in 50 years (1) if no management action is taken or (2) if management is taken to connect this population to another population.  You will want to compare number of alleles that exist in your population under both of these actions: no action and reconnecting populations.
 
@@ -43,11 +39,12 @@ The first thing to do is to click on "Help Choosing Simulator". This tab is to h
 
 **General Conf Tab: General parameters of skelesim.**  You already know you want a forward in time simulation, so move on to "General Conf".   
        
-1. Name your project.  This should distinguish this project from any other simulation projects you are working on (such as species name, objective, etc).  We'll call this one "Connect_or_not". 
-2. Choose the number of simulation rep(licates).  The more you run, the longer it takes.  For a first pass, you might run 100. For more refined estimates you might run 1 000.     
-3. Choose which analyses you will run (see text explaining the Analyses).  For now, you can check each box.   
-4. Set the number of permutations for significance tests.  *what now?*    
-5. Lastly, name the directory in which you want to run simulations.  This directory might include already genotyped files, previously saved results, or other related files.  Notice that when you change this, and some other parameters in skeleSim, you see immediate feedback on the right part of the screen.       
+1. Name your project.  This should distinguish this project from any other simulation projects you are working on (such as species name, objective, etc).  We'll call this one "Connect_or_not".  
+2. Deselect "Coalescent simulator?"    
+3. Choose the number of simulation rep(licates).The more you run, the longer it takes. For a first pass, you might run 100. For more refined estimates you might run 1 000.     
+4. Choose which analyses you will run (see text explaining the Analyses).  For now, you can check each box.   
+5. Set the number of permutations for significance tests. Start with 100.   
+6. Name the directory in which you want to run simulations.  This directory might include already genotyped files, previously saved results, or other related files.  Notice that when you change this, and some other parameters in skeleSim, you see immediate feedback on the right part of the screen.       
 
 <img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/doc/new_screens/Tutorial1/screen2_Gen_Conf.png" style="width: 750px;"/>   
 

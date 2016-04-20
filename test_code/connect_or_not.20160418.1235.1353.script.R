@@ -1,0 +1,8 @@
+library(skeleSim)
+getwd()
+setwd('C:/Users/Z_M/Michelle's Documents/skeleSim/test_code')
+getwd()
+load('connect_or_not.20160418.1235.1353.params.rdata')
+ls()
+ssClass <- runSim(ssClass)
+save(ssClass, file = 'connect_or_not.20160418.1235.1353.skeleSim.out.rdata')
