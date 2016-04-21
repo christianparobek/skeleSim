@@ -42,7 +42,7 @@ simscore <- reactive(
 #        forward.wts <- c(0.5, 0.5, 0.2, 0.2, 0.2, 1, 1, 0.2, 1)
 
 #        forward.wts <- rep(1,9)
-        forward.wts <- c(0.5, 0.4, 0.2, 0.5, 0, 1, 1, 0.1, 1 )
+        forward.wts <- c(0.5, 0.5, 0.2, 0.5, 0, 1, 1, 0.1, 1 )
 
         fwd <- df[,2]*forward.wts
 
