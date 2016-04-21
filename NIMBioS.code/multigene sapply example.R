@@ -11,6 +11,9 @@ phist <- sapply(locNames(x.g), function(n) {
   unname(statPhist(x.g[, n, ]))
 })
 
+<<<<<<< HEAD
+phist
+=======
 
 # A DNAbin example that behaves maybe
 data(woodmouse)
@@ -21,3 +24,4 @@ strata(x.g) <- c("A", "B")
 results_gtype <- x.g
 
 
+>>>>>>> 3252dce708b8b02ff116978934bd1c74ddbf76a5
