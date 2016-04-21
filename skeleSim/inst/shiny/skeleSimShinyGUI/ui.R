@@ -31,7 +31,7 @@ shinyUI(
                      checkboxInput("pop.size", label = "Do you have large population sizes?", value = FALSE),
                      checkboxInput("complex.hist", label = "Do you have a complex history to simulate?", value=FALSE),
                      checkboxInput("deep.time", label = "Are you looking at deep time frames", value = FALSE),
-                     checkboxInput("demography", label = "Do you want to include demography?", value = FALSE),
+                     checkboxInput("demography", label = "Include within population demography?", value = FALSE),
                      checkboxInput("management", label = "Does your question involve management decisions?", value = FALSE),
                      checkboxInput("completion.time", label = "Do you need a short completion time", value = FALSE),
                      checkboxInput("computer", label = "Do you have large computer capacity?", value = FALSE)
@@ -42,8 +42,11 @@ shinyUI(
                  
                  mainPanel(
                      includeMarkdown("helpfiles/help-questions.md"),
-                     h3(textOutput("simname", container = span)),
-                     tableOutput("values")
+                     tableOutput("values"),
+                     br(),
+                     h4("Relative weighting to coalescent versus forward-time simulator"),
+                     textOutput("coalscore"),
+                     textOutput("forwardscore")
                  )
              )),
 ### Set parameters for the skeleSim class

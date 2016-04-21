@@ -18,6 +18,7 @@ observeEvent(input$quiet, {
 })
 
 observeEvent(input$coalescent,{
+#observeEvent(coalescentstate(),{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
     rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rms")
     for (s in 1:length(rValues$ssClass@scenarios))
