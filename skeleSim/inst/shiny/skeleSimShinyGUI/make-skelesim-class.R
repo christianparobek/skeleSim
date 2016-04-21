@@ -101,26 +101,30 @@ observeEvent(input$numpopsTxt,
 
 observeEvent(input$numloci,
              {
-                 if (!is.na(input$numloci))
-                     if (input$numloci>0)
-                     {
-                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(input$numloci)
-                     }
-                 updateNumericInput(session,"numloci",
-                                    value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
-                 #### rmetasim addition
-                 if (rValues$ssClass@simulator.type=="f")
+                 numloci <- as.numeric(input$numloci)
+                 if (!is.na(numloci))
                  {
-                     if (debug()) print("resetting the number of alleles per locus vector")
-                     navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
-#                     print(navec)
-                     #could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
-                     if (length(navec)!=floor(input$numloci))
-                         navec <- rep(1,floor(input$numloci))
-#                     print(navec)
-                     navec[is.na(navec)] <- 1
-                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
+                     if (numloci>0)
+                     {
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(numloci)
+                     }
                  }
+                 updateTextInput(session,"numloci",
+                                    value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
+                 #### rmetasim addition
+                 if (!is.na(numloci))
+                     if (rValues$ssClass@simulator.type=="f")
+                     {
+                         if (debug()) print("resetting the number of alleles per locus vector")
+                         navec <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
+####                     print(navec)
+####could test navec and append or shrink.  right now, we hose all num alleles values if the number of loci changes
+                         if (length(navec)!=floor(numloci))
+                             navec <- rep(1,floor(numloci))
+###                     print(navec)
+                         navec[is.na(navec)] <- 1
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
+                     }
              })
 
 observeEvent(input$loctype,

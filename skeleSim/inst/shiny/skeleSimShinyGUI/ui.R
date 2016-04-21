@@ -98,8 +98,8 @@ shinyUI(
                                       selectInput("distfun", "Distance function (must be an R function)",choices=c("dexp"))),
                      selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
                      conditionalPanel(condition = "input.loctype != 'sequence'", 
-                                      numericInput("numloci", "Number of loci",
-                                                   value = 1)),
+                                      textInput("numloci", "Number of loci",
+                                                   value = "1")),
                      
                      conditionalPanel(condition = "input.loctype == 'sequence'",
                                       numericInput("seqlen","Sequence length",value=100)),

@@ -113,6 +113,7 @@ observeEvent(input$histplotDblClick,
 
 observeEvent(input$simhist,{
     if (debug()) print("input$simhist modified")
+    simhist <- input$simhist
     mnum <- 0
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
         mnum <- length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)
@@ -120,18 +121,21 @@ observeEvent(input$simhist,{
     ps <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size
     if (debug()) print(paste("got popsize",paste(ps,collapse=",")))
     if (!isTRUE(all.equal(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev),
-                          input$simhist)))
+                          simhist)))
     {
         if (debug()) print("hist modified to new value")
-        if (debug()) print(input$simhist)
-        hevck <- fsc.histEvCheck(input$simhist,
-                            ps,
+#        print("this is the hist.ev")
+        if (dim(simhist)[1]==0) simhist <- NULL
+#        print(simhist)
+#        print(dim(simhist))
+        hevck <- fsc.histEvCheck(hist.ev=simhist,
+                            pop.size=ps,
 #                            0,
-                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
+                            growth.rate=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
                             num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
         if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
-        if (hevck)
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- input$simhist
+        if ((hevck))
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- simhist
         else
             output$simhistEditTbl <- renderUI({ #redraw matrix with stored values, the input$simhist values are not legal
                 matrixInput("simhist","time | source | sink | migrants | new.size | growth.rate | migr.matrix",
@@ -172,7 +176,7 @@ output$clickinfo <- renderText({
 
 samp.times <- function()
     {
-        print("running samptime")
+        if (debug()) print("running samptime")
         if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times))|
             (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@sample.times)!=
              rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
@@ -192,15 +196,15 @@ output$samptime <- renderUI({
 
 growth.rates <- function()
     {
-        print("running growth.rates")
+        if (debug()) print("running growth.rates")
         if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate))|
             (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate)!=
              rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
             ret <- rep(0,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
         else 
-            {
-                ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate
-            }
+        {
+            ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate
+        }
         matrix(ret,nrow=1)
     }
 
