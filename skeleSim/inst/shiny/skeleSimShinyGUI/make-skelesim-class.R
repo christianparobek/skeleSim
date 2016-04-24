@@ -97,7 +97,7 @@ observeEvent(input$numpopsTxt,
                              
                      }
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber +1]] <- mig.mat()
-             })
+             },priority=-1)
 
 observeEvent(input$numloci,
              {
@@ -125,7 +125,7 @@ observeEvent(input$numloci,
                          navec[is.na(navec)] <- 1
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
                      }
-             })
+             },priority=-1)
 
 observeEvent(input$loctype,
              {
@@ -314,7 +314,7 @@ observeEvent(rValues$ssClass,{
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
                 updateNumericInput(session,"stages",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
         }
-})
+= 100}, priority \)
 
 ###change stuff if the scenario number changes
 ### this is a central 'function' that has grown organically.  In other words, its a mess.
