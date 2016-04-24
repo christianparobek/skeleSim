@@ -86,7 +86,7 @@ observeEvent(input$scenarioNumber,
 observeEvent(input$numpopsTxt,
              {
                  numpop <- suppressWarnings(floor(as.numeric(input$numpopsTxt)))
-                 updateTextInput(session,"numpopsTxt",value=numpop)
+ #                updateTextInput(session,"numpopsTxt",value=numpop)
                  if (!is.na(numpop))
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops <- numpop
                  if (req(rValues$ssClass@simulator.type)=="c")
@@ -109,8 +109,8 @@ observeEvent(input$numloci,
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(numloci)
                      }
                  }
-                 updateTextInput(session,"numloci",
-                                    value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
+#                 updateTextInput(session,"numloci",
+#                                    value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
                  #### rmetasim addition
                  if (!is.na(numloci))
                      if (rValues$ssClass@simulator.type=="f")
@@ -314,7 +314,7 @@ observeEvent(rValues$ssClass,{
             if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
                 updateNumericInput(session,"stages",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
         }
-= 100}, priority \)
+}, priority = 100)
 
 ###change stuff if the scenario number changes
 ### this is a central 'function' that has grown organically.  In other words, its a mess.
