@@ -115,6 +115,10 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.param
 })
 
 
+#
+# this function updates a bunch of user interface items based on the rValues$ssClass entries
+#
+
 updateUIs <- function()
 {
                     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))

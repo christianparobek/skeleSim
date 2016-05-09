@@ -25,11 +25,11 @@ Depends:
     igraph,
     strataG (>= 1.0),
     rmetasim (>= 3.0.0),
-    markdown
+    markdown,
+    ggplot2
 Imports:
     adegenet,
     ape,
-    ggplot2,
     hierfstat,
     pegas,
     methods,
