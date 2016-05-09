@@ -8,3 +8,4 @@ testRun.wd
 /shiny_parameters/README.md~
 skeleSim.Rcheck/
 error.log
+/skeleSim/inst/shiny/skeleSimShinyGUI/make-skelesim-class-old.R
