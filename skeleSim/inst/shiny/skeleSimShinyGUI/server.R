@@ -47,7 +47,10 @@ shinyServer(function(input, output, session) {
 
 ######################## skeleSim class setup
     source("make-skelesim-class.R",local=T)
-  
+
+##########updating user interface
+    source("update-ui.R",local=T)
+    
 ##################visualization
     #source("visualize.R", local = T)
 
