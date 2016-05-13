@@ -39,25 +39,25 @@ output$leading <- renderText({
 
 ##in theory this observe event waits to see if the number of alleles at a locus changes and updates ssClass
 
-numal.react <- reactive({
-    vf=NULL
-    if (req(rValues$ssClass@simulator.type=="f"))
-    {
-        nal <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
-        if (!is.null(req(nal)))
-        {
-            nal[is.na(nal)] <- 1
-            vf <- callModule(vectorIn,"numall",label="Num. Alleles per locus (each element of vector corresponds to a locus)",
-                             vec=nal)()
-        }
-    }
-    vf
-})
-observeEvent(numal.react(),
-                        {
-                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <-
-                                c(numal.react())
-                        })
+#numal.react <- reactive({
+#    vf=NULL
+#    if (req(rValues$ssClass@simulator.type=="f"))
+#    {
+#        nal <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
+#        if (!is.null(req(nal)))
+#        {
+#            nal[is.na(nal)] <- 1
+#            vf <- callModule(vectorIn,"numall",label="Num. Alleles per locus (each element of vector corresponds to a locus)",
+#                             vec=nal)()
+#        }
+#    }
+#    vf
+#})
+#observeEvent(numal.react(),
+#                        {
+#                            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <-
+#                                c(numal.react())
+#                        })
 
 
 anums <- reactive({  #allele numbers pulled from reactive value.  this allows checks for existence
@@ -67,34 +67,54 @@ anums <- reactive({  #allele numbers pulled from reactive value.  this allows ch
         } else {NULL}
 })
 
+num.alleles <- function() #a function to return a sensible number of alleles vector
+    {
+        print("running num.alleles()")
+        if (req(rValues$ssClass@simulator.type=="f"))
+        {
+             nal <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
+             if (!is.null(req(nal)))
+             {
+                 nal[is.na(nal)] <- 1
+             }
+             nal
+        } else {c(1)}
+    }
+
+output$numall <- renderUI({
+    print("creating allele num vector ui")
+    matrixInput("numall","Number of alleles per locus",
+                as.data.frame(num.alleles()))
+})
+
+observeEvent(input$numall,{
+     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- c(input$numall)
+})
+
 observeEvent(anums(),
 {
     if (debug()) print("running anums()")
-    if (is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))
-    {
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
-    } else {
-        if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)!=length(anums()))
+    if ((req(rValues$ssClass@simulator.type)=="f"))
+        if (is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))
         {
-            if (debug()) print("setting allele freqs")
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
-        } else { #if there is a legitimate list and only changing the number of alleles for a locus be more smart
-            aflst <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs #just to make easier to work with
-            svec <- which(sapply(aflst,length) !=anums())
-            for (i in svec) {aflst[[i]] <- rep(1/anums()[i],anums()[i])} #only replace elements whose allele numbers have changed
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- aflst
+        } else   {
+            if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)!=length(anums()))
+            {
+                if (debug()) print("setting allele freqs")
+                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- lapply(anums(),function(x){rep(1/x,x)})
+            } else { #if there is a legitimate list and only changing the number of alleles for a locus be more smart
+                aflst <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs #just to make easier to work with
+                svec <- which(sapply(aflst,length) !=anums())
+                for (i in svec) {aflst[[i]] <- rep(1/anums()[i],anums()[i])} #only replace elements whose allele numbers have changed
+                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs <- aflst
+            }
         }
-    }
     
 })
-
 
 output$afreqs <- renderText({
     if (!is.null(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)))
         paste(sapply(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs,function(x){paste(x,sep=", ")}),sep="\n")
-       
 })
 
-#observe({
-#    ANvecFn <- callModule(vectorIn,"numall",label="Allele num per loc",vec=
-#})
