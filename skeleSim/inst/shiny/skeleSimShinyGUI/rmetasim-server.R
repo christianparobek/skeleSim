@@ -69,7 +69,7 @@ anums <- reactive({  #allele numbers pulled from reactive value.  this allows ch
 
 num.alleles <- function() #a function to return a sensible number of alleles vector
     {
-        print("running num.alleles()")
+          if (debug()) print("running num.alleles()")
         if (req(rValues$ssClass@simulator.type=="f"))
         {
              nal <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles
@@ -82,7 +82,7 @@ num.alleles <- function() #a function to return a sensible number of alleles vec
     }
 
 output$numall <- renderUI({
-    print("creating allele num vector ui")
+      if (debug()) print("creating allele num vector ui")
     matrixInput("numall","Number of alleles per locus",
                 as.data.frame(num.alleles()))
 })

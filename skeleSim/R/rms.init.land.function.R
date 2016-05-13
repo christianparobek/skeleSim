@@ -106,7 +106,7 @@ fstr <- c(fstr,paste0("skeletonland<-landscape.new.local.demo(skeletonland,surv.
 #cross habitat matrices
 
 fstr <- c(fstr,paste0("epoch_s_matr<-matrix(0,nrow=(num.pops*num.stgs), ncol=(num.pops*num.stgs))"))
-fstr <- c(fstr,paste0("epoch_r_matr <- landscape.mig.matrix(h=num.pops,s=num.stgs,R.custom=mig.rates)$R"))
+fstr <- c(fstr,paste0("epoch_r_matr <- landscape.mig.matrix(h=num.pops,s=num.stgs,mig.model='custom',R.custom=mig.rates)$R"))
 fstr <- c(fstr,paste0("epoch_m_matr <- epoch_s_matr"))
     
 #no extinction allowed, hard coded

@@ -48,15 +48,15 @@ rms.run <- function(params){
   skeleland_samp<-landscape.sample(skeleland, ns=24)  ###need to improve
   #print(skeleland_samp)
   
-print("about to check sampling")
+#print("about to check sampling")
 #check is landscape ok still
   if (!is.landscape(skeleland_samp)) stop("landscape not cool after sampling")
 
-print(str(skeleland_samp))
+#print(str(skeleland_samp))
   
-  print("was able to sample")
+#  print("was able to sample")
   
-  print("bout to convert")
+#  print("bout to convert")
   #now store the results
   save(file="tmpskeleland.rda",skeleland_samp)
   params@rep.sample<- rms.convert(skeleland_samp, sc@locus.type)

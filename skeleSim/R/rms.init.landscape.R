@@ -48,7 +48,7 @@ for (i in 1:num.pops)
 #epoch_r_matr<-
 #epoch_m_matr<-matrix(0,nrow=4, ncol=4)
     epoch_s_matr<-matrix(0,nrow=(num.pops*num.stgs), ncol=(num.pops*num.stgs))
-    epoch_r_matr <- landscape.mig.matrix(h=num.pops,s=num.stgs,R.custom=mig.rates)$R
+    epoch_r_matr <- landscape.mig.matrix(h=num.pops,s=num.stgs,mig.model="custom",R.custom=mig.rates)$R
     epoch_m_matr <- epoch_s_matr
 
     
