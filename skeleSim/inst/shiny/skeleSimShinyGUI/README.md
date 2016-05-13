@@ -1,8 +1,6 @@
 This folder contains the shiny interface for skeleSim.  As the codebase is structured now, everything depends on this ui for 
 organisation. In other words, there are no command-line approaches to skelesim at the moment.
 
-Right now (11/23/15) the app only supports  fastsimcoal simulations. Rmetasim simulations are in development.
-
 To use,
 
 1. From CRAN:
