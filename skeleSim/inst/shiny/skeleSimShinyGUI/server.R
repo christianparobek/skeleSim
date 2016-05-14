@@ -52,7 +52,7 @@ shinyServer(function(input, output, session) {
     source("update-ui.R",local=T)
     
 ##################visualization
-    #source("visualize.R", local = T)
+source("vizServer.R", local = T)
 
 
 ####navbar header

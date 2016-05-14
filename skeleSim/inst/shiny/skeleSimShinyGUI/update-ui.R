@@ -141,4 +141,15 @@ updateUIs <- function()
                      updateTextInput(session,"distfun",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun)
                  if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
                      updateNumericInput(session,"migRate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate)
+
+    ##analysis results
+    if (!is.null(rValues$ssClass@analysis.results))
+    {
+        updateSelectizeInput(session,"gstatsel",choices=isolate(global.stats(rValues$ssClass)),selected=isolate(global.stats(rValues$ssClass)),server=TRUE)
+        updateSelectizeInput(session,"lstatsel",choices=isolate(locus.stats(rValues$ssClass)),selected=isolate(locus.stats(rValues$ssClass)),server=TRUE)
+        updateSelectizeInput(session,"pstatsel",choices=isolate(pairwise.stats(rValues$ssClass)),
+                             selected=isolate(pairwise.stats(rValues$ssClass)),server=TRUE)
+        
+    }
+                    
 }

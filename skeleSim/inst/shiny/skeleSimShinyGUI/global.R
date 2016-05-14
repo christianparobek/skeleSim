@@ -6,10 +6,13 @@
 #require(shinyFiles)
 #require(shinyIncubator)
 #require(igraph)
+library(dplyr)
 
 source("utils.R")
 source("mig.matrix.R")
 source("simcoal-history.R")
+source("vizAbstract.R")
+source("vizfuncs.R")
 #source("../skeleSim.classes.R")
 #source("../fastsimcoal/fsc.run.R")
 #source("../fastsimcoal/fsc.classes.R")

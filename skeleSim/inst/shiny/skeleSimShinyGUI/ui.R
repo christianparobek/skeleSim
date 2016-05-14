@@ -223,35 +223,34 @@ shinyUI(
                     
                 )
             )
-            ) ,
+            ) 
+ , #don't forget the comma
+
+   tabPanel("Results",
+            sidebarLayout(
+                sidebarPanel(
+                    h4("side"),
+                    selectizeInput("gstatsel","Global statistics",selected=NULL,multiple=TRUE,choices=NULL),
+                    selectizeInput("lstatsel","Locus-level statistics",selected=NULL,multiple=TRUE,choices=NULL),
+                    selectizeInput("pstatsel","Pairwise statistics",selected=NULL,multiple=TRUE,choices=NULL)
+                )
+               ,
+                mainPanel(
+                    tabsetPanel(
+                        tabPanel("Global Statistics",
+                                 plotOutput("globalMainPlot")
+                                 ),
+                        tabPanel("Locus Statistics",
+                                 plotOutput("locusMainPlot")
+                                 ),
+                        tabPanel("Pairwise Statistics",
+                                 plotOutput("pairwiseMainPlot")
+                                 )
+                   )))),
    tabPanel(
        "Current ssClass",
        tableOutput("ssClass")
    )
-# , #don't forget the comma
-
-
-      ##### MAKE THIS TAB REACTIVE SOMEHOW... EITHER NOT SHOW BEFORE THERE ARE RESULTS, OR SAY "NOTHING TO SEE HERE"
-#     tabPanel("Visualize",
-#          sidebarLayout(
-#               sidebarPanel(
-#                 selectInput("scenario", label = h3("Choose Scenario to Visualize:"),
-#                             choice = c("Scenario #1" = 1,
-#                                        "Scenario #2" = 2,
-#                                        "Scenario #3" = 3)),
-#                             ### NEED TO MAKE THIS REACTIVE TO NUMBER OF SCENARIOS THERE ARE; CAN HAVE > 3
-#                 actionButton("newplot", "New plot")),
-#               mainPanel(
-#                 tabsetPanel(
-#                   tabPanel("Global Statistics",
-#                            uiOutput("plot_global"),
-#                            fluidRow(column(3, verbatimTextOutput("sometext")))
-#                            ),
-#                   tabPanel("Locus Statistics",
-#                            plotOutput("testViz1")),
-#                   tabPanel("Pairwise Statistics",
-#                            plotOutput("testViz2"))))
-#       )
-    )
   )
+)
 

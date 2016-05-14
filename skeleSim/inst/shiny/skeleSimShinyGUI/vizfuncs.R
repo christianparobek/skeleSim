@@ -2,9 +2,16 @@
 # ggplot versions of of vizualization functions
 #
 
-gg.global <- function(ssc) #ssc is an ssClass (skelesim class) object
+
+global.stats <- function(ssc)
+{
+    unique(sort(as.character(globalDF(ssc@analysis.results)$statistic)))
+}
+
+gg.global <- function(ssc,stats=global.stats(ssc)) #ssc is an ssClass (skelesim class) object
 {
     gdf <- globalDF(ssc@analysis.results)
+    gdf <- gdf[gdf$statistic%in%stats,]
 
     p <- ggplot(data=gdf,aes(x=Locus,y=value)) +
         facet_wrap(~statistic, scales="free") +
@@ -13,21 +20,32 @@ gg.global <- function(ssc) #ssc is an ssClass (skelesim class) object
     print(p)
 }
 
-gg.locus <- function(ssc)
+locus.stats <- function(ssc)
+{
+    unique(sort(as.character(locusDF(ssc@analysis.results)$statistic)))
+}
+
+gg.locus <- function(ssc,stats=locus.stats(ssc))
 {
     ldf <- locusDF(ssc@analysis.results)
+    ldf <- ldf[ldf$statistic%in%stats,]
     l <- ggplot(data=ldf,aes(x=locus,y=value)) + geom_violin()+
         geom_jitter(width=0.15)+facet_wrap(~statistic,scales="free")
     print(l)
     p <- ggplot(data=ldf,aes(x=pop,y=value)) + geom_violin()+
         geom_jitter(width=0.15)+facet_wrap(~statistic,scales="free")
     print(p)
-    
 }
 
-gg.pairwise <- function(ssc)
+pairwise.stats <- function(ssc)
+{
+    unique(sort(as.character(pairwiseDF(ssc@analysis.results)$statistic)))
+}
+
+gg.pairwise <- function(ssc,stats=pairwise.stats(ssc))
     {
         pwdf <- pairwiseDF(ssc@analysis.results)
+        pwdf <- pwdf[pwdf$statistic%in%stats,]
         pwdf.mn <- pwdf %>% group_by(pop1,pop2,rep,statistic) %>% summarise(value=mean(value))
 
         plts <- list()
@@ -88,4 +106,4 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                                   layout.pos.col = matchidx$col))
         }
     }
-						  }	
+}	

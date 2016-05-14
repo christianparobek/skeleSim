@@ -9,3 +9,4 @@ testRun.wd
 skeleSim.Rcheck/
 error.log
 /skeleSim/inst/shiny/skeleSimShinyGUI/make-skelesim-class-old.R
+/skeleSim/inst/shiny/skeleSimShinyGUI/vizServer.R~
