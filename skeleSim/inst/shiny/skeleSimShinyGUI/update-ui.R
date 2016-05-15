@@ -66,45 +66,6 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops,{
     }
 })
     
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
-#        updateNumericInput(session,"numloci",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
-#})
-
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
-#        updateNumericInput(session,"loctype",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type)
-#})
-
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
-#        updateNumericInput(session,"seqlen",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length)
-#})
-### needed for keeping track of how matrices are built in different scenarios
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
-#        updateSelectInput(session,"migModel",selected=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel)
-#})
-
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
-#        updateNumericInput(session,"migRate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate)
-#})
-
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows))
-#        updateNumericInput(session,"rows",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
-#})
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols))
-#        updateNumericInput(session,"cols",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
-#})
-
-#observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun,{
-#    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun))
-#        updateTextInput(session,"distfun",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun)
-#
-#})
         
 observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params,{
     if (rValues$ssClass@simulator.type!="c") #rmetasim, for now
@@ -149,6 +110,7 @@ updateUIs <- function()
         updateSelectizeInput(session,"lstatsel",choices=isolate(locus.stats(rValues$ssClass)),selected=isolate(locus.stats(rValues$ssClass)),server=TRUE)
         updateSelectizeInput(session,"pstatsel",choices=isolate(pairwise.stats(rValues$ssClass)),
                              selected=isolate(pairwise.stats(rValues$ssClass)),server=TRUE)
+        updateNumericInput(session,"vizScenario",max=viz.scenarios(rValues$ssClass))
         
     }
                     

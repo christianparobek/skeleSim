@@ -49,7 +49,7 @@ analysisFunc <- function(params) {
   if(params@analyses.requested["Pairwise"] & currentScenario(params)@num.pops > 1) {
     cat("  Pairwise analysis...\n")
     mat <- pairwiseAnalysis(results.gtype, num.perm.reps)
-#    cat("Finished Pairwise\n")
+    cat("Finished Pairwise\n")
     params <- loadResultsMatrix(params, mat, "Pairwise")
 
   }

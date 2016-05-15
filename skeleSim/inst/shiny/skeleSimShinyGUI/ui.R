@@ -5,10 +5,10 @@ shinyUI(
     tabPanel(
         "Actions",
         h4("File operations" ),
-        shinyFilesButton("fileParams","Read skelesim file","Select saved skelesim file", FALSE),
+        shinyFilesButton("fileParams","Read skelesim object from file","Select saved skelesim file", FALSE),
         uiOutput("uiSelectParamObj"),
         h5(textOutput("txtObjLabel")),
-        shinySaveButton("ssClassSave","Save skelesim parameters to file","Save parameter file",
+        shinySaveButton("ssClassSave","Save skelesim object to file","Save parameter file",
                         filetype=list(ssClass=c("rdata","Rdata","rda"))),
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
@@ -168,7 +168,7 @@ shinyUI(
                     conditionalPanel(
                         condition = "input.coalescent != true",
                         numericInput("gens", "generations to simulate",
-                                     value = 50)
+                                     value = 50,min=1)
                     ),
                     width=3 #width 1-12 of simulator specific tab                    
                 ),
@@ -229,7 +229,7 @@ shinyUI(
    tabPanel("Results",
             sidebarLayout(
                 sidebarPanel(
-                    h4("side"),
+                    numericInput("vizScenario","Scenario to plot",value=1,min=1,max=1),
                     selectizeInput("gstatsel","Global statistics",selected=NULL,multiple=TRUE,choices=NULL),
                     selectizeInput("lstatsel","Locus-level statistics",selected=NULL,multiple=TRUE,choices=NULL),
                     selectizeInput("pstatsel","Pairwise statistics",selected=NULL,multiple=TRUE,choices=NULL)

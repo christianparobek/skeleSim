@@ -3,14 +3,23 @@
 #
 
 
+viz.scenarios <- function(ssc)
+{
+    if (!is.null(req(ssc@analysis.results)))
+        length(ssc@analysis.results)
+    else
+        NULL
+}
+
 global.stats <- function(ssc)
 {
     unique(sort(as.character(globalDF(ssc@analysis.results)$statistic)))
 }
 
-gg.global <- function(ssc,stats=global.stats(ssc)) #ssc is an ssClass (skelesim class) object
+gg.global <- function(ssc,stats=global.stats(ssc),scenario=1) #ssc is an ssClass (skelesim class) object
 {
     gdf <- globalDF(ssc@analysis.results)
+    gdf <- gdf[gdf$scenario%in%scenario,]
     gdf <- gdf[gdf$statistic%in%stats,]
 
     p <- ggplot(data=gdf,aes(x=Locus,y=value)) +
@@ -25,10 +34,11 @@ locus.stats <- function(ssc)
     unique(sort(as.character(locusDF(ssc@analysis.results)$statistic)))
 }
 
-gg.locus <- function(ssc,stats=locus.stats(ssc))
+gg.locus <- function(ssc,stats=locus.stats(ssc),scenario=1)
 {
     ldf <- locusDF(ssc@analysis.results)
     ldf <- ldf[ldf$statistic%in%stats,]
+        ldf <- ldf[ldf$scenario%in%scenario,]
     l <- ggplot(data=ldf,aes(x=locus,y=value)) + geom_violin()+
         geom_jitter(width=0.15)+facet_wrap(~statistic,scales="free")
     print(l)
@@ -42,12 +52,12 @@ pairwise.stats <- function(ssc)
     unique(sort(as.character(pairwiseDF(ssc@analysis.results)$statistic)))
 }
 
-gg.pairwise <- function(ssc,stats=pairwise.stats(ssc))
+gg.pairwise <- function(ssc,stats=pairwise.stats(ssc),scenario=1)
     {
         pwdf <- pairwiseDF(ssc@analysis.results)
         pwdf <- pwdf[pwdf$statistic%in%stats,]
+        pwdf <- pwdf[pwdf$scenario%in%scenario,]
         pwdf.mn <- pwdf %>% group_by(pop1,pop2,rep,statistic) %>% summarise(value=mean(value))
-
         plts <- list()
         for (s in unique(pwdf$statistic))
             {

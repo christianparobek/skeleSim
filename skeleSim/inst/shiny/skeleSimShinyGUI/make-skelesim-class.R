@@ -77,10 +77,6 @@ observeEvent(input$scenarioNumber,
                  updateNumericInput(session,"scenarioNumber",value=rValues$scenarioNumber)
              })
 
-#observeEvent(input$migrationNumber,
-#             {
-#                 rValues$migrationNumber <- input$migrationNumber
-#             })
 
 
 observeEvent(input$numpopsTxt,
@@ -99,6 +95,8 @@ observeEvent(input$numpopsTxt,
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration[[rValues$migrationNumber +1]] <- mig.mat()
              },priority=-1)
 
+
+
 observeEvent(input$numloci,
              {
                  numloci <- as.numeric(input$numloci)
@@ -109,8 +107,6 @@ observeEvent(input$numloci,
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(numloci)
                      }
                  }
-#                 updateTextInput(session,"numloci",
-#                                    value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
                  #### rmetasim addition
                  if (!is.na(numloci))
                      if (rValues$ssClass@simulator.type=="f")
@@ -230,6 +226,14 @@ observeEvent(input$self,
     }
 })
 
+observeEvent(input$gens,{
+    if (rValues$ssClass@simulator.type=="f")
+    {
+        if (input$gens>=1)
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen <- input$gens
+    }
+    
+})
 
 
 

@@ -101,7 +101,7 @@ output$migmat <- renderUI({
                 as.data.frame(mig.mat()))
 })
 
-pop.sizes <- function()
+pop.sizes <- reactive(
     {
         if (debug()) print("running popsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size))|
@@ -114,14 +114,16 @@ pop.sizes <- function()
           }
       matrix(ret,nrow=1)
     }
+    )
 
 output$popsize <- renderUI({
     if (debug()) print("creating popsize vector")
+    psz <- as.data.frame(pop.sizes())
     matrixInput("psvec","Vector of population sizes",
-                as.data.frame(pop.sizes()))
+                psz)
 })
 
-samp.sizes <- function()
+samp.sizes <- reactive(
     {
       if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sample.size))|
@@ -134,6 +136,7 @@ samp.sizes <- function()
           }
       matrix(ret,nrow=1)
     }
+)
 
 output$sampsize <- renderUI({
     if (debug()) print("creating popsize vector")
@@ -141,7 +144,7 @@ output$sampsize <- renderUI({
                 as.data.frame(samp.sizes()))
 })
 
-mut.rates <- function()
+mut.rates <- reactive(
     {
       if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))|
@@ -154,6 +157,7 @@ mut.rates <- function()
           }
       matrix(ret,nrow=1)
     }
+)
 
 output$mutrate <- renderUI({
     matrixInput("mutvec","Vector of mutation rates",

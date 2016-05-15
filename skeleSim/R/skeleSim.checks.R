@@ -13,6 +13,13 @@ overall.check <- function(params) {
   #then calculate new checks
   ths_chk <- rbind(params@sim.check.func(params), gen.scenario.check(params))
 
+  #if the number of columns of the two checks are different, then set prv_chk to null
+  #this would happen if a scenario is added to an existing object
+  if (!is.null(prv_chk))
+      if (dim(prv_chk)[2]!=dim(ths_chk)[2])
+          prv_chk=NULL
+
+  
   if(is.null(prv_chk)) { #if what was there is null, replace with new checks
     params@sim.scen.checks <- ths_chk
   } else { # else, check which lines are there and replace info

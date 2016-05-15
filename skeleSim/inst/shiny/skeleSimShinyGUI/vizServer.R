@@ -6,18 +6,18 @@
 
 output$globalMainPlot <- renderPlot({
 
-    gg.global(rValues$ssClass,stats=input$gstatsel)
+    gg.global(rValues$ssClass,stats=input$gstatsel,scenario=input$vizScenario)
 
 })
 
 output$locusMainPlot <- renderPlot({
 
-    gg.locus(rValues$ssClass,stats=input$lstatsel)
+    gg.locus(rValues$ssClass,stats=input$lstatsel,scenario=input$vizScenario)
 
 })
 
 output$pairwiseMainPlot <- renderPlot({
-
-    gg.pairwise(rValues$ssClass,stats=input$pstatsel)
+    
+    gg.pairwise(rValues$ssClass,stats=input$pstatsel,scenario=input$vizScenario)
 
 })
