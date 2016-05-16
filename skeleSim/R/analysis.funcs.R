@@ -64,14 +64,64 @@ analysisFunc <- function(params) {
 loadResultsMatrix <- function(params, mat, label) {
   curr_scn <- params@current.scenario
   num_reps <- params@num.sim.reps
-  if(is.null(params@analysis.results[[curr_scn]][[label]])) {
-    params@analysis.results[[curr_scn]][[label]] <- array(
-      NA, dim = c(nrow(mat), ncol(mat), num_reps),
-      dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
-    )
+
+if (label=="Pairwise") #alter mat to make sure all the rows are there.
+  {
+      ###This first part is an overwrought way to specify all combinations of pops and loci
+      np <- params@scenarios[[curr_scn]]@num.pops
+      all.names.df <- expand.grid(pop1=1:np,pop2=1:np,locus=paste0("L",1:params@scenarios[[curr_scn]]@num.loci))
+      all.names.df[,1:2] <- t(apply(all.names.df[,1:2],1,sort))
+      
+      pops <- unique(all.names.df[,1:2])
+      pops <- pops[pops[,1]!=pops[,2],]
+      all.names.df <- merge(pops,all.names.df,all.x=T,all.y=F)
+      all.names.df <- unique(all.names.df[with(all.names.df,order(pop1,pop2,locus)),])
+###this next line results in a complete list of pops and loci in the format that is used for rownames in the
+###analysis.results pairwise matrices
+      if (class(params@scenarios[[curr_scn]]@simulator.params)=="rmetasim.params")
+          all.names <- with(all.names.df,paste(pop1,pop2,locus,sep="_"))
+      else if (class(params@scenarios[[curr_scn]]@simulator.params)=="fastsimcoal.params")
+      {
+          all.names <- with(all.names.df,paste0("Sample ",pop1,"_Sample ",pop2,"_Locus_",gsub("L","",locus)))
+      }
+
+      if (sum(sapply(all.names,function(x){!x%in%rownames(mat)}))>0) #eq zero means all predicted popxpopxloc are there
+      {
+          insrt <- all.names[which(!all.names%in%rownames(mat))]
+          add <- matrix(NA,ncol=dim(mat)[2],nrow=length(insrt))
+          rownames(add) <- insrt
+          mat <- rbind(mat,add)
+      }
+      mat <- mat[order(rownames(mat)),]
+   }
+
+  
+  if(is.null(params@analysis.results[[curr_scn]][[label]]))
+  {
+      params@analysis.results[[curr_scn]][[label]] <- array(
+          NA, dim = c(nrow(mat), ncol(mat), num_reps),
+          dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
+      )
   }
-  curr_rep <- params@current.replicate
+
+    curr_rep <- params@current.replicate
+  
+#  print("debugging:")
+#  print(curr_scn)
+#  print(label)
+#  print(mat)
+#  print(dim(mat))
+#  print("done debugging")
+  
+
+    
+#  print(mat)
+#  print(dim(mat))
+#  print(dim(params@analysis.results[[curr_scn]][[label]][, , curr_rep]))
+
   params@analysis.results[[curr_scn]][[label]][, , curr_rep] <- mat
+
+  
   return(params)
 }
 

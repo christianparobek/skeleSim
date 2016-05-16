@@ -46,3 +46,31 @@ observeEvent(input$btnSave,{
     }
     setwd(d)
 })
+
+observeEvent(input$resetButton,{
+#    rValues <- reactiveValues(ssClass=ssClassInit(),
+#                          scenarioNumber=1,
+#                          lstScenario=1,
+#                          migrationNumber=0,
+#                          lstMigration = 0,
+#                          localDemoNumber = 1,
+#                          lstLocalDemo = 1,
+#                          EpochNumber = 1,
+#                          lstEpoch = 1,
+#                          history=NULL,
+#                          msg=NULL)
+
+    rValues$ssClass <- ssClassInit()
+    rValues$scenarioNumber <- 1
+    rValues$lstScenario <- 1
+    rValues$migrationNumber=0
+    rValues$lstMigration = 0
+    rValues$localDemoNumber = 1
+    rValues$lstLocalDemo = 1
+    rValues$EpochNumber = 1
+    rValues$lstEpoch = 1
+    rValues$history=NULL
+    rValues$msg=NULL
+                          
+    updateUIs()
+})

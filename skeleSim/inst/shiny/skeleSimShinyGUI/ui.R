@@ -13,13 +13,16 @@ shinyUI(
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
         shinyDirButton("workFolder","Set Simulation Root Directory (required before proceeding below)","Set Simulation Root Directory",FALSE),
-        br(),br(),
+        textOutput("rootText"),
+        br(),
     actionButton("btnSave","Save example inputs for each scenario"),
         br(),
     actionButton("btnRun","Run simulation"),
-        br(),
-        h4("After running a simulation..."),
-        actionButton("quitbtn","Quit App")
+    br(),
+    h4("After submitting a simulation,"),
+    h4("re-edit and submit/save another, or..."),
+#    actionButton("resetButton","Reset skeleSim object to default"),
+    actionButton("quitbtn","Quit skeleSimGUI()")
     ),
     tabPanel("Help Choosing Simulator",
              sidebarLayout(
@@ -83,7 +86,9 @@ shinyUI(
     tabPanel("Scenario Conf",
              sidebarLayout(
                  sidebarPanel(
-                     numericInput("scenarioNumber", "Which scenario",value=1,min=1),
+                     selectInput("scenarioNumber", "Which scenario",choices=1,selected=1),
+                     actionButton("addScenario","Add a new scenario"),
+                     br(),br(),
                      textInput("numpopsTxt", "Number of Populations",
                                value = "2"),
                      br(),
@@ -134,7 +139,7 @@ shinyUI(
    tabPanel(textOutput("simtext"),
             sidebarLayout(
                 sidebarPanel(
-                    numericInput("specScenNumber","Scenario number",value=1,min=1),
+                    selectInput("specScenNumber","Scenario number",choices=c(1),selected="1"),
 
 ##################### simcoal specific
                     conditionalPanel(
@@ -142,8 +147,10 @@ shinyUI(
                         h4("Fastsimcoal parameters")),
 #                    conditionalPanel(
 #                        condition = "input.coalescent == true",
-#                        checkboxInput("infSiteModel", "Infinite site model",
-#                                      value = FALSE)),
+#                        {
+#                            checkboxInput("coalesceStar", "Make all pops coalesce at max time in past",
+#                                          value = FALSE)
+#                        }
                     conditionalPanel(
                         condition = "input.coalescent == true",
                         uiOutput("simexec")
@@ -229,22 +236,31 @@ shinyUI(
    tabPanel("Results",
             sidebarLayout(
                 sidebarPanel(
-                    numericInput("vizScenario","Scenario to plot",value=1,min=1,max=1),
-                    selectizeInput("gstatsel","Global statistics",selected=NULL,multiple=TRUE,choices=NULL),
-                    selectizeInput("lstatsel","Locus-level statistics",selected=NULL,multiple=TRUE,choices=NULL),
-                    selectizeInput("pstatsel","Pairwise statistics",selected=NULL,multiple=TRUE,choices=NULL)
+                    radioButtons("scompare","Type of plots",c("Summarize Scenario"="s","Compare Scenarios"="c"),
+                                       selected="s"),
+                    conditionalPanel(
+                        condition = "input.scompare == 's'",
+                        numericInput("vizScenario","Scenario to plot",value=1,min=1,max=1)
+                    ),
+
+                    selectizeInput("gstatsel","Global statistics",selected=NULL,multiple=TRUE,choices="None (load completed simulation)"),
+                    selectizeInput("lstatsel","Locus-level statistics",selected=NULL,multiple=TRUE,choices="None (load completed simulation)"),
+                    selectizeInput("pstatsel","Pairwise statistics",selected=NULL,multiple=TRUE,choices="None (load completed simulation)")
                 )
                ,
                 mainPanel(
                     tabsetPanel(
                         tabPanel("Global Statistics",
-                                 plotOutput("globalMainPlot")
+                                 downloadButton("dlGlobal","Download .csv of global analyses"),
+                                 plotOutput("globalMainPlot",height=500,width=500)
                                  ),
                         tabPanel("Locus Statistics",
-                                 plotOutput("locusMainPlot")
+                                 downloadButton("dlLocus","Download .csv of locus analyses"),
+                                 plotOutput("locusMainPlot",height=900,width=600)
                                  ),
                         tabPanel("Pairwise Statistics",
-                                 plotOutput("pairwiseMainPlot")
+                                 downloadButton("dlPairwise","Download .csv of pairwise analyses"),
+                                 plotOutput("pairwiseMainPlot",height=600,width=900)
                                  )
                    )))),
    tabPanel(

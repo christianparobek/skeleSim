@@ -9,23 +9,23 @@
 
 observeEvent(rValues$ssClass@title,{
     if (!is.null(rValues$ssClass@title))
-        updateTextInput(session,"title",value=rValues$ssClass@title)
+        updateTextInput(session,"title",value=isolate(rValues$ssClass@title))
 })
 observeEvent(rValues$ssClass@date,{
     if (!is.null(rValues$ssClass@date))
-        updateDateInput(session,"date",value=rValues$ssClass@date)
+        updateDateInput(session,"date",value=isolate(rValues$ssClass@date))
 })
 observeEvent(rValues$ssClass@num.perm.reps,{
     if (!is.null(rValues$ssClass@num.perm.reps))
-        updateNumericInput(session,"NumPermReps",value=rValues$ssClass@num.perm.reps)
+        updateNumericInput(session,"NumPermReps",value=isolate(rValues$ssClass@num.perm.reps))
 })
 observeEvent(rValues$ssClass@quiet,{
     if (!is.null(rValues$ssClass@quiet))
-        updateCheckboxInput(session,"quiet",value=rValues$ssClass@quiet)
+        updateCheckboxInput(session,"quiet",value=isolate(rValues$ssClass@quiet))
 })
 observeEvent(rValues$ssClass@simulator.type,{
     if (!is.null(rValues$ssClass@simulator.type)){##sets a bunch of downstream parameters based on simulation type
-        updateCheckboxInput(session,"coalescent",value=ifelse(rValues$ssClass@simulator.type=="c",T,F))
+        updateCheckboxInput(session,"coalescent",value=isolate(ifelse(rValues$ssClass@simulator.type=="c",T,F)))
         output$simulator <- renderText({paste("Simulator:",rValues$ssClass@simulator)})
         if (rValues$ssClass@simulator.type=="c") rValues$ssClass@sim.func <- fsc.run else rValues$ssClass@sim.func <- rms.run
         output$simfunc <- renderText({paste("Simulator function:",ifelse(rValues$ssClass@simulator.type=="c","fsc.run","rms.run"))})
@@ -36,13 +36,13 @@ observeEvent(rValues$ssClass@simulator.type,{
 
 observeEvent(rValues$ssClass@num.sim.reps,{   
     if (!is.null(rValues$ssClass@num.sim.reps))
-        updateNumericInput(session,"reps",value=rValues$ssClass@num.sim.reps)
+        updateNumericInput(session,"reps",value=isolate(rValues$ssClass@num.sim.reps))
 })
 
 observeEvent(rValues$ssClass@analyses.requested,{
     if (!is.null(rValues$ssClass@analyses.requested))
         updateCheckboxGroupInput(session,"analysesReq",
-                                 names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested])
+                                 isolate(names(rValues$ssClass@analyses.requested)[rValues$ssClass@analyses.requested]))
 })
     
 observeEvent(rValues$ssClass@wd,{
@@ -70,8 +70,8 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops,{
 observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params,{
     if (rValues$ssClass@simulator.type!="c") #rmetasim, for now
     {
-        updateNumericInput(session,"gens",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen)
-        updateNumericInput(session,"stages",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
+        updateNumericInput(session,"gens",value=(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
+        updateNumericInput(session,"stages",value=(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
     }
 })
 
@@ -82,34 +82,43 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.param
 
 updateUIs <- function()
 {
-                    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
-                     updateTextInput(session,"numpopsTxt",
-                                     value=paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
 
-                  if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
-                      updateNumericInput(session,"numloci",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
-                     updateNumericInput(session,"loctype",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
-                     updateNumericInput(session,"seqlen",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
-                     updateSelectInput(session,"migModel",selected=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows))
-                     updateNumericInput(session,"rows",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols))
-                         updateNumericInput(session,"cols",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun))
-                     updateTextInput(session,"distfun",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun)
-                 if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
-                     updateNumericInput(session,"migRate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate)
-
+                 ######## update the scenario input boxes
+    choices=1:length(rValues$ssClass@scenarios)
+    updateSelectInput(session,"scenarioNumber",choices=choices,selected=isolate(as.character(rValues$scenarioNumber)))
+    updateSelectInput(session,"specScenNumber",choices=choices,selected=isolate(as.character(rValues$scenarioNumber)))
+    
+    
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
+        updateTextInput(session,"numpopsTxt",
+                        value=isolate(paste(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)))
+    
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
+        updateNumericInput(session,"numloci",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
+        updateNumericInput(session,"loctype",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
+        updateNumericInput(session,"seqlen",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
+        updateSelectInput(session,"migModel",selected=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel)
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows))
+        updateNumericInput(session,"rows",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols))
+        updateNumericInput(session,"cols",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun))
+        updateTextInput(session,"distfun",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun)
+    if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
+        updateNumericInput(session,"migRate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate)
+    
     ##analysis results
     if (!is.null(rValues$ssClass@analysis.results))
     {
         updateSelectizeInput(session,"gstatsel",choices=isolate(global.stats(rValues$ssClass)),selected=isolate(global.stats(rValues$ssClass)),server=TRUE)
+
         updateSelectizeInput(session,"lstatsel",choices=isolate(locus.stats(rValues$ssClass)),selected=isolate(locus.stats(rValues$ssClass)),server=TRUE)
-        updateSelectizeInput(session,"pstatsel",choices=isolate(pairwise.stats(rValues$ssClass)),
-                             selected=isolate(pairwise.stats(rValues$ssClass)),server=TRUE)
+
+        updateSelectizeInput(session,"pstatsel",choices=isolate(pairwise.stats(rValues$ssClass)), selected=isolate(pairwise.stats(rValues$ssClass)),server=TRUE)
+
         updateNumericInput(session,"vizScenario",max=viz.scenarios(rValues$ssClass))
         
     }

@@ -7,7 +7,7 @@
 #require(shinyIncubator)
 #require(igraph)
 library(dplyr)
-
+library(ggplot2)
 source("utils.R")
 source("mig.matrix.R")
 source("simcoal-history.R")

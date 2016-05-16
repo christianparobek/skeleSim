@@ -7,6 +7,10 @@ output$saveButton <- renderUI({
     actionButton("btnSave","Save example inputs for each scenario")
 })
 
+output$rootText <- renderText({paste("Simulation inputs, outputs and work directory will be written in:", supportValues$simroot)})
+
+
+
 observeEvent(input$btnRun, {
     req(supportValues$simroot)
 #    print("in run")
@@ -30,17 +34,13 @@ observeEvent(input$btnRun, {
             }
         })
 
-#        output$btnRun <- renderUI({
-#            actionButton("btnRunSim", paste("Run", supportValues$fnameLabel))
-#        })
-
 #### do the running now
         
         if(!is.null(supportValues$fnameLabel)) {
             scriptFname <- paste(supportValues$fnameLabel, ".script.R", sep = "")
             paramFname <- paste(supportValues$fnameLabel, ".params.rdata", sep = "")
             outFname <- paste(supportValues$fnameLabel, ".skeleSim.out.rdata", sep = "")
-            
+            logFname <- paste(supportValues$fnameLabel, ".log", sep = "")
             scriptFname <- paste(supportValues$simroot,scriptFname,sep="/")
             
             write("rm(list = ls())", file = scriptFname, append=TRUE)
@@ -57,16 +57,6 @@ observeEvent(input$btnRun, {
             write(paste0("library(skeleSim)"), file = scriptFname)
             write("getwd()",file = scriptFname, append=TRUE)
             
-#            srcfiles <- ifelse(rValues$ssClass@simulator=="fsc",
-#                               'source("fastsimcoal.skeleSim.R")',
-#                               'source("rmetasim.skeleSim.R")'
-#                               )
-#            write('source("skeleSim.classes.R")', file = scriptFname, append = TRUE)
-#            write('source("skeleSim.funcs.R")', file = scriptFname, append = TRUE)
-#            write(srcfiles, file = scriptFname, append = TRUE)
-#            print("srcfiles")
-#            print(srcfiles)
-#            print("printed srcfiles")
             cdcmd <- chartr("\\","/",paste0("setwd('",supportValues$simroot,"')")) #make this work on windows also
             write(cdcmd, file = scriptFname, append=TRUE)
             write("getwd()",file = scriptFname, append=TRUE)
@@ -86,10 +76,10 @@ observeEvent(input$btnRun, {
             if (debug()) print(ifelse(supportValues$OS=="unix","Unix-based system","Windows-based system"))
             if (supportValues$OS=="unix") #
                 {
-                    cmd <- paste("nohup R CMD BATCH --no-restore", scriptFname)
+                    cmd <- paste("cd",supportValues$simroot,"; nohup R CMD BATCH --no-restore ", scriptFname)
                     system(cmd, wait = FALSE)
                     
-                } else {
+                } else { #windows output put in shiny directory
                     cmd <- paste("start R CMD BATCH --no-restore", scriptFname)
                     shell(cmd,wait=F)
                 }

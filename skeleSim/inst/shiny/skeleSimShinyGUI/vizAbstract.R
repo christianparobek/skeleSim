@@ -4,8 +4,9 @@
 #
 
 #this one returns the global results
-globalDF <- function(ar)
+globalDF <- function(ssc)
 {
+    ar <- ssc@analysis.results
     if ("Global" %in% names(ar[[1]]))
     {
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
@@ -20,15 +21,15 @@ globalDF <- function(ar)
     } else {NULL}
 }
 
-locusDF <- function(ar)
+locusDF <- function(ssc)
 {
+    ar <- ssc@analysis.results
     if ("Locus" %in% names(ar[[1]]))
     {
-        lar <- ar[[1]][["Locus"]]
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
         {
             ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
-            ploc <- strsplit(as.character(ldf$Var1)," ")
+            ploc <- strsplit(as.character(ldf$Var1),"_")
             population <- sapply(ploc,function(x){if(length(x)>1){x[2]} else {"overall"}})
             locus <- gsub("Locus_","",gsub("_Sample","",sapply(ploc,function(x){x[1]})))
             data.frame(locus=locus,pop=population,rep=ldf$Var3,scenario=i,statistic=ldf$Var2,value=ldf$Freq)
@@ -37,8 +38,9 @@ locusDF <- function(ar)
     } else {NULL}
 }
 
-pairwiseDF <- function(ar)
+pairwiseDF <- function(ssc)
     {
+        ar <- ssc@analysis.results
         if ("Pairwise" %in% names(ar[[1]]))
         {
          ret <- do.call(rbind,lapply(1:length(ar),function(i)

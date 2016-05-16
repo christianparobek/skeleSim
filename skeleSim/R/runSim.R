@@ -8,8 +8,14 @@
 #' @export
 #'
 runSim <- function(params, num.secs = NULL) {
-  # check parameters
-  params <- overall.check(params)
+
+### these are parameters that are going to be hosed anyway.
+    params@analysis.results <- NULL
+    params@sim.scen.checks <- NULL
+    params@rep.result <- NULL
+
+### check parameters
+    params <- overall.check(params)
   print(params@other.checks)
   print(params@sim.scen.checks)
   if(!all(params@other.checks, params@sim.scen.checks)) {

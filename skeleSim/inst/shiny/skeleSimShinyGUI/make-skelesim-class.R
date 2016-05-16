@@ -18,20 +18,25 @@ observeEvent(input$quiet, {
 })
 
 observeEvent(input$coalescent,{
-#observeEvent(coalescentstate(),{
     rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
     rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rms")
     for (s in 1:length(rValues$ssClass@scenarios))
         if (rValues$ssClass@simulator.type=="c")
             {
-                rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    fastsimcoalInit(rValues$ssClass@scenarios[[s]]@num.pops)
+                if (is.null(rValues$ssClass@scenarios[[s]]@simulator.params)|class(rValues$ssClass@scenarios[[s]]@simulator.params)!="fastsimcoal.params")
+                {
+                    rValues$ssClass@scenarios[[s]]@simulator.params <-
+                        fastsimcoalInit(rValues$ssClass@scenarios[[s]]@num.pops)
+                }
             } else {
-                rValues$ssClass@scenarios[[s]]@simulator.params <-
-                    rmetasimInit(rValues$ssClass@scenarios[[s]]@num.pops)
-                rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- rep(1,rValues$ssClass@scenarios[[s]]@num.loci)
-                rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- vector("list",rValues$ssClass@scenarios[[s]]@num.loci)
-                rValues$ssClass@scenarios[[s]]@simulator.params@num.gen <- 50
+                if (is.null(rValues$ssClass@scenarios[[s]]@simulator.params)|class(rValues$ssClass@scenarios[[s]]@simulator.params)!="rmetasim.params")
+                {
+                    rValues$ssClass@scenarios[[s]]@simulator.params <-
+                        rmetasimInit(rValues$ssClass@scenarios[[s]]@num.pops)
+                    rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- rep(1,rValues$ssClass@scenarios[[s]]@num.loci)
+                    rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- vector("list",rValues$ssClass@scenarios[[s]]@num.loci)
+                    rValues$ssClass@scenarios[[s]]@simulator.params@num.gen <- 50
+                }
             }
 })
 
@@ -72,9 +77,9 @@ observeEvent(input$scenarioNumber,
              {
                  if (req(input$scenarioNumber)>0)
                  {
-                     rValues$scenarioNumber <- floor(input$scenarioNumber)
+                     rValues$scenarioNumber <- isolate(floor(as.numeric(input$scenarioNumber)))
                  }
-                 updateNumericInput(session,"scenarioNumber",value=rValues$scenarioNumber)
+#                 updateNumericInput(session,"scenarioNumber",value=isolate(rValues$scenarioNumber))
              })
 
 
@@ -171,9 +176,9 @@ observeEvent(input$specScenNumber,
                  if (!is.na(input$specScenNumber))
                      if (input$specScenNumber>0)
                      {
-                         rValues$scenarioNumber <- as.integer(floor(input$specScenNumber))
+                         rValues$scenarioNumber <- isolate(as.integer(floor(as.numeric(input$specScenNumber))))
                      }
-                 updateNumericInput(session,"specScenNumber",value=rValues$scenarioNumber)
+ #                updateNumericInput(session,"specScenNumber",value=isolate(rValues$scenarioNumber))
 
              })
 
@@ -277,9 +282,6 @@ observeEvent(rValues$scenarioNumber,
 
                  rValues$lstScenario <- rValues$scenarioNumber
 
-                 ######## update the scenario input boxes
-                 updateNumericInput(session,"scenarioNumber",value=rValues$scenarioNumber)
-                 updateNumericInput(session,"specScenNumber",value=rValues$scenarioNumber)
 
                  updateUIs()
  
@@ -345,3 +347,8 @@ observeEvent(hst(),{
     }
 })
 
+
+###scenario adding
+observeEvent(input$addScenario,{
+    rValues$scenarioNumber <- isolate(length(rValues$ssClass@scenarios)+1)
+})
