@@ -310,21 +310,28 @@ observeEvent(input$ssvec,{
 })
 
 observeEvent(input$mutvec,{
+
     req(input$mutvec)
-#    print("in mutvec observeEvent")
-#    print(rValues$scenarioNumber)
-#    print(input$mutvec)
-#    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
-    diff <- length(input$mutvec)-length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
-#    print(diff)
+
+    print("in mutvec observeEvent")
+    print(rValues$scenarioNumber)
+    print(input$mutvec)
+    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+   diff <- length(input$mutvec)-length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+    print(diff)
+
     if (diff==0) #lengths are good. replace
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec)
     else if (diff<0) #input short
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec,rep(0.0001,abs(diff)))
     else #input long
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-
-        c(input$mutvec)[1:rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci]
-#    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+        {
+            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-
+                c(input$mutvec)[1:(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)]
+        }
+    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+    print("leaving observerevent mutvec")
+
 })
 
 #this is a change in the migration matrix number
