@@ -30,6 +30,10 @@ locusDF <- function(ssc)
         {
             ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
             ploc <- strsplit(as.character(ldf$Var1),"_")
+            
+            if (prod(sapply(ploc,function(x){x[1]=="Locus"})) == 1)
+                ploc <- lapply(ploc,function(x){x[-1]})
+
             population <- sapply(ploc,function(x){if(length(x)>1){x[2]} else {"overall"}})
             locus <- gsub("Locus_","",gsub("_Sample","",sapply(ploc,function(x){x[1]})))
             data.frame(locus=locus,pop=population,rep=ldf$Var3,scenario=i,statistic=ldf$Var2,value=ldf$Freq)

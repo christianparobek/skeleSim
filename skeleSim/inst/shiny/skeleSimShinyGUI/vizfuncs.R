@@ -81,6 +81,7 @@ gg.locus.scmp <- function(ssc,stats=locus.stats(ssc))
     ldf <- locusDF(ssc)
     ldf <- ldf[ldf$statistic%in%stats,]
     ldf <- ldf[ldf$pop!="overall",]
+    ldf$scenario <- as.factor(ldf$scenario)
     ldf <- group_by(ldf,pop,locus,scenario,statistic)%>%summarise(value=mean(value,na.rm=T))
     l <- ggplot(data=ldf,aes(x=scenario,y=value,group=locus,col=locus)) + geom_violin(aes(group=scenario))+
         geom_jitter(width=0.15)+facet_wrap(~statistic,scales="free")+stat_summary(fun.y="mean",geom="line")
@@ -127,8 +128,10 @@ gg.pairwise.scmp <- function(ssc,stats=pairwise.stats(ssc))
     {
         pwdf <- pairwiseDF(ssc)
         pwdf <- pwdf[pwdf$statistic%in%stats,]
+        pwdf$scenario <- as.factor(pwdf$scenario)
         
         pwdf.mn <- pwdf %>% group_by(pop1,pop2,statistic,scenario) %>% summarise(value=mean(value))
+
         plts <- list()
         for (s in unique(pwdf$statistic))
 #            for (scen in unique(pwdf.mn$scenario))
