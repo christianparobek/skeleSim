@@ -215,26 +215,26 @@ output$growthrate <- renderUI({
 })
 
 
-output$simexec <- renderUI({
-    ui <- textInput("fscexec", "No fastsimcoal executable in path: enter value", value = "")
-    if (!is.null(rValues$ssClass@simulator))
-        if (rValues$ssClass@simulator=="fsc")
-            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params))
-                    {
-                        sim.exec <-
-                            c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,
-                                      supportValues$simexec)
-                        sim.exec <- sim.exec[!is.null(sim.exec)]
-                        sim.exec <- basename(Sys.which(sim.exec))
-                        sim.exec <- unique(sim.exec)
-                        sim.exec <- sim.exec[nchar(sim.exec)>2]
-                        if (debug()) print("rendering UI for simexec")
-                        if (debug()) print(sim.exec)
-                        ui <- selectInput("fscexec","Select fastsimcoal executable",selected=sim.exec[1],
-                                          choices=sim.exec)
-                    }
-    ui
-})
+#output$simexec <- renderUI({
+#    ui <- textInput("fscexec", "No fastsimcoal executable in path: enter value", value = "")
+#    if (!is.null(rValues$ssClass@simulator))
+#        if (rValues$ssClass@simulator=="fsc")
+#            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params))
+#                    {
+#                        sim.exec <-
+#                            c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,
+#                                      supportValues$simexec)
+#                        sim.exec <- sim.exec[!is.null(sim.exec)]
+#                        sim.exec <- basename(Sys.which(sim.exec))
+#                        sim.exec <- unique(sim.exec)
+#                        sim.exec <- sim.exec[nchar(sim.exec)>2]
+#                        if (debug()) print("rendering UI for simexec")
+#                        if (debug()) print(sim.exec)
+#                        ui <- selectInput("fscexec","Select fastsimcoal executable",selected=sim.exec[1],
+#                                          choices=sim.exec)
+#                    }
+#    ui
+#})
 
 
 ###########locus params (actually derived from scenario-specific information)

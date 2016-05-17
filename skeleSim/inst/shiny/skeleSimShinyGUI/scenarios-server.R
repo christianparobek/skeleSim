@@ -97,8 +97,9 @@ mig.mat <- function(){
 
 
 output$migmat <- renderUI({
+    mat <- as.data.frame(mig.mat())
     matrixInput("migmat","Migration Matrix",
-                as.data.frame(mig.mat()))
+                isolate(mat))
 })
 
 pop.sizes <- reactive(
@@ -120,7 +121,7 @@ output$popsize <- renderUI({
     if (debug()) print("creating popsize vector")
     psz <- as.data.frame(pop.sizes())
     matrixInput("psvec","Vector of population sizes",
-                psz)
+                isolate(psz))
 })
 
 samp.sizes <- reactive(
@@ -140,8 +141,9 @@ samp.sizes <- reactive(
 
 output$sampsize <- renderUI({
     if (debug()) print("creating popsize vector")
+    ssz <- as.data.frame(samp.sizes())
     matrixInput("ssvec","Vector of sample sizes",
-                as.data.frame(samp.sizes()))
+                isolate(ssz))
 })
 
 mut.rates <- reactive(
@@ -160,8 +162,9 @@ mut.rates <- reactive(
 )
 
 output$mutrate <- renderUI({
+    mr <- as.data.frame(mut.rates())
     matrixInput("mutvec","Vector of mutation rates",
-                as.data.frame(mut.rates()))
+                isolate(mr))
 })
 
 

@@ -153,7 +153,9 @@ shinyUI(
 #                        }
                     conditionalPanel(
                         condition = "input.coalescent == true",
-                        uiOutput("simexec")
+#                        uiOutput("simexec")
+                        selectInput("fscexec","Select fastsimcoal executable",
+                                          choices="No compatible executable found in path")
                     )
 #################### end simcoal specific
                     ,

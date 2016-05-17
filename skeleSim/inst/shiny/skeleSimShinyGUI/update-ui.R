@@ -88,6 +88,7 @@ updateUIs <- function()
     updateSelectInput(session,"scenarioNumber",choices=choices,selected=isolate(as.character(rValues$scenarioNumber)))
     updateSelectInput(session,"specScenNumber",choices=choices,selected=isolate(as.character(rValues$scenarioNumber)))
     
+
     
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops))
         updateTextInput(session,"numpopsTxt",
@@ -96,19 +97,39 @@ updateUIs <- function()
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
         updateNumericInput(session,"numloci",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
-        updateNumericInput(session,"loctype",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
+        updateSelectInput(session,"loctype",selected=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
         updateNumericInput(session,"seqlen",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
-        updateSelectInput(session,"migModel",selected=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel)
+        updateSelectInput(session,"migModel",selected=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows))
-        updateNumericInput(session,"rows",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
+        updateNumericInput(session,"rows",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols))
-        updateNumericInput(session,"cols",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
+        updateNumericInput(session,"cols",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun))
-        updateTextInput(session,"distfun",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun)
+        updateTextInput(session,"distfun",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$distfun))
     if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
-        updateNumericInput(session,"migRate",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate)
+        updateNumericInput(session,"migRate",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migRate))
+
+###supposed to reset the executables section for fastsimcoal
+    if (!is.null(rValues$ssClass@simulator))
+        if (rValues$ssClass@simulator=="fsc")
+            if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params))
+                    {
+                        sim.exec <-
+                            c(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec,
+                                      supportValues$simexec)
+                        sim.exec <- sim.exec[!is.null(sim.exec)]
+                        sim.exec <- basename(Sys.which(sim.exec)) #gets the names of the executables actually on machine
+                        sim.exec <- unique(sim.exec)
+                        sim.exec <- sim.exec[nchar(sim.exec)>2]
+                        if (debug()) print("rendering UI for simexec")
+                        if (debug()) print(sim.exec)
+                        updateSelectInput(session,"fscexec",selected=sim.exec[1],
+                                          choices=sim.exec)
+                    }
+
+
     
     ##analysis results
     if (!is.null(rValues$ssClass@analysis.results))
@@ -119,8 +140,7 @@ updateUIs <- function()
 
         updateSelectizeInput(session,"pstatsel",choices=isolate(pairwise.stats(rValues$ssClass)), selected=isolate(pairwise.stats(rValues$ssClass)),server=TRUE)
 
-        updateNumericInput(session,"vizScenario",max=viz.scenarios(rValues$ssClass))
-        
+        updateNumericInput(session,"vizScenario",max=viz.scenarios(isolate(rValues$ssClass)))
     }
                     
 }
