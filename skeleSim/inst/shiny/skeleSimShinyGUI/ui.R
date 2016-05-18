@@ -102,12 +102,12 @@ shinyUI(
                      conditionalPanel(condition = "input.migModel == 'distance'",
                                       selectInput("distfun", "Distance function (must be an R function)",choices=c("dexp"))),
                      selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
-                     conditionalPanel(condition = "input.loctype != 'sequence'", 
-                                      textInput("numloci", "Number of loci",
-                                                   value = "1")),
                      
                      conditionalPanel(condition = "input.loctype == 'sequence'",
                                       numericInput("seqlen","Sequence length",value=100)),
+
+                     textInput("numloci", "Number of loci",
+                               value = "1"),
 
                      width=3 #number between 1-12 for sidebar width on scenarios tab                     
                  )

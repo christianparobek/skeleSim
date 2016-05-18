@@ -24,11 +24,12 @@
 #'   landscape.mig.matrix landscape.new.epoch landscape.new.locus landscape.new.individuals
 #' @export
 rms.init.landscape <- function(num.pops = NULL, carrying = NULL,
-  sample.size = NULL, mig.rates = NULL, num.loc = NULL, loc.type = NULL,
-  mut.rate = NULL, seq.length = NULL, num.stgs = NULL, selfing = NULL,
-  surv.matr = NULL, repr.matr = NULL, male.matr = NULL, init.pop.sizes = NULL,
-  num.gen = NULL, num.alleles = NULL, allele.freqs = NULL) {
-
+                               sample.size = NULL, mig.rates = NULL, num.loc = NULL, loc.type = NULL,
+                               mut.rate = NULL, seq.length = NULL, num.stgs = NULL, selfing = NULL,
+                               surv.matr = NULL, repr.matr = NULL, male.matr = NULL, init.pop.sizes = NULL,
+                               num.gen = NULL, num.alleles = NULL, allele.freqs = NULL)
+{
+    
 
 if(exists("skeletonland")) rm(skeletonland)
 skeletonland<-landscape.new.empty()
@@ -82,7 +83,6 @@ if (loc.type == "sequence") rms.locus.type = 2
                                               transmission=0, numalleles=num.alleles[l],
                                               frequencies=allele.freqs[[l]])
         }
-#assumes population initial sizes all defined nicely by user
+###assumes population initial sizes all defined nicely by user
     skeletonland<-landscape.new.individuals(skeletonland,init.pop.sizes)
-    
 }

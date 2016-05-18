@@ -134,9 +134,12 @@ observeEvent(input$loctype,
                  if (input$loctype=="sequence")
                  {
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- 1
+                     updateTextInput(session,"numloci",value="1")
+                 } else {
+
                  }
-                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type <- input$loctype
                  
+                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type <- input$loctype
              })
 
 observeEvent(input$seqlen,
@@ -335,15 +338,17 @@ observeEvent(input$mutvec,{
    diff <- length(input$mutvec)-length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
     print(diff)
 
-    if (diff==0) #lengths are good. replace
+#    if (diff==0) #lengths are good. replace
+    
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec)
-    else if (diff<0) #input short
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec,rep(0.0001,abs(diff)))
-    else #input long
-        {
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-
-                c(input$mutvec)[1:(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)]
-        }
+        
+#    else if (diff<0) #input short
+#        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- c(input$mutvec,rep(0.0001,abs(diff)))
+#    else #input long
+#        {
+#            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-
+#                c(input$mutvec)[1:(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)]
+#        }
     print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
     print("leaving observerevent mutvec")
 
