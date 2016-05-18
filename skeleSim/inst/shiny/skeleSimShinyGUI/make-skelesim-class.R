@@ -26,27 +26,27 @@ observeEvent(input$coalescent,{
                 if (is.null(rValues$ssClass@scenarios[[s]]@simulator.params)|class(rValues$ssClass@scenarios[[s]]@simulator.params)!="fastsimcoal.params")
                 {
                     rValues$ssClass@scenarios[[s]]@simulator.params <-
-                        fastsimcoalInit(rValues$ssClass@scenarios[[s]]@num.pops)
+                        isolate(fastsimcoalInit(rValues$ssClass@scenarios[[s]]@num.pops))
                 }
             } else {
                 if (is.null(rValues$ssClass@scenarios[[s]]@simulator.params)|class(rValues$ssClass@scenarios[[s]]@simulator.params)!="rmetasim.params")
                 {
                     rValues$ssClass@scenarios[[s]]@simulator.params <-
                         rmetasimInit(rValues$ssClass@scenarios[[s]]@num.pops)
-                    rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- rep(1,rValues$ssClass@scenarios[[s]]@num.loci)
-                    rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- vector("list",rValues$ssClass@scenarios[[s]]@num.loci)
+                    rValues$ssClass@scenarios[[s]]@simulator.params@num.alleles <- isolate(rep(1,rValues$ssClass@scenarios[[s]]@num.loci))
+                    rValues$ssClass@scenarios[[s]]@simulator.params@allele.freqs <- isolate(vector("list",rValues$ssClass@scenarios[[s]]@num.loci))
                     rValues$ssClass@scenarios[[s]]@simulator.params@num.gen <- 50
                 }
             }
 })
 
 observeEvent(input$reps, {
-    rValues$ssClass@num.sim.reps <- as.numeric(floor(input$reps))
+    rValues$ssClass@num.sim.reps <- isolate(as.numeric(floor(input$reps)))
 
 })
 
 observeEvent(input$NumPermReps,{
-    rValues$ssClass@num.perm.reps <- floor(input$NumPermReps)
+    rValues$ssClass@num.perm.reps <- isolate(floor(input$NumPermReps))
 
 })
 
@@ -219,7 +219,7 @@ observeEvent(input$stages,
 {
     if (rValues$ssClass@simulator.type=="f")
     {
-        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- floor(input$stages)
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- isolate(floor(input$stages))
         if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)) || (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)[1]!=floor(input$stages)))
         {
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr <- matrix(0,floor(input$stages),floor(input$stages))

@@ -136,8 +136,11 @@ updateUIs <- function()
                     }
 
     ###rmetasim
-    updateNumericInput(session,"stages",
-                       value= isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
+    if (req(rValues$ssClass@simulator)=="rms")
+        {
+            updateNumericInput(session,"stages",
+                               value= isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
+        }
 
 
     
