@@ -8,18 +8,18 @@
 ####This section updates the ssClass reactive when inputs change
 
 observeEvent(input$title, {
-    rValues$ssClass@title <- input$title
+    rValues$ssClass@title <- isolate(input$title)
 })
 observeEvent(input$date, {
-    rValues$ssClass@date <- as.POSIXct(input$date) #do we need POSIX dates?
+    rValues$ssClass@date <- isolate(as.POSIXct(input$date)) #do we need POSIX dates?
 })
 observeEvent(input$quiet, {
-    rValues$ssClass@quiet <- input$quiet
+    rValues$ssClass@quiet <- isolate(input$quiet)
 })
 
 observeEvent(input$coalescent,{
-    rValues$ssClass@simulator.type <- ifelse(input$coalescent,"c","f")
-    rValues$ssClass@simulator <- ifelse(input$coalescent,"fsc","rms")
+    rValues$ssClass@simulator.type <- ifelse(isolate(input$coalescent),"c","f")
+    rValues$ssClass@simulator <- ifelse(isolate(input$coalescent),"fsc","rms")
     for (s in 1:length(rValues$ssClass@scenarios))
         if (rValues$ssClass@simulator.type=="c")
             {
