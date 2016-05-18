@@ -45,7 +45,8 @@ output$dlGlobal <- downloadHandler(
     content = function(file) {
       write.table(df.global(rValues$ssClass), file, sep = ",",
         row.names = FALSE)
-    }
+    },
+    contentType="text/csv"
   )
 
 output$dlLocus <- downloadHandler(
@@ -59,7 +60,9 @@ output$dlLocus <- downloadHandler(
     content = function(file) {
       write.table(df.locus(rValues$ssClass), file, sep = ",",
         row.names = FALSE)
-    }
+    },
+    contentType="text/csv"
+
   )
 
 output$dlPairwise <- downloadHandler(
@@ -73,7 +76,9 @@ output$dlPairwise <- downloadHandler(
     content = function(file) {
       write.table(df.pairwise(rValues$ssClass), file, sep = ",",
         row.names = FALSE)
-    }
+    },
+    contentType="text/csv"
+
   )
 
 
