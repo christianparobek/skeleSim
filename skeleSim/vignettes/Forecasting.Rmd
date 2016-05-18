@@ -92,4 +92,8 @@ And that is all you have to do to create this second scenario.  The unique aspec
 
 Now go back to the "Current ssClass" tab at the top and look over the parameters of each of your simulations to make sure everything is as you'd like it to be.  You should now see 2 entries that say "Formal class 'scenario.params' [package "skeleSim"] with 10 slots".  These are you two scenarios
 
-Now you are ready to run.  Go back to the Actions tab, save your skelesim object, select the root directory you would like to run in, and click run simulation.  You can then open your skelesim object in the running R session.  Just load up the .Rdata file ("Connect_or_not.20160316.1028.1618.params.rdata" for example) and type in ssClass- this will show your object and the results.
+Now you are ready to run.  Go back to the Actions tab, save your skelesim object, select the root directory you would like to run in, and click run simulation. Back on the Actions tab, use the File operations "Read skelesim object from file" to load the skelesim.out.rdata file you created. You may then view results in the Results tab. 
+
+<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/skeleSim/vignettes/obsvdheterozygosity.png" style="width: 750px;"/>
+
+You can also open your skelesim object in the running R session.  Just load up the .Rdata file ("Connect_or_not.20160316.1028.1618.params.rdata" for example) and type in ssClass- this will show your object and the results.
