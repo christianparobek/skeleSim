@@ -240,7 +240,7 @@ observeEvent(input$self,
 observeEvent(input$gens,{
     if (rValues$ssClass@simulator.type=="f")
     {
-        if (input$gens>=1)
+        if (req(input$gens)>=1)
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen <- input$gens
     }
     
@@ -288,6 +288,7 @@ observeEvent(rValues$scenarioNumber,
 
                  rValues$lstScenario <- rValues$scenarioNumber
 
+                 sanityChecks()
 
                  updateUIs()
  
@@ -302,7 +303,21 @@ observeEvent(input$migmat,{
 })
 
 observeEvent(input$psvec,{
-    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- c(input$psvec)
+    print("in observevent psvec")
+    print(rValues$scenarioNumber)
+    print(input$psvec)
+    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
+    print(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size))
+    if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size) != rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
+    {
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <-
+            rep(100,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
+    } else {
+        rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- c(input$psvec)
+    }
+    
+    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
+    print("in observevent psvec")
 })
 
 observeEvent(input$ssvec,{

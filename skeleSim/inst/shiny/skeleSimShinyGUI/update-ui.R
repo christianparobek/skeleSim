@@ -70,8 +70,8 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops,{
 observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params,{
     if (rValues$ssClass@simulator.type!="c") #rmetasim, for now
     {
-        updateNumericInput(session,"gens",value=(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
-        updateNumericInput(session,"stages",value=(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
+        updateNumericInput(session,"gens",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.gen))
+        updateNumericInput(session,"stages",value=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
     }
 })
 

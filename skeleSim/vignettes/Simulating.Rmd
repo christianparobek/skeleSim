@@ -30,6 +30,7 @@ the filename prefix format for all skeleSim files produced during simulation has
   * The R file has the prefix above with ".script.R" appended.  It contains an R script to run this particular simulation
   * The input parameter file has ".params.rdata" appended
   * Simulation results are stored in a file with ".skeleSim.out.rdata"
+  * log files should be stored in a file with .Rout as an extension
   
 #### R script
 The R script is a self-contained R script that loads the appropriate libraries, loads data runs a simulation and analysis and then saves the results.  Here is an example.  The comments have been added to provide clarity.  The skelesim class saved in the input and output files is called 'ssClass'
@@ -73,7 +74,20 @@ ssClass <- runSim(ssClass) #run simulation.  now results are stored in ssClass@a
 ##Troubleshooting
 Common problems include:
   
- 1. **Not specifying the root simulation directory**  Depending on the operating system, your results will appear in some form of your home directory which might be an unexpected location
+ 1. **Not specifying the root simulation directory** Depending on the
+    operating system, your results will appear in some form of your
+    home directory which might be an unexpected location
   
- 2. **Simulation not completing** Because it is happening in the simulator softwares, this one is much more difficult to resolve. You know there is a problem when no output file appears in the simulation directory.  An obvious first step to troubleshoot is to call the R script into a running R session and look for error messages.  In addition, the simulation subdirectory might include information on what happened.  You can also use the "save input files for each scenario" button on the actions tab.  This will create an input file for a simulator and you may be able to run that file and look for errors.
+ 2. **Simulation not completing** Because it is happening in the
+    simulator softwares, this one is much more difficult to
+    resolve. You know there is a problem when no output file appears
+    in the simulation directory.  An obvious first step to
+    troubleshoot is to check te log file.  Second, source the R script
+    into a running R session and look for error messages.  In
+    addition, the simulation subdirectory might include information on
+    what happened.  You can also use the "save input files for each
+    scenario" button on the actions tab.  This will create an input
+    file for a simulator and you may be able to run that file and look
+    for errors.
+ 
  

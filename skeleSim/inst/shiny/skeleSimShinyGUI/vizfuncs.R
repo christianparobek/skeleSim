@@ -19,7 +19,6 @@ global.stats <- function(ssc)
 
 gg.global <- function(ssc,stats=global.stats(ssc),scenario=1) #ssc is an ssClass (skelesim class) object
 {
-
     gdf <- globalDF(ssc)
     gdf <- gdf[gdf$scenario%in%scenario,]
     gdf <- gdf[gdf$statistic%in%stats,]

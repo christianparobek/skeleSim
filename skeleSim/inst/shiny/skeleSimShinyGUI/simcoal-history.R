@@ -7,7 +7,7 @@
 #
 
 create.new.history <- function(npop=3,
-                               deepestPopcoal=1000000,
+                               deepestPopcoal=5000,
                                method=c("allroot","exponential")[2]
                                )
     {
