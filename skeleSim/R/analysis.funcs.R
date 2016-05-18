@@ -71,7 +71,7 @@ if (label=="Pairwise") #alter mat to make sure all the rows are there.
       np <- params@scenarios[[curr_scn]]@num.pops
       all.names.df <- expand.grid(pop1=1:np,pop2=1:np,locus=paste0("L",1:params@scenarios[[curr_scn]]@num.loci))
       all.names.df[,1:2] <- t(apply(all.names.df[,1:2],1,sort))
-      
+
       pops <- unique(all.names.df[,1:2])
       pops <- pops[pops[,1]!=pops[,2],]
       all.names.df <- merge(pops,all.names.df,all.x=T,all.y=F)
@@ -95,7 +95,7 @@ if (label=="Pairwise") #alter mat to make sure all the rows are there.
       mat <- mat[order(rownames(mat)),]
    }
 
-  
+
   if(is.null(params@analysis.results[[curr_scn]][[label]]))
   {
       params@analysis.results[[curr_scn]][[label]] <- array(
@@ -105,23 +105,23 @@ if (label=="Pairwise") #alter mat to make sure all the rows are there.
   }
 
     curr_rep <- params@current.replicate
-  
+
 #  print("debugging:")
 #  print(curr_scn)
 #  print(label)
 #  print(mat)
 #  print(dim(mat))
 #  print("done debugging")
-  
 
-    
+
+
 #  print(mat)
 #  print(dim(mat))
 #  print(dim(params@analysis.results[[curr_scn]][[label]][, , curr_rep]))
 
   params@analysis.results[[curr_scn]][[label]][, , curr_rep] <- mat
 
-  
+
   return(params)
 }
 
@@ -418,59 +418,42 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
       dA.locus
     )
   } else NULL
-
-
-                                        # chord distance
+    # chord distance
     cd <- NULL
     cd <- if(ploidy(g) == 2) {
-
-              dat <- genind2hierfstat(gtypes2genind(g))
-
-              chord.dist <- calcChordDist(dat)
-                                        # chord.dist by locus
-
-
-              chord.dist.locus <- do.call(rbind, lapply(locNames(g), function(l) {
-                  if (length(unique(dat[,l]))>1)
-                  {
-                      result <- calcChordDist(dat[, c("pop", l)])
-                  }
-                  else {
-                      result <- as.data.frame(matrix(0,
-                                                     nrow=length(unique(dat[,"pop"])),
-                                                     ncol=3))
-                      names(result) <- c("strata.1","strata.2","chord.distance")
-                      }
-                  cbind(result[, 1:2], Locus = l, result[, 3])
-              }))
-
-              colnames(chord.dist.locus)[4] <- "chord.dist"
-              chord.dist.locus
-
-          } else NULL
-
-
-
+      dat <- genind2hierfstat(gtypes2genind(g))
+      chord.dist <- calcChordDist(dat)
+      # chord.dist by locus
+      chord.dist.locus <- do.call(rbind, lapply(colnames(dat)[-1], function(l) {
+        if (length(unique(dat[, l])) > 1) {
+          result <- calcChordDist(dat[, c("pop", l)])
+        } else {
+          result <- matrix(0, nrow = length(unique(dat[,"pop"])), ncol = 3)
+          result <- as.data.frame(result)
+          names(result) <- c("strata.1","strata.2","chord.distance")
+        }
+        cbind(result[, 1:2], Locus = l, result[, 3])
+      }))
+      colnames(chord.dist.locus)[4] <- "chord.dist"
+      chord.dist.locus
+    } else NULL
 
   # combine results into single matrix
   by.cols <- c("strata.1", "strata.2", "Locus")
   smry <- merge(pws, sA, by = by.cols)
   if(!is.null(dA)) smry <- merge(smry, dA, by = by.cols)
   if(!is.null(cd)) smry <- merge(smry, cd, by = by.cols)
-
-
-
-    smry <- smry[with(smry, order(Locus, strata.1, strata.2)), ]
-    rownames(smry) <- sapply(1:nrow(smry), function(i) {
-        st.pair <- paste(smry$strata.1[i], smry$strata.2[i], sep = "_")
-        if(is.na(smry$Locus[i])) {
-            st.pair
-        } else {
-            paste(st.pair, smry$Locus[i], sep = "_")
-        }
-    })
-    smry$strata.1 <- smry$strata.2 <- smry$Locus <- NULL
-    smry <- as.matrix(smry)
+  smry <- smry[with(smry, order(Locus, strata.1, strata.2)), ]
+  rownames(smry) <- sapply(1:nrow(smry), function(i) {
+    st.pair <- paste(smry$strata.1[i], smry$strata.2[i], sep = "_")
+    if(is.na(smry$Locus[i])) {
+      st.pair
+    } else {
+      paste(st.pair, smry$Locus[i], sep = "_")
+    }
+  })
+  smry$strata.1 <- smry$strata.2 <- smry$Locus <- NULL
+  smry <- as.matrix(smry)
 
   return(smry)
 }
