@@ -12,36 +12,52 @@ globalDF <- function(ssc)
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
         {
             gdf <- as.data.frame(as.table(ar[[i]][['Global']]));
-
             names(gdf) <- c("Locus","statistic","rep","value");
             gdf$scenario <- i
+            gdf$Locus <- as.factor(gsub("Locus_","",as.character(gdf$Locus)))
             gdf
         }))
         ret[complete.cases(ret),] #get rid of statistics that are NAs
     } else {NULL}
 }
 
+####takes the analysis.results slot from a skelesim object and makes a data frame of locus information
 locusDF <- function(ssc)
 {
     ar <- ssc@analysis.results
+    ret <- NULL
     if ("Locus" %in% names(ar[[1]]))
     {
+        print("locusDF")
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
         {
-            ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
-            ploc <- strsplit(as.character(ldf$Var1),"_")
-            
-            if (prod(sapply(ploc,function(x){x[1]=="Locus"})) == 1)
-                ploc <- lapply(ploc,function(x){x[-1]})
+            print(i)
+            if (ssc@scenarios[[i]]@locus.type=="microsatellite")
+            {
+                ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
 
-            population <- sapply(ploc,function(x){if(length(x)>1){x[2]} else {"overall"}})
-            locus <- gsub("Locus_","",gsub("_Sample","",sapply(ploc,function(x){x[1]})))
-            data.frame(locus=locus,pop=population,rep=ldf$Var3,scenario=i,statistic=ldf$Var2,value=ldf$Freq)
-        }))
-        ret[complete.cases(ret),]
-    } else {NULL}
+                print(dim(ldf))
+                
+                ploc <- strsplit(as.character(ldf$Var1),"_")
+                
+                if (prod(sapply(ploc,function(x){x[1]=="Locus"})) == 1)
+                    ploc <- lapply(ploc,function(x){x[-1]})
+                
+                population <- as.factor(gsub("Sample ","",sapply(ploc,function(x){if(length(x)>1){x[2]} else {NA}})))
+                locus <- as.factor(gsub("L","",sapply(ploc,function(x){x[1]})))
+               df <- data.frame(locus=locus,pop=population,rep=ldf$Var3,scenario=i,statistic=ldf$Var2,value=ldf$Freq)
+            } else {  #data are sequence or other
+                df <- NULL
+            }
+        }
+        ))
+        if (!is.null(ret))
+            ret <- ret[complete.cases(ret),]
+    }
+    ret
 }
 
+####takes the analysis.results slot from a skelesim object and makes a data frame of pairwise information
 pairwiseDF <- function(ssc)
     {
         ar <- ssc@analysis.results

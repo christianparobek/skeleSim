@@ -288,6 +288,7 @@ observeEvent(rValues$scenarioNumber,
 
                  rValues$lstScenario <- rValues$scenarioNumber
 
+                 sanityChecks()
 
                  updateUIs()
  

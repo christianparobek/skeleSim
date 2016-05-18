@@ -54,6 +54,8 @@ shinyServer(function(input, output, session) {
 ##################visualization
 source("vizServer.R", local = T)
 
+#################sanity checks
+source("sanity-checks.R", local=T)
 
 ####navbar header
     output$simtext <- renderText({
