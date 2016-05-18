@@ -42,12 +42,12 @@ observeEvent(input$coalescent,{
 
 observeEvent(input$reps, {
     rValues$ssClass@num.sim.reps <- as.numeric(floor(input$reps))
-    updateNumericInput(session,"reps",value = rValues$ssClass@num.sim.reps)
+
 })
 
 observeEvent(input$NumPermReps,{
     rValues$ssClass@num.perm.reps <- floor(input$NumPermReps)
-    updateNumericInput(session,"NumPermReps",value = rValues$ssClass@num.perm.reps)
+
 })
 
 observeEvent(input$analysesReq, {
@@ -163,14 +163,14 @@ observeEvent(input$migRate,
 observeEvent(input$rows,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows <- floor(input$rows)
-                 updateNumericInput(session,"rows",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
+#                 updateNumericInput(session,"rows",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$rows)
                  mig.mat()
              })
 
 observeEvent(input$cols,
              {
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols <- input$cols
-                 updateNumericInput(session,"cols",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
+#                 updateNumericInput(session,"cols",value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$cols)
                  mig.mat()
              })
 observeEvent(input$distfun,
@@ -197,7 +197,7 @@ observeEvent(input$fscexec,
                  {
                      if (debug()) print(input$fscexec)
                      if (input$fscexec!="")
-                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- input$fscexec
+                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@fastsimcoal.exec <- isolate(input$fscexec)
                  }
              })
 
@@ -220,8 +220,6 @@ observeEvent(input$stages,
     if (rValues$ssClass@simulator.type=="f")
     {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs <- floor(input$stages)
-        updateNumericInput(session,"stages",
-                           value= rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs)
         if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)) || (dim(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr)[1]!=floor(input$stages)))
         {
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@surv.matr <- matrix(0,floor(input$stages),floor(input$stages))
@@ -367,7 +365,7 @@ observeEvent(input$mignum,{
         }
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration <- migs
         rValues$migrationNumber <- mn
-        updateNumericInput(session,"mignum",value=mn)
+        updateNumericInput(session,"mignum",value=isolate(mn))
         if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel))
         {
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mig.helper$migModel <- "user"

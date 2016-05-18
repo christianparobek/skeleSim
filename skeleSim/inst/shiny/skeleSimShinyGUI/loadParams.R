@@ -46,7 +46,7 @@ observeEvent(input$slctParams,{
   } else {
     ""
   }
-  updateTextInput(session, "txtTitle", value = rValues$ssClass@title)
+  updateTextInput(session, "txtTitle", value = isolate(rValues$ssClass@title))
   updateUIs()
 })
 

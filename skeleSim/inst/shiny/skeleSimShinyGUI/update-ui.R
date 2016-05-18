@@ -83,6 +83,12 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.param
 updateUIs <- function()
 {
 
+
+    ###genpars
+    updateNumericInput(session,"reps",value = isolate(rValues$ssClass@num.sim.reps))
+    updateNumericInput(session,"NumPermReps",value = isolate(rValues$ssClass@num.perm.reps))
+    
+    
                  ######## update the scenario input boxes
     choices=1:length(rValues$ssClass@scenarios)
     updateSelectInput(session,"scenarioNumber",choices=choices,selected=isolate(as.character(rValues$scenarioNumber)))
@@ -128,6 +134,10 @@ updateUIs <- function()
                         updateSelectInput(session,"fscexec",selected=sim.exec[1],
                                           choices=sim.exec)
                     }
+
+    ###rmetasim
+    updateNumericInput(session,"stages",
+                       value= isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
 
 
     
