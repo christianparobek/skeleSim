@@ -301,14 +301,15 @@ hapSmryFunc <- function(g) {
   g <- g[, , , drop = TRUE]
   unstrat <- g
   strata(unstrat) <- "Default"
-  smry <- t(sapply(locNames(g), function(l) {
-    summary(unstrat[, l, , drop = TRUE])$strata.smry[1, ]
+  t(sapply(locNames(g), function(l) {
+    loc.g <- unstrat[, l, , drop = TRUE]
+    smry <- summary(loc.g)$strata.smry[1, ]
+    smry <- smry[!names(smry) %in% "num.missing"]
+    dvsty <- mean(nucleotideDiversity(g), na.rm = TRUE)
+    Fs <- fusFs(loc.g)
+    tD <- tajimasD(loc.g)[, "D"]
+    c(smry, mean.nucleotide.diversity = dvsty, Fus.Fs = Fs, Tajimas.D = tD)
   }))
-  smry <- smry[, -grep("num.missing", colnames(smry))]
-  dvsty <- sapply(nucleotideDiversity(g), mean, na.rm = TRUE)
-  Fs <- fusFs(g)
-  tD <- tajimasD(g)[, "D"]
-  cbind(smry, mean.nucleotide.diversity = dvsty, Fus.Fs = Fs, Tajimas.D = tD)
 }
 
 
@@ -420,23 +421,23 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
   } else NULL
     # chord distance
     cd <- NULL
-    cd <- if(ploidy(g) == 2) {
-      dat <- genind2hierfstat(gtypes2genind(g))
-      chord.dist <- calcChordDist(dat)
-      # chord.dist by locus
-      chord.dist.locus <- do.call(rbind, lapply(colnames(dat)[-1], function(l) {
-        if (length(unique(dat[, l])) > 1) {
-          result <- calcChordDist(dat[, c("pop", l)])
-        } else {
-          result <- matrix(0, nrow = length(unique(dat[,"pop"])), ncol = 3)
-          result <- as.data.frame(result)
-          names(result) <- c("strata.1","strata.2","chord.distance")
-        }
-        cbind(result[, 1:2], Locus = l, result[, 3])
-      }))
-      colnames(chord.dist.locus)[4] <- "chord.dist"
-      chord.dist.locus
-    } else NULL
+    # cd <- if(ploidy(g) == 2) {
+    #   dat <- genind2hierfstat(gtypes2genind(g))
+    #   chord.dist <- calcChordDist(dat)
+    #   # chord.dist by locus
+    #   chord.dist.locus <- do.call(rbind, lapply(colnames(dat)[-1], function(l) {
+    #     if (length(unique(dat[, l])) > 1) {
+    #       result <- calcChordDist(dat[, c("pop", l)])
+    #     } else {
+    #       result <- matrix(0, nrow = length(unique(dat[,"pop"])), ncol = 3)
+    #       result <- as.data.frame(result)
+    #       names(result) <- c("strata.1","strata.2","chord.distance")
+    #     }
+    #     cbind(result[, 1:2], Locus = l, result[, 3])
+    #   }))
+    #   colnames(chord.dist.locus)[4] <- "chord.dist"
+    #   chord.dist.locus
+    # } else NULL
 
   # combine results into single matrix
   by.cols <- c("strata.1", "strata.2", "Locus")
