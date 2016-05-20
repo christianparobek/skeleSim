@@ -4,7 +4,7 @@
 \alias{skeleSimGUI}
 \title{GUI for skeleSim system}
 \usage{
-skeleSimGUI()
+skeleSimGUI(launch.browser = TRUE)
 }
 \description{
 This function starts the shiny simulation control panel
