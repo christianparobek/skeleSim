@@ -4,7 +4,7 @@
 #' @param Rland a \code{rmetasim} landscape object.
 #' @param locus.type character giving type of locus (\code{microsat} or
 #'   \code{sequence})
-#'
+#' @return A gtypes object containing genotypes (or sequences)
 #' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind landscape.locus.states
 #' @importFrom ape as.DNAbin
 #' @export
@@ -38,7 +38,7 @@ rms.convert <- function(Rland, locus.type) {
     }
     else if (ltype=="SNP")
     {
-        this.rep.result <- landscape.make.genind(landscape.snp.convert(Rland))
+        this.rep.result <- genind2gtypes(landscape.make.genind(landscape.snp.convert(Rland)))
     }
 
 
