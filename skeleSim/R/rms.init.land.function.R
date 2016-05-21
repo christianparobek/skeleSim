@@ -1,23 +1,23 @@
 #' @title Initialize a landscape object
 #' @description Initialize a landscape object
 #'
-#' @param num.pops ?
-#' @param carrying ?
-#' @param sample.size ?
-#' @param mig.rates ?
-#' @param num.loc ?
-#' @param loc.type ?
-#' @param mut.rate ?
-#' @param seq.length ?
-#' @param num.stgs ?
-#' @param selfing ?
-#' @param surv.matr ?
-#' @param repr.matr ?
-#' @param male.matr ?
-#' @param init.pop.sizes ?
-#' @param num.gen ?
-#' @param num.alleles ?
-#' @param allele.freqs ?
+#' @param num.pops number of populations to simulate
+#' @param carrying maximum population sizes for each population 
+#' @param sample.size size of sample to be pulled from each population 
+#' @param mig.rates a list of among-population migration matrices
+#' @param num.loc number of independently segregating loci
+#' @param loc.type sequence or microsatellite
+#' @param mut.rate per gene mutation rate
+#' @param seq.length if simulating a sequence, the length of the molecule
+#' @param num.stgs number of demographic stages in a population
+#' @param selfing selfing rate (must range from 0 [random mating] to 1 [complete selfing]
+#' @param surv.matr within pop survival matrices
+#' @param repr.matr within pop reproduction matrices
+#' @param male.matr with pop male repro matrices
+#' @param init.pop.sizes starting population sizes
+#' @param num.gen number of generations to simulate
+#' @param num.alleles vector of the number of alleles per locus
+#' @param allele.freqs list of allele freqs for each locus (range 0-1)
 #'
 #' @importFrom rmetasim landscape.new.empty landscape.new.floatparam
 #'   landscape.new.intparam landscape.new.switchparam landscape.new.local.demo

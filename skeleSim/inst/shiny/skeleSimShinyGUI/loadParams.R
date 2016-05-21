@@ -33,7 +33,7 @@ output$uiSelectParamObj <- renderUI({
           selectInput(
               "slctParams",
               label = h5("Selected parameter object (could be multiple objects per file)"),
-              choices = obj.list
+              choices = isolate(obj.list)
               )
       } else h5("<No skeleSim parameter objects found>")
   } else NULL
