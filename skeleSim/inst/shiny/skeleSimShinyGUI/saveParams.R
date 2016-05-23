@@ -25,9 +25,6 @@ output$txtObjLabel <- renderText({
   paste("Title of skelesim object currently in memory:",ret)
 })
 
-
-
-
         
 observeEvent(input$btnSave,{
     req(rValues$ssClass)
