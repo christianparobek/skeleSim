@@ -12,39 +12,39 @@ rms.init.landscape.func(num.pops = NULL, carrying = NULL,
   allele.freqs = NULL)
 }
 \arguments{
-\item{num.pops}{?}
+\item{num.pops}{number of populations to simulate}
 
-\item{carrying}{?}
+\item{carrying}{maximum population sizes for each population}
 
-\item{sample.size}{?}
+\item{sample.size}{size of sample to be pulled from each population}
 
-\item{mig.rates}{?}
+\item{mig.rates}{a list of among-population migration matrices}
 
-\item{num.loc}{?}
+\item{num.loc}{number of independently segregating loci}
 
-\item{loc.type}{?}
+\item{loc.type}{sequence or microsatellite}
 
-\item{mut.rate}{?}
+\item{mut.rate}{per gene mutation rate}
 
-\item{seq.length}{?}
+\item{seq.length}{if simulating a sequence, the length of the molecule}
 
-\item{num.stgs}{?}
+\item{num.stgs}{number of demographic stages in a population}
 
-\item{selfing}{?}
+\item{selfing}{selfing rate (must range from 0 [random mating] to 1 [complete selfing]}
 
-\item{surv.matr}{?}
+\item{surv.matr}{within pop survival matrices}
 
-\item{repr.matr}{?}
+\item{repr.matr}{within pop reproduction matrices}
 
-\item{male.matr}{?}
+\item{male.matr}{with pop male repro matrices}
 
-\item{init.pop.sizes}{?}
+\item{init.pop.sizes}{starting population sizes}
 
-\item{num.gen}{?}
+\item{num.gen}{number of generations to simulate}
 
-\item{num.alleles}{?}
+\item{num.alleles}{vector of the number of alleles per locus}
 
-\item{allele.freqs}{?}
+\item{allele.freqs}{list of allele freqs for each locus (range 0-1)}
 }
 \description{
 Initialize a landscape object

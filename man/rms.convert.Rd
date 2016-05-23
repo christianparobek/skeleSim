@@ -12,6 +12,9 @@ rms.convert(Rland, locus.type)
 \item{locus.type}{character giving type of locus (\code{microsat} or
 \code{sequence})}
 }
+\value{
+A gtypes object containing genotypes (or sequences)
+}
 \description{
 Extract genetic data from landscape object
 }
