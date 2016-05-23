@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^Archive/*
+^README\.Rmd$
+^README-.*\.png$
+^NEWS\.Rmd$
+^NEWS\.md$
+tar.gz$
+.gitignore

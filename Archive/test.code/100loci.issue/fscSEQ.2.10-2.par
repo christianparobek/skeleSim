@@ -1,0 +1,35 @@
+//  << fscSEQ.2.10-2 >>  (input from 'fastsimcoal.skeleSim.run')
+4 populations to sample
+//Population effective sizes
+100
+100
+100
+100
+//Sample sizes
+20 0
+20 0
+20 0
+20 0
+//Growth rates
+0
+0
+0
+0
+//Number of migration matrices
+1
+//migration matrix
+0 0.001 0 0
+0.001 0 0.001 0
+0 0.001 0 0.001
+0 0 0.001 0
+//Historical events: time, source, sink, migrants, new size, growth rate, migr. matrix
+3
+437943 1 0 1 1 0 0
+8981 2 3 1 1 0 0
+394845 3 0 1 1 0 0
+//Number of independent loci [chromosomes]
+1 0
+//Per chromosome: Number of linkage blocks
+1
+//Per block: data type, num loci, rec. rate and mut rate + optional parameters
+DNA 100 0 1 0.333333333333333
