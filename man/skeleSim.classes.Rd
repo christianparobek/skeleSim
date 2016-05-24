@@ -6,6 +6,7 @@
 \alias{scenario.params-class}
 \alias{skeleSim.classes}
 \alias{skeleSim.params}
+\alias{skeleSim.params-class}
 \title{skeleSim Parameters Class}
 \description{
 An S4 class storing generic parameters used throughout

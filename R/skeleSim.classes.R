@@ -43,7 +43,7 @@ setClassUnion("logOrNULL", c("logical", "NULL"))
 #'   or "Pairwise" analyses have been requested.
 #'
 #' @name skeleSim.classes
-#' @aliases skeleSim.params
+#' @aliases skeleSim.params skeleSim.params-class
 #' @importFrom methods setClass
 #' @export
 #'
