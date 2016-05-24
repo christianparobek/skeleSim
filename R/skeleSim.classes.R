@@ -1,11 +1,8 @@
-#' @name skeleSim.classes
-#' @importFrom methods setClassUnion
-setClassUnion("logOrNULL", c("logical", "NULL"))
-setClassUnion("funcOrNULL", c("function", "NULL"))
-setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
+setClassUnion("matrOrNULL", c("matrix", "NULL"))
+setClassUnion("funcOrNULL", c("function", "NULL"))
+setClassUnion("logOrNULL", c("logical", "NULL"))
 
-#' @rdname skeleSim.classes
 #' @title skeleSim Parameters Class
 #' @description An S4 class storing generic parameters used throughout
 #'   the workflow
@@ -45,6 +42,9 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot analyses.requested vector of logicals specifying "Global", "Locus",
 #'   or "Pairwise" analyses have been requested.
 #'
+#' @name skeleSim.classes
+#' @aliases skeleSim.params
+#' @importFrom methods setClass
 #' @export
 #'
 skeleSim.params <- setClass(
@@ -78,8 +78,6 @@ skeleSim.params <- setClass(
 )
 
 
-#' @rdname skeleSim.classes
-#'
 #' @slot num.pops number of populations.
 #' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.
 #' @slot sample.size a vector \code{num.pop} long giving the number of
@@ -97,6 +95,8 @@ skeleSim.params <- setClass(
 #' @slot simulator.params an object storing simulator-specific parameters. Can
 #'   be a list or a simulator-specific class.
 #'
+#' @rdname skeleSim.classes
+#' @aliases scenario.params
 #' @export
 #'
 scenario.params <- setClass(

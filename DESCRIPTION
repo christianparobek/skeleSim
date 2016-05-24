@@ -37,10 +37,10 @@ Suggests:
     knitr,
     rmarkdown
 Collate:
+  skeleSim-package.R
   skeleSim.classes.R
   fsc.classes.R
   rms.classes.R
-  skeleSim-package.R
   skeleSim.internals.R
   skeleSimGUI.R
   analysis.funcs.R
