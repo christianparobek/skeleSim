@@ -9,10 +9,10 @@ setClassUnion("intOrNULL", c("integer", "NULL"))
 #'   executable.
 #' @slot pop.info matrix of population sampling information created by the
 #'   \code{\link{fscPopInfo}} function.
-#' @slot locus.params data.frame specifying loci to simulate created by the
-#'   \code{\link{fscLocusParams}} function.
 #' @slot hist.ev matrix of historical events created by the
 #'   \code{\link{fscHistEv}} function.
+#' @slot locus.params data.frame specifying loci to simulate created by the
+#'   \code{\link{fscLocusParams}} function.
 #'
 #' @export
 #'
@@ -20,13 +20,11 @@ fastsimcoal.params <- setClass(
   Class = "fastsimcoal.params",
   slots = c(
     fastsimcoal.exec = "character", pop.info = "matrOrNULL",
-    hist.ev = "matrOrNULL", locus.params = "dfOrNULL",
-    growth.rate = "intOrNum",
-    sample.times = "intOrNULL"
+    hist.ev = "matrOrNULL", locus.params = "dfOrNULL"
   ),
   prototype = list(
     fastsimcoal.exec = "fsc252", pop.info = NULL, hist.ev = NULL,
-    locus.params = NULL, growth.rate=0,sample.times=NULL
+    locus.params = NULL
   ),
   validity = function(object) {
     return(TRUE)

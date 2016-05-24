@@ -3,8 +3,3 @@
 .RData
 skeleSim.Rproj
 skeleSim.Rcheck/
-error.log
-/shiny_parameters/nohup.out
-/shiny_parameters/README.md~
-/skeleSim/inst/shiny/skeleSimShinyGUI/make-skelesim-class-old.R
-/skeleSim/inst/shiny/skeleSimShinyGUI/vizServer.R~

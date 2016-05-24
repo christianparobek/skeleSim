@@ -17,10 +17,10 @@ executable.}
 \item{\code{pop.info}}{matrix of population sampling information created by the
 \code{\link{fscPopInfo}} function.}
 
-\item{\code{locus.params}}{data.frame specifying loci to simulate created by the
-\code{\link{fscLocusParams}} function.}
-
 \item{\code{hist.ev}}{matrix of historical events created by the
 \code{\link{fscHistEv}} function.}
+
+\item{\code{locus.params}}{data.frame specifying loci to simulate created by the
+\code{\link{fscLocusParams}} function.}
 }}
 

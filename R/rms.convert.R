@@ -34,7 +34,7 @@ rms.convert <- function(Rland, locus.type) {
         dna.seq <- strsplit(as.character(tolower(seq$state)),"")
         dnabin <- as.DNAbin(do.call(rbind,strsplit(tolower(as.character(seq$state)),"")))
         this.rep.result <- sequence2gtypes(strata=seq$pop,x=dnabin)
-                                           
+
     }
     else if (ltype=="SNP")
     {
