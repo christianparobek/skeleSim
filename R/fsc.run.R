@@ -17,7 +17,7 @@ fsc.run <- function(params) {
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
   locus.type <- c("dna","msat","snp")[which(c("DNA","MICROSAT")==sc@simulator.params@locus.params[1,1])]
-  
+
   params@rep.sample <- fastsimcoal(
     pop.info = fscPopInfo(pop.size=sc@pop.size,
                           sample.size=sc@sample.size,
@@ -37,6 +37,8 @@ fsc.run <- function(params) {
 
   return(params)
 }
+
+
 #' @name fsc.write
 #' @title Write fastsimcoal files
 #' @description Run fastsimcoal
@@ -58,12 +60,12 @@ fsc.write <- function(params) {
         label <- paste0(currentLabel(params),"-",s)
                                         # Check that folder is empty
         if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
-        
+
         locus.type <- c("dna","msat","snp")[which(c("DNA","MICROSAT")==sc@simulator.params@locus.params[1,1])]
 
 #       print("about to run fscWrite")
-        
-        tmp <- strataG:::.fscWrite(
+
+        tmp <- fscWrite(
 #        tmp <- fscWrite(
             pop.info = fscPopInfo(pop.size=sc@pop.size,
                 sample.size=sc@sample.size,
