@@ -23,6 +23,7 @@ Depends:
     strataG (>= 1.0),
     rmetasim (>= 3.0.0),
     shiny (>= 0.13.0),
+    shinyFiles,
     ggplot2
 Imports:
     adegenet,
