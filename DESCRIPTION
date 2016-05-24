@@ -24,6 +24,7 @@ Depends:
     rmetasim (>= 3.0.0),
     shiny (>= 0.13.0),
     shinyFiles,
+    markdown,
     ggplot2
 Imports:
     adegenet,
