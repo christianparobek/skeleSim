@@ -36,10 +36,10 @@ rms.convert <- function(Rland, locus.type) {
         this.rep.result <- sequence2gtypes(strata=seq$pop,x=dnabin)
 
     }
-    else if (ltype=="SNP")
-    {
-        this.rep.result <- genind2gtypes(landscape.make.genind(landscape.snp.convert(Rland)))
-    }
+    # else if (ltype=="SNP")
+    # {
+    #     this.rep.result <- genind2gtypes(landscape.make.genind(landscape.snp.convert(Rland)))
+    # }
 
 
     this.rep.result
