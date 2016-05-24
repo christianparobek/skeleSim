@@ -31,4 +31,3 @@ skeleSimGUI()
 
 * submit suggestions and bug-reports: <https://github.com/christianparobek/skeleSim/issues>
 * send a pull request: <https://github.com/christianparobek/skeleSim/>
-* e-mail: <eric.archer@noaa.gov>
