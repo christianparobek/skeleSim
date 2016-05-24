@@ -20,21 +20,44 @@ LazyLoad: Yes
 LazyData: true
 Depends:
     R (>= 3.2.0),
-    igraph,
     strataG (>= 1.0),
     rmetasim (>= 3.0.0),
+    shiny (>= 0.13.0),
     ggplot2
 Imports:
     adegenet,
     ape,
     hierfstat,
+    igraph,
     pegas,
     methods,
     reshape2,
-    shiny (>= 0.13.0),
     swfscMisc (>= 1.1)
 Suggests:
     knitr,
     rmarkdown
+Collate:
+  skeleSim.classes.R
+  fsc.classes.R
+  rms.classes.R
+  skeleSim.internals.R
+  skeleSimGUI.R
+  analysis.funcs.R
+  fsc.loadScenario.R
+  fsc.run.R
+  fsc.scenarioCheck.R
+  landscape.freq.locnames.R
+  landscape.make.genpop.R
+  landscape.sample.R
+  plot.all.stats.R
+  rms.convert.R
+  rms.init.land.function.R
+  rms.init.landscape.R
+  rms.run.R
+  rms.scenarioCheck.R
+  runSim.R
+  skeleSim.checks.R
+  summ.stats.table.R
+  tableinput.R
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

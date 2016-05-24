@@ -6,7 +6,7 @@
 #'
 #' @return NULL
 #'
-#' @importFrom shiny runApp
+#' @import shiny
 #' @importFrom igraph graph.adjacency plot.igraph
 #' @export
 #'
