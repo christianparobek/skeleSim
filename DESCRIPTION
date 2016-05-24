@@ -40,6 +40,7 @@ Collate:
   skeleSim.classes.R
   fsc.classes.R
   rms.classes.R
+  skeleSim-package.R
   skeleSim.internals.R
   skeleSimGUI.R
   analysis.funcs.R
