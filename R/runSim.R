@@ -4,6 +4,8 @@
 #' @param params a \linkS4class{skeleSim.params} object.
 #' @param num.secs number of seconds to run timing checks
 #'
+#' # markdown and shinyFiles import added for shiny app
+#' @import markdown shinyFiles
 #' @importFrom swfscMisc autoUnits
 #' @export
 #'

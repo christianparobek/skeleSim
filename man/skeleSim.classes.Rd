@@ -75,10 +75,16 @@ or "Pairwise" analyses have been requested.}
 
 \item{\code{num.pops}}{number of populations.}
 
-\item{\code{pop.size}}{a vector \code{num.pop} long giving size of each populaiton.}
+\item{\code{pop.size}}{a vector \code{num.pop} long giving size of each population.}
 
 \item{\code{sample.size}}{a vector \code{num.pop} long giving the number of
 samples to take from each population.}
+
+\item{\code{growth.rate}}{a vector \code{num.pop} long giving the growth rate of
+each population.}
+
+\item{\code{sample.times}}{a vector \code{num.pop} long giving the time (in generations)
+that samples are drawn from in population.}
 
 \item{\code{migration}}{a list of one or more \code{num.pop} x \code{num.pop} matrices
 giving the migration rates between each population.}

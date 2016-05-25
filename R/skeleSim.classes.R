@@ -79,9 +79,13 @@ skeleSim.params <- setClass(
 
 
 #' @slot num.pops number of populations.
-#' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.
+#' @slot pop.size a vector \code{num.pop} long giving size of each population.
 #' @slot sample.size a vector \code{num.pop} long giving the number of
 #'   samples to take from each population.
+#' @slot growth.rate a vector \code{num.pop} long giving the growth rate of
+#'   each population.
+#' @slot sample.times a vector \code{num.pop} long giving the time (in generations)
+#'   that samples are drawn from in population.
 #' @slot migration a list of one or more \code{num.pop} x \code{num.pop} matrices
 #'   giving the migration rates between each population.
 #' @slot locus.type a character representation of what type of marker to simulate.
@@ -103,13 +107,16 @@ scenario.params <- setClass(
   Class = "scenario.params",
   slots = c(
     num.pops = "intOrNum", pop.size = "intOrNum", sample.size = "intOrNum",
+    growth.rate = "intOrNum", sample.times = "intOrNum",
     migration = "listOrNULL", mig.helper = "listOrNULL",
     locus.type = "charOrNULL", num.loci = "intOrNum",
     sequence.length = "intOrNum", mut.rate = "intOrNum", simulator.params = "ANY"
   ),
   prototype = list(
-    num.pops = NULL, pop.size = NULL, sample.size = NULL, migration = NULL,
-    mig.helper = NULL, locus.type = NULL, num.loci = NULL,
+    num.pops = NULL, pop.size = NULL, sample.size = NULL,
+    growth.rate = NULL, sample.times = NULL,
+    migration = NULL,  mig.helper = NULL,
+    locus.type = NULL, num.loci = NULL,
     sequence.length = NULL, mut.rate = NULL, simulator.params = NULL
   )
 )
