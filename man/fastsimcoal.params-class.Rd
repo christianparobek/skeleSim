@@ -22,5 +22,11 @@ executable.}
 
 \item{\code{locus.params}}{data.frame specifying loci to simulate created by the
 \code{\link{fscLocusParams}} function.}
+
+\item{\code{growth.rate}}{a vector \code{num.pop} long giving the growth rate of
+each population.}
+
+\item{\code{sample.times}}{a vector \code{num.pop} long giving the time (in generations)
+that samples are drawn from in population.}
 }}
 
