@@ -75,7 +75,7 @@ or "Pairwise" analyses have been requested.}
 
 \item{\code{num.pops}}{number of populations.}
 
-\item{\code{pop.size}}{a vector \code{num.pop} long giving size of each populaiton.}
+\item{\code{pop.size}}{a vector \code{num.pop} long giving size of each population.}
 
 \item{\code{sample.size}}{a vector \code{num.pop} long giving the number of
 samples to take from each population.}

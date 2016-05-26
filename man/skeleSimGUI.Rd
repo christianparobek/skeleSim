@@ -6,6 +6,10 @@
 \usage{
 skeleSimGUI(launch.browser = TRUE)
 }
+\arguments{
+\item{launch.browser}{If true, the system's default web browser will be
+launched automatically after the app is started.}
+}
 \description{
 This function starts the shiny simulation control panel
 }

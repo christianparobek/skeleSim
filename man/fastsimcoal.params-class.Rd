@@ -17,10 +17,16 @@ executable.}
 \item{\code{pop.info}}{matrix of population sampling information created by the
 \code{\link{fscPopInfo}} function.}
 
+\item{\code{hist.ev}}{matrix of historical events created by the
+\code{\link{fscHistEv}} function.}
+
 \item{\code{locus.params}}{data.frame specifying loci to simulate created by the
 \code{\link{fscLocusParams}} function.}
 
-\item{\code{hist.ev}}{matrix of historical events created by the
-\code{\link{fscHistEv}} function.}
+\item{\code{growth.rate}}{a vector \code{num.pop} long giving the growth rate of
+each population.}
+
+\item{\code{sample.times}}{a vector \code{num.pop} long giving the time (in generations)
+that samples are drawn from in population.}
 }}
 

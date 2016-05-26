@@ -1,11 +1,8 @@
-#' @name skeleSim.classes
-#' @importFrom methods setClassUnion
-setClassUnion("logOrNULL", c("logical", "NULL"))
-setClassUnion("funcOrNULL", c("function", "NULL"))
-setClassUnion("matrOrNULL", c("matrix", "NULL"))
 setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
+setClassUnion("matrOrNULL", c("matrix", "NULL"))
+setClassUnion("funcOrNULL", c("function", "NULL"))
+setClassUnion("logOrNULL", c("logical", "NULL"))
 
-#' @rdname skeleSim.classes
 #' @title skeleSim Parameters Class
 #' @description An S4 class storing generic parameters used throughout
 #'   the workflow
@@ -45,6 +42,9 @@ setClassUnion("posixOrNULL", c("POSIXct", "POSIXlt", "NULL"))
 #' @slot analyses.requested vector of logicals specifying "Global", "Locus",
 #'   or "Pairwise" analyses have been requested.
 #'
+#' @name skeleSim.classes
+#' @aliases skeleSim.params skeleSim.params-class
+#' @importFrom methods setClass
 #' @export
 #'
 skeleSim.params <- setClass(
@@ -78,10 +78,8 @@ skeleSim.params <- setClass(
 )
 
 
-#' @rdname skeleSim.classes
-#'
 #' @slot num.pops number of populations.
-#' @slot pop.size a vector \code{num.pop} long giving size of each populaiton.
+#' @slot pop.size a vector \code{num.pop} long giving size of each population.
 #' @slot sample.size a vector \code{num.pop} long giving the number of
 #'   samples to take from each population.
 #' @slot migration a list of one or more \code{num.pop} x \code{num.pop} matrices
@@ -97,6 +95,8 @@ skeleSim.params <- setClass(
 #' @slot simulator.params an object storing simulator-specific parameters. Can
 #'   be a list or a simulator-specific class.
 #'
+#' @rdname skeleSim.classes
+#' @aliases scenario.params
 #' @export
 #'
 scenario.params <- setClass(
@@ -108,8 +108,9 @@ scenario.params <- setClass(
     sequence.length = "intOrNum", mut.rate = "intOrNum", simulator.params = "ANY"
   ),
   prototype = list(
-    num.pops = NULL, pop.size = NULL, sample.size = NULL, migration = NULL,
-    mig.helper = NULL, locus.type = NULL, num.loci = NULL,
+    num.pops = NULL, pop.size = NULL, sample.size = NULL,
+    migration = NULL,  mig.helper = NULL,
+    locus.type = NULL, num.loci = NULL,
     sequence.length = NULL, mut.rate = NULL, simulator.params = NULL
   )
 )

@@ -1,14 +1,33 @@
-**SkeleSim** package
+# skeleSim
 
-Installation.  Right now the package runs as a shiny app. The app is
-located in the subdirectory inst/shiny/skeleSimShinyGUI.  
+## Description
 
-Basically, you need to make sure the dependencies are installed (installing the skeleSim package enforces this) and then issue:
+*skeleSim* is a tool to guide users in choosing appropriate simulations, setting parameters, calculating summary genetic statistics, and organizing data output, all within the R environment. Skelesim is designed to be an extensible environment that can 'wrap' around any simulation software to increase its accessibility and use.
+    
+## Installation
 
- libary(skeleSim)
+To install the latest version from GitHub:
 
- skeleSimGUI()
+```r
+# make sure you have Rtools installed
+if (!require('devtools')) install.packages('devtools')
+# install from GitHub
+devtools::install_github('christianparobek/skeleSim', build_vignettes = TRUE)
+```
 
-See the README in that
-folder for additional information.
+## Execution
 
+To run the shiny app:
+
+```r
+# Load the skeleSim package
+library(skeleSim)
+
+# Run the app
+skeleSimGUI()
+```
+
+## Contact
+
+* submit suggestions and bug-reports: <https://github.com/christianparobek/skeleSim/issues>
+* send a pull request: <https://github.com/christianparobek/skeleSim/>
