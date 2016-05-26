@@ -5,7 +5,7 @@
 #' @param num.secs number of seconds to run timing checks
 #'
 #' # markdown and shinyFiles import added for shiny app
-#' @import markdown shinyFiles
+#' @import igraph markdown shiny shinyFiles
 #' @importFrom swfscMisc autoUnits
 #' @export
 #'
