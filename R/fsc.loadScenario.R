@@ -55,7 +55,10 @@
 #'   \code{scenarios} slot of a \linkS4class{skeleSim.params} object.
 #'
 #' @export
-#'
+#' @importFrom methods new
+
+
+
 fsc.loadScenario <- function(
   num.pops, pop.size, sample.size, mut.rate, migration = NULL,
   sample.times = NULL, growth.rate = NULL,
@@ -87,7 +90,7 @@ fsc.loadScenario <- function(
   sample.size <- rep(sample.size, length.out = num.pops)
 
   # load general scenario parameters
-  sc <- new("scenario.params")
+  sc <- methods::new("scenario.params")
   sc@num.pops <- num.pops
   sc@pop.size <- pop.size
   sc@sample.size <- sample.size
@@ -102,7 +105,7 @@ fsc.loadScenario <- function(
   } else NULL
 
   # load fastsimcoal-specific parameters
-  fsc <- new("fastsimcoal.params")
+  fsc <- methods::new("fastsimcoal.params")
   fsc@fastsimcoal.exec = fastsimcoal.exec
   fsc@pop.info = fscPopInfo(
     pop.size = pop.size,

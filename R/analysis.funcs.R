@@ -339,12 +339,13 @@ locusAnalysisHaplotypes <- function(g) {
 
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genet.dist
+#' @importFrom utils combn
 #'
 calcChordDist <- function(dat) {
   chord.dist <- genet.dist(dat, diploid = TRUE, method = "Dch")
   chord.dist <- as.matrix(chord.dist)
   rownames(chord.dist) <- colnames(chord.dist) <- levels(dat$pop)
-  pop.pairs <- data.frame(combn(levels(dat$pop), 2), stringsAsFactors = FALSE)
+  pop.pairs <- data.frame(utils::combn(levels(dat$pop), 2), stringsAsFactors = FALSE)
   result <- do.call(rbind, lapply(pop.pairs, function(pop.pair) {
     data.frame(
       strata.1 = pop.pair[1], strata.2 = pop.pair[2],
@@ -359,6 +360,7 @@ calcChordDist <- function(dat) {
 
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genind2hierfstat
+#' @importFrom stats aggregate
 #'
 pairwiseAnalysis <- function(g, num.perm.reps) {
   # pairwise population structure test
@@ -409,7 +411,7 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
       cbind(x[, 1:2], Locus = l, x[, 3:ncol(x)])
     }))
     colnames(dA.locus)[5] <- "mean.nucleotide.divergence"
-    dA.all <- aggregate(
+    dA.all <- stats::aggregate(
       dA.locus[, -(1:3)],
       list(strata.1 = dA.locus$strata.1, strata.2 = dA.locus$strata.2),
       mean, na.rm = TRUE
