@@ -7,6 +7,8 @@
 #' # markdown and shinyFiles import added for shiny app
 #' @import igraph markdown shiny shinyFiles
 #' @importFrom swfscMisc autoUnits
+#' @importFrom utils write.csv
+#' @importFrom utils write.table
 #' @export
 #'
 runSim <- function(params, num.secs = NULL) {
@@ -22,10 +24,10 @@ runSim <- function(params, num.secs = NULL) {
   print(params@sim.scen.checks)
   if(!all(params@other.checks, params@sim.scen.checks)) {
     filewr <- "error.log"
-    write.csv(params@sim.scen.checks, file = filewr)
+    utils::write.csv(params@sim.scen.checks, file = filewr)
     print(params@other.checks)
     write("\n", file = filewr, append = T)
-    write.table(params@other.checks, file = filewr, append = T)
+    utils::write.table(params@other.checks, file = filewr, append = T)
     stop("parameters do not pass checks; see error log for details")
   }
   cat("\nparameter check complete\n\n")

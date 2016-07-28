@@ -3,6 +3,8 @@
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
 #'
+#' @importFrom stats sd
+#'
 summ.stats.table <- function(params) {
   results.datafr<-params@analysis.results
   num.sc <- length(params@scenarios)
@@ -17,7 +19,7 @@ summ.stats.table <- function(params) {
   for (i in 1:num.stats)
     table.means[,i]<-tapply(results.datafr[,1+i],results.datafr[,1],mean)
   for (i in 1:num.stats)
-    table.sd[,i]<-tapply(results.datafr[,1+i],results.datafr[,1],sd)
+    table.sd[,i]<-tapply(results.datafr[,1+i],results.datafr[,1],stats::sd)
   results.list<-list()
   results.list$means<-table.means
   results.list$sd<-table.sd

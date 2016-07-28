@@ -1,3 +1,6 @@
+[![Travis-CI Build Status](https://travis-ci.org/thierrygosselin/skeleSim.svg?branch=master)](https://travis-ci.org/thierrygosselin/skeleSim)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thierrygosselin/skeleSim?branch=master&svg=true)](https://ci.appveyor.com/project/thierrygosselin/skeleSim)
+
 # skeleSim
 
 ## Description

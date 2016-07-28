@@ -1,0 +1,24 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+cache: packages
+
+warnings_are_errors: true
+
+env:
+ global:
+   - CRAN: http://cran.rstudio.com
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+before_install:
+  - apt-get install libgsl-dev -y
+
+addons:
+  apt:
+    packages:
+        - libgsl-dev
