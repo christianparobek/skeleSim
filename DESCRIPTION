@@ -10,7 +10,7 @@ Authors@R: c(
   LL = person("Libby", "Liggins", email = "L.Liggins@massey.ac.nz", role = c("aut")),
   CP = person("Christian", "Parobek", email = "christian.parobek@gmail.com", role = c("aut")),
   AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut", "cre")))
-BugReports: https://github.com/christianparobek/skelesim/issues
+BugReports: BugReports: https://github.com/christianparobek/skeleSim/issues
 Description: SkeleSim is a tool to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
     statistics, and organizing data output, all within the R environment.
@@ -35,7 +35,8 @@ Imports:
     shiny,
     shinyFiles,
     markdown,
-    ggplot2
+    ggplot2,
+    gsl
 Suggests:
     knitr,
     rmarkdown
@@ -66,4 +67,3 @@ Collate:
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 URL: https://github.com/christianparobek/skeleSim
-BugReports: https://github.com/christianparobek/skeleSim/issues
