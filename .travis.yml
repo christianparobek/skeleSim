@@ -15,5 +15,7 @@ notifications:
     on_success: change
     on_failure: change
 
-before_install:
-- sudo apt-get install libgsl-dev
+addons:
+  apt:
+    packages:
+        - libgsl-dev
