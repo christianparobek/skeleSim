@@ -3,3 +3,17 @@
 language: R
 sudo: false
 cache: packages
+
+warnings_are_errors: true
+
+env:
+ global:
+   - CRAN: http://cran.rstudio.com
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+before_install:
+- sudo apt-get install libgsl-dev
