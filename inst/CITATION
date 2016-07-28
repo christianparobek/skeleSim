@@ -1,0 +1,11 @@
+citHeader("To cite skeleSim in publications use:")
+
+citEntry(
+entry="Manual",
+title = "skeleSim: an extensible, general framework for population genetic simulation in R",
+year = "2016",
+author = personList(as.person("Eric Archer"), as.person("Michelle DePrenger-Levin"), as.person("Sean Hoban"), as.person("Libby Liggins"), as.person("Christian Parobek"), as.person("Allan Strand")),
+url = "https://github.com/christianparobek/skeleSim",
+doi = "complete",
+textVersion = paste("Eric Archer, Michelle DePrenger-Levin, Sean Hoban, Libby Liggins, Christian Parobek, Allan Strand, (2016). skeleSim: an extensible, general framework for population genetic simulation in R. R package version 0.9.1. https://github.com/christianparobek/skeleSim. doi : to_complete")
+)
