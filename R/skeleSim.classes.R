@@ -44,7 +44,7 @@ setClassUnion("logOrNULL", c("logical", "NULL"))
 #'
 #' @name skeleSim.classes
 #' @aliases skeleSim.params skeleSim.params-class
-#' @importFrom methods setClass
+#' @importFrom methods setClass new
 #' @export
 #'
 skeleSim.params <- setClass(

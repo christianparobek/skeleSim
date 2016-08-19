@@ -54,6 +54,7 @@
 #' @return a \linkS4class{scenario.params} object to be loaded into a list in the
 #'   \code{scenarios} slot of a \linkS4class{skeleSim.params} object.
 #'
+#' @importFrom methods new
 #' @export
 #'
 fsc.loadScenario <- function(

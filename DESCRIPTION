@@ -25,8 +25,7 @@ Depends:
     igraph,
     shiny (>= 0.13.0),
     shinyFiles,
-    markdown,
-    ggplot2
+    markdown
 Imports:
     adegenet,
     ape,
@@ -39,28 +38,26 @@ Suggests:
     knitr,
     rmarkdown
 Collate:
-  skeleSim-package.R
-  skeleSim.classes.R
-  fsc.classes.R
-  rms.classes.R
-  skeleSim.internals.R
-  skeleSimGUI.R
-  analysis.funcs.R
-  fsc.loadScenario.R
-  fsc.run.R
-  fsc.scenarioCheck.R
-  landscape.freq.locnames.R
-  landscape.make.genpop.R
-  landscape.sample.R
-  plot.all.stats.R
-  rms.convert.R
-  rms.init.land.function.R
-  rms.init.landscape.R
-  rms.run.R
-  rms.scenarioCheck.R
-  runSim.R
-  skeleSim.checks.R
-  summ.stats.table.R
-  tableinput.R
+    skeleSim-package.R
+    skeleSim.classes.R
+    fsc.classes.R
+    rms.classes.R
+    skeleSim.internals.R
+    skeleSimGUI.R
+    analysis.funcs.R
+    fsc.loadScenario.R
+    fsc.run.R
+    fsc.scenarioCheck.R
+    landscape.freq.locnames.R
+    landscape.make.genpop.R
+    landscape.sample.R
+    rms.convert.R
+    rms.init.land.function.R
+    rms.init.landscape.R
+    rms.run.R
+    rms.scenarioCheck.R
+    runSim.R
+    skeleSim.checks.R
+    tableinput.R
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000

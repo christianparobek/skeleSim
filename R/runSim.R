@@ -7,6 +7,7 @@
 #' # markdown and shinyFiles import added for shiny app
 #' @import igraph markdown shiny shinyFiles
 #' @importFrom swfscMisc autoUnits
+#' @importFrom utils write.table write.csv
 #' @export
 #'
 runSim <- function(params, num.secs = NULL) {

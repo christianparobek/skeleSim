@@ -22,9 +22,9 @@ analysisFunc <- function(params) {
 
   results.gtype <- params@rep.sample
 # -->> REMOVE FOR RELEASE: SAVING gtypes OBJECT FOR TESTING <<--
-  label <- currentLabel(params)
-  file <- paste(label, ".results.gtype.rdata", sep = "")
-  save(results.gtype, file = file)
+  # label <- currentLabel(params)
+  # file <- paste(label, ".results.gtype.rdata", sep = "")
+  # save(results.gtype, file = file)
 #-----
   num.perm.reps <- params@num.perm.reps
 
@@ -328,6 +328,7 @@ locusAnalysisHaplotypes <- function(g) {
 
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genet.dist
+#' @importFrom utils combn
 #'
 calcChordDist <- function(dat) {
   chord.dist <- genet.dist(dat, diploid = TRUE, method = "Dch")
@@ -348,6 +349,7 @@ calcChordDist <- function(dat) {
 
 #' @rdname analysis.funcs
 #' @importFrom hierfstat genind2hierfstat
+#' @importFrom stats aggregate
 #'
 pairwiseAnalysis <- function(g, num.perm.reps) {
   # pairwise population structure test
