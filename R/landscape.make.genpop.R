@@ -5,7 +5,6 @@
 #'
 #' @importFrom adegenet genind2genpop
 #'
-landscape.make.genpop <- function(l)
-    {
-        genind2genpop(landscape.make.genind(l))
-    }
+landscape.make.genpop <- function(l) {
+  genind2genpop(landscape.make.genind(l))
+}

@@ -65,62 +65,49 @@ loadResultsMatrix <- function(params, mat, label) {
   curr_scn <- params@current.scenario
   num_reps <- params@num.sim.reps
 
-if (label=="Pairwise") #alter mat to make sure all the rows are there.
-  {
-      ###This first part is an overwrought way to specify all combinations of pops and loci
-      np <- params@scenarios[[curr_scn]]@num.pops
-      all.names.df <- expand.grid(pop1=1:np,pop2=1:np,locus=paste0("L",1:params@scenarios[[curr_scn]]@num.loci))
-      all.names.df[,1:2] <- t(apply(all.names.df[,1:2],1,sort))
+  # alter mat to make sure all the rows are there.
+  if (label=="Pairwise") {
+    ###This first part is an overwrought way to specify all combinations of pops and loci
+    np <- params@scenarios[[curr_scn]]@num.pops
+    all.names.df <- expand.grid(
+      pop1 = 1:np,
+      pop2 = 1:np,
+      locus = paste0("L", 1:params@scenarios[[curr_scn]]@num.loci)
+    )
+    all.names.df[, 1:2] <- t(apply(all.names.df[, 1:2], 1, sort))
 
-      pops <- unique(all.names.df[,1:2])
-      pops <- pops[pops[,1]!=pops[,2],]
-      all.names.df <- merge(pops,all.names.df,all.x=T,all.y=F)
-      all.names.df <- unique(all.names.df[with(all.names.df,order(pop1,pop2,locus)),])
-###this next line results in a complete list of pops and loci in the format that is used for rownames in the
-###analysis.results pairwise matrices
-      if (class(params@scenarios[[curr_scn]]@simulator.params)=="rmetasim.params")
-          all.names <- with(all.names.df,paste(pop1,pop2,locus,sep="_"))
-      else if (class(params@scenarios[[curr_scn]]@simulator.params)=="fastsimcoal.params")
-      {
-          all.names <- with(all.names.df,paste0("Sample ",pop1,"_Sample ",pop2,"_Locus_",gsub("L","",locus)))
-      }
+    pops <- unique(all.names.df[, 1:2])
+    pops <- pops[pops[, 1] != pops[, 2] ,]
+    all.names.df <- merge(pops,all.names.df, all.x = T, all.y = F)
+    all.names.df <- unique(all.names.df[with(all.names.df, order(pop1, pop2, locus)), ])
+    ###this next line results in a complete list of pops and loci in the format that is used for rownames in the
+    ###analysis.results pairwise matrices
+    all.names <- switch(
+      class(params@scenarios[[curr_scn]]@simulator.params),
+      rmetasim.params = with(all.names.df, paste(pop1, pop2, locus, sep = "_")),
+      fastsimcoal.params =  with(all.names.df, paste0("Sample ", pop1, "_Sample ", pop2, "_Locus_", gsub("L", "", locus)))
+    )
 
-      if (sum(sapply(all.names,function(x){!x%in%rownames(mat)}))>0) #eq zero means all predicted popxpopxloc are there
-      {
-          insrt <- all.names[which(!all.names%in%rownames(mat))]
-          add <- matrix(NA,ncol=dim(mat)[2],nrow=length(insrt))
-          rownames(add) <- insrt
-          mat <- rbind(mat,add)
-      }
-      mat <- mat[order(rownames(mat)),]
-   }
-
-
-  if(is.null(params@analysis.results[[curr_scn]][[label]]))
-  {
-      params@analysis.results[[curr_scn]][[label]] <- array(
-          NA, dim = c(nrow(mat), ncol(mat), num_reps),
-          dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
-      )
+    # eq zero means all predicted popxpopxloc are there
+    all.present <- sum(sapply(all.names, function(x) {!x %in% rownames(mat)})) > 0
+    if(all.present) {
+      insrt <- all.names[which(!all.names %in% rownames(mat))]
+      add <- matrix(NA, ncol = dim(mat)[2], nrow = length(insrt))
+      rownames(add) <- insrt
+      mat <- rbind(mat, add)
+    }
+    mat <- mat[order(rownames(mat)), ]
   }
 
-    curr_rep <- params@current.replicate
+  if(is.null(params@analysis.results[[curr_scn]][[label]])) {
+    params@analysis.results[[curr_scn]][[label]] <- array(
+      NA, dim = c(nrow(mat), ncol(mat), num_reps),
+      dimnames = list(rownames(mat), colnames(mat), 1:num_reps)
+    )
+  }
 
-#  print("debugging:")
-#  print(curr_scn)
-#  print(label)
-#  print(mat)
-#  print(dim(mat))
-#  print("done debugging")
-
-
-
-#  print(mat)
-#  print(dim(mat))
-#  print(dim(params@analysis.results[[curr_scn]][[label]][, , curr_rep]))
-
+  curr_rep <- params@current.replicate
   params@analysis.results[[curr_scn]][[label]][, , curr_rep] <- mat
-
 
   return(params)
 }
@@ -201,17 +188,17 @@ locusAnalysisGenotypes <- function(g) {
   }))
 
   smry <- rbind(smryLoci, smryLociPop)
-  smry <- smry[,
-    which(!colnames(smry) %in% c("num.genotyped", "pct.genotyped"))
-  ]
+  geno.cols <- which(!colnames(smry) %in% c("num.genotyped", "pct.genotyped"))
+  smry <- smry[, geno.cols]
   rownames(smry) <- NULL
 
   theta.hwe <- function(g) {
     cbind(theta = theta(g), hwe.p = hweTest(g, use.genepop = FALSE))
   }
   th.locus <- data.frame(theta.hwe(g))
-  th.locus <- cbind(Pop = NA, Locus = rownames(th.locus),
-                         th.locus, stringsAsFactors = FALSE)
+  th.locus <- cbind(
+    Pop = NA, Locus = rownames(th.locus), th.locus, stringsAsFactors = FALSE
+  )
   th.pop <- do.call(rbind, lapply(strataSplit(g), function(st.g) {
     df <- data.frame(theta.hwe(st.g))
     cbind(Pop = strataNames(st.g), Locus = rownames(df), df, stringsAsFactors = FALSE)
@@ -251,8 +238,9 @@ locusAnalysisGenotypes <- function(g) {
   #for loci
   g.loci <- gtypes2loci(g)
   FSTloci <- Fst(g.loci)
-  FSTloci <- data.frame(Pop = NA, Locus = loc_names, FSTloci[loc_names, ],
-                        stringsAsFactors = FALSE)
+  FSTloci <- data.frame(
+    Pop = NA, Locus = loc_names, FSTloci[loc_names, ], stringsAsFactors = FALSE
+  )
 
   #for pops
   # pop.1/locus.1:num_loci - pop.num_pops/locus.1:num_loci..
@@ -262,8 +250,9 @@ locusAnalysisGenotypes <- function(g) {
   names(FSTpop) <- levels(g.loci$population)
 
   FSTpop <- do.call(rbind, mapply(function(mat, pop){
-    data.frame(Pop = pop, Locus = loc_names, mat[loc_names, ],
-               stringsAsFactors = FALSE)
+    data.frame(
+      Pop = pop, Locus = loc_names, mat[loc_names, ], stringsAsFactors = FALSE
+    )
   }, mat = FSTpop, pop = names(FSTpop), SIMPLIFY = FALSE))
   rownames(FSTpop) <- NULL
 
@@ -369,16 +358,14 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
          statGstDblPrime, statFis)
   }
 
-    print("in pairwise analysis")
-
+  # print("in pairwise analysis")
   pws.all <- pairwiseTest(
     g, nrep = num.perm.reps, stats = stats, quietly = TRUE, max.cores = 1,
     model = "raw"
   )$result
 
-
-    pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
-    pws <- do.call(rbind, lapply(locNames(g), function(l) {
+  pws.all$pair.label <- pws.all$n.1 <- pws.all$n.2 <- NULL
+  pws <- do.call(rbind, lapply(locNames(g), function(l) {
     result <- pairwiseTest(
       g[, l, ], nrep = num.perm.reps, stats = stats, quietly = TRUE,
       max.cores = 1, model = "raw"
@@ -394,11 +381,15 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
 
   # shared alleles
   sA <- sharedAlleles(g)
-  sA <- cbind(sA[, 1:2],
-              mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE),
-              sA[, 3:ncol(sA), drop = FALSE])
-  sA <- melt(sA, id.vars = c("strata.1", "strata.2"),
-             variable.name = "Locus", value.name = "shared.alleles")
+  sA <- cbind(
+    sA[, 1:2],
+    mean = rowMeans(sA[, -(1:2), drop = FALSE], na.rm = TRUE),
+    sA[, 3:ncol(sA), drop = FALSE]
+  )
+  sA <- melt(
+    sA, id.vars = c("strata.1", "strata.2"),
+    variable.name = "Locus", value.name = "shared.alleles"
+  )
   sA$Locus[sA$Locus == "mean"] <- NA
 
   dA <- if(ploidy(g) == 1) {
@@ -419,25 +410,26 @@ pairwiseAnalysis <- function(g, num.perm.reps) {
       dA.locus
     )
   } else NULL
-    # chord distance
-    cd <- NULL
-    # cd <- if(ploidy(g) == 2) {
-    #   dat <- genind2hierfstat(gtypes2genind(g))
-    #   chord.dist <- calcChordDist(dat)
-    #   # chord.dist by locus
-    #   chord.dist.locus <- do.call(rbind, lapply(colnames(dat)[-1], function(l) {
-    #     if (length(unique(dat[, l])) > 1) {
-    #       result <- calcChordDist(dat[, c("pop", l)])
-    #     } else {
-    #       result <- matrix(0, nrow = length(unique(dat[,"pop"])), ncol = 3)
-    #       result <- as.data.frame(result)
-    #       names(result) <- c("strata.1","strata.2","chord.distance")
-    #     }
-    #     cbind(result[, 1:2], Locus = l, result[, 3])
-    #   }))
-    #   colnames(chord.dist.locus)[4] <- "chord.dist"
-    #   chord.dist.locus
-    # } else NULL
+
+  # chord distance
+  cd <- NULL
+  # cd <- if(ploidy(g) == 2) {
+  #   dat <- genind2hierfstat(gtypes2genind(g))
+  #   chord.dist <- calcChordDist(dat)
+  #   # chord.dist by locus
+  #   chord.dist.locus <- do.call(rbind, lapply(colnames(dat)[-1], function(l) {
+  #     if (length(unique(dat[, l])) > 1) {
+  #       result <- calcChordDist(dat[, c("pop", l)])
+  #     } else {
+  #       result <- matrix(0, nrow = length(unique(dat[,"pop"])), ncol = 3)
+  #       result <- as.data.frame(result)
+  #       names(result) <- c("strata.1","strata.2","chord.distance")
+  #     }
+  #     cbind(result[, 1:2], Locus = l, result[, 3])
+  #   }))
+  #   colnames(chord.dist.locus)[4] <- "chord.dist"
+  #   chord.dist.locus
+  # } else NULL
 
   # combine results into single matrix
   by.cols <- c("strata.1", "strata.2", "Locus")

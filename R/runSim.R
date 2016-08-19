@@ -10,25 +10,24 @@
 #' @export
 #'
 runSim <- function(params, num.secs = NULL) {
+  # these are parameters that are going to be hosed anyway.
+  params@analysis.results <- NULL
+  params@sim.scen.checks <- NULL
+  params@rep.result <- NULL
 
-### these are parameters that are going to be hosed anyway.
-    params@analysis.results <- NULL
-    params@sim.scen.checks <- NULL
-    params@rep.result <- NULL
-
-### check parameters
-    params <- overall.check(params)
-  print(params@other.checks)
-  print(params@sim.scen.checks)
+  # check parameters
+  params <- overall.check(params)
+  # print(params@other.checks)
+  # print(params@sim.scen.checks)
   if(!all(params@other.checks, params@sim.scen.checks)) {
     filewr <- "error.log"
     write.csv(params@sim.scen.checks, file = filewr)
-    print(params@other.checks)
+    #print(params@other.checks)
     write("\n", file = filewr, append = T)
     write.table(params@other.checks, file = filewr, append = T)
     stop("parameters do not pass checks; see error log for details")
   }
-  cat("\nparameter check complete\n\n")
+  # cat("\nparameter check complete\n\n")
 
   # Check/setup folder structure
   if(file.exists(params@wd)) unlink(params@wd, recursive = TRUE, force = TRUE)
@@ -54,12 +53,12 @@ runSim <- function(params, num.secs = NULL) {
       params <- params@sim.func(params)
       # analyzes params@rep.sample and loads results into params@rep.result
       params <- params@rep.analysis.func(params)
-# -->> REMOVE FOR RELEASE: SAVING params OBJECT FOR TESTING <<--
-      label <- currentLabel(params)
-      file <- paste(label, ".params.rdata", sep = "")
-      if(!dir.exists(label)) dir.create(label)
-      save(params, file = file.path(label, file))
-#-----
+      # -->> REMOVE FOR RELEASE: SAVING params OBJECT FOR TESTING <<--
+      # label <- currentLabel(params)
+      # file <- paste(label, ".params.rdata", sep = "")
+      # if(!dir.exists(label)) dir.create(label)
+      # save(params, file = file.path(label, file))
+      #-----
       # check timing
       results$timing$end.time <- Sys.time()
       if(!is.null(num.secs)) {
@@ -75,6 +74,6 @@ runSim <- function(params, num.secs = NULL) {
     results$params <- params
   }, finally = setwd(wd))
 
-    results[[2]]@timing <- results[[1]]  #make timing a sub portion of the ssClass object
-    results[[2]]
+  results[[2]]@timing <- results[[1]]
+  results[[2]]
 }

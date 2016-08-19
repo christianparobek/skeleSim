@@ -10,10 +10,10 @@
 #' @importFrom igraph graph.adjacency plot.igraph
 #' @export
 #'
-skeleSimGUI <- function(launch.browser=TRUE) {
+skeleSimGUI <- function(launch.browser = TRUE) {
   appDir <- system.file("shiny", "skeleSimShinyGUI", package = "skeleSim")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing `skeleSim`.", call. = FALSE)
   }
-  runApp(appDir, display.mode = "normal", launch.browser=launch.browser)
+  runApp(appDir, display.mode = "normal", launch.browser = launch.browser)
 }

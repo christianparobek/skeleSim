@@ -18,18 +18,15 @@ setClassUnion("matrOrNULL", c("matrix", "NULL"))
 #'
 setClass(
   Class = "rmetasim.params",
-  slots = c(num.stgs = "intOrNum", selfing = "intOrNum",
-            surv.matr = "matrOrNULL", repr.matr = "matrOrNULL",
-            male.matr = "matrOrNULL", carrying = "intOrNum",
-            init.pop.sizes = "intOrNum",
-            num.alleles = "intOrNum", allele.freqs = "listOrNULL",
-            num.gen = "intOrNum"
+  slots = c(
+    num.stgs = "intOrNum", selfing = "intOrNum", surv.matr = "matrOrNULL",
+    repr.matr = "matrOrNULL", male.matr = "matrOrNULL", carrying = "intOrNum",
+    init.pop.sizes = "intOrNum", num.alleles = "intOrNum",
+    allele.freqs = "listOrNULL", num.gen = "intOrNum"
   ),
-  prototype = list(num.stgs = NULL, selfing = NULL,
-            surv.matr = NULL, repr.matr = NULL,
-            male.matr = NULL, carrying = NULL,
-            init.pop.sizes = NULL,
-            num.alleles = NULL, allele.freqs = NULL,
-            num.gen = NULL
+  prototype = list(
+    num.stgs = NULL, selfing = NULL, surv.matr = NULL, repr.matr = NULL,
+    male.matr = NULL, carrying = NULL, init.pop.sizes = NULL,
+    num.alleles = NULL, allele.freqs = NULL, num.gen = NULL
   )
 )

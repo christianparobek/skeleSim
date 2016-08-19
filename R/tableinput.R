@@ -1,21 +1,19 @@
-#' @import shiny
-NULL
-
 #' Matrix input
-#' 
+#'
 #' Creates an adjustable-length matrix input.
-#' 
+#'
 #' @param inputId Input variable to assign the control's value to.
 #' @param label Display label for the control.
 #' @param data The initial values to use for the matrix.
-#' 
+#'
+#' @import shiny
 #' @export
 matrixInput <- function(inputId, label, data) {
   addResourcePath(
-    prefix='tableinput', 
-    directoryPath=system.file('tableinput', 
-                              package='skeleSim'))
-  
+    prefix='tableinput',
+    directoryPath=system.file('tableinput', package = 'skeleSim')
+  )
+
   tagList(
     singleton(
       tags$head(
@@ -25,7 +23,7 @@ matrixInput <- function(inputId, label, data) {
         tags$script(src = 'tableinput/tableinput.js')
       )
     ),
-    
+
 #    tags$div(
 #      class = 'control-group tableinput-container',
       tags$label(
@@ -70,7 +68,7 @@ matrixInput <- function(inputId, label, data) {
         ),
         tags$div(
           class = 'modal-body',
-          
+
           HTML('
 <form class="form-horizontal">
   <div class="control-group">
