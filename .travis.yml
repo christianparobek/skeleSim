@@ -1,0 +1,12 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+sudo: required
+warnings_are_errors: false
+r_packages:
+  - knitr
+  - rmarkdown
+r_github_packages: ericarcher/strataG
+apt_packages:
+  - libgsl0-dev
