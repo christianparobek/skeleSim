@@ -7,6 +7,7 @@
 #' @return A gtypes object containing genotypes (or sequences)
 #' @importFrom rmetasim landscape.populations is.landscape landscape.make.genind landscape.locus.states
 #' @importFrom ape as.DNAbin
+#' @importFrom strataG genind2gtypes sequence2gtypes
 #' @export
 rms.convert <- function(Rland, locus.type) {
 

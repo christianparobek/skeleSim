@@ -7,6 +7,7 @@
 #' @return a modified \linkS4class{skeleSim.params} object with the results of
 #'   a fastsimcoal run.
 #'
+#' @importFrom strataG fastsimcoal fscPopInfo fscLocusParams fscWrite
 #' @export
 #'
 fsc.run <- function(params) {

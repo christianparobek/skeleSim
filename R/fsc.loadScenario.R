@@ -55,6 +55,7 @@
 #'   \code{scenarios} slot of a \linkS4class{skeleSim.params} object.
 #'
 #' @importFrom methods new
+#' @importFrom strataG fscPopInfo fscHistEv fscLocusParams
 #' @export
 #'
 fsc.loadScenario <- function(

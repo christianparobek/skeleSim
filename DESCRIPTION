@@ -20,19 +20,19 @@ LazyLoad: Yes
 LazyData: true
 Depends:
     R (>= 3.2.0),
-    strataG (>= 1.0),
-    rmetasim (>= 3.0.0),
     igraph,
     shiny (>= 0.13.0),
-    shinyFiles,
-    markdown
+    shinyFiles
 Imports:
     adegenet,
     ape,
     hierfstat,
     pegas,
+    markdown,
     methods,
     reshape2,
+    rmetasim (>= 3.0.0),
+    strataG (>= 1.0),
     swfscMisc (>= 1.1)
 Suggests:
     knitr,

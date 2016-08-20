@@ -10,7 +10,12 @@
 #' @param label analysis type label ("Global", "Locus", or "Pairwise").
 #' @param dat data.frame in hierfstat format (see \code{\link[hierfstat]{genet.dist}}).
 #'
-#' @import strataG
+#' @importFrom strataG statChi2 statFst statPhist statFstPrime statGst statGstPrime statGstDblPrime statFis
+#'   overallTest pairwiseTest summarizeLoci hweTest mRatio
+#'   fusFs nucleotideDivergence nucleotideDiversity privateAlleles
+#'   sharedAlleles tajimasD theta strataSplit ploidy locNames
+#'   strata<- gtypes2loci strataNames
+#' @importFrom reshape2 melt
 #' @export
 #'
 analysisFunc <- function(params) {
