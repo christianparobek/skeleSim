@@ -9,6 +9,7 @@ Authors@R: c(
   LL = person("Libby", "Liggins", email = "L.Liggins@massey.ac.nz", role = c("aut")),
   CP = person("Christian", "Parobek", email = "christian.parobek@gmail.com", role = c("aut")),
   AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut", "cre")))
+URL: https:://github.com/christianparobek/skelesim
 BugReports: https://github.com/christianparobek/skelesim/issues
 Description: SkeleSim is a tool to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic

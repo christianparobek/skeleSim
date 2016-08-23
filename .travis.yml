@@ -7,6 +7,4 @@ warnings_are_errors: false
 r_packages:
   - knitr
   - rmarkdown
-r_github_packages: ericarcher/strataG
-apt_packages:
-  - libgsl0-dev
+  - shiny
