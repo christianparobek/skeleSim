@@ -101,14 +101,14 @@ shinyUI(
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",value=1)),
                      conditionalPanel(condition = "input.migModel == 'distance'",
                                       selectInput("distfun", "Distance function (must be an R function)",choices=c("dexp"))),
-                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite"),selected="sequence"),
-                     
+                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite","SNP"),selected="sequence"),
+
                      conditionalPanel(condition = "input.loctype == 'sequence'",
                                       numericInput("seqlen","Sequence length",value=100)),
 
                      textInput("numloci", "Number of loci",
                                value = "1"),
-
+                     
                      width=3 #number between 1-12 for sidebar width on scenarios tab                     
                  )
                , #don't forget comma
@@ -129,6 +129,20 @@ shinyUI(
                                   plotOutput("networkPlot")
                                   ),
                          tabPanel("Locus characteristics",
+                                  selectInput("specifyMutRate","Populate mutation rate vector with:",selected=1,choices=c("Constant rate","Rates chosen at random from Gamma Distribution")),
+                                  conditionalPanel(condition = "input.specifyMutRate == 'Constant rate'",
+                                                   
+                                  numericInput("ConstMutRate",
+                                               "Constant mutation rate across loci",1e-04)),
+                                  conditionalPanel(condition = "input.specifyMutRate != 'Constant rate'",
+                                                   
+                                  numericInput("gammaMean",
+                                               "Mean of Gamma Distribution",1e-04)),
+                                  conditionalPanel(condition = "input.specifyMutRate != 'Constant rate'",
+                                                   
+                                  numericInput("gammaStd",
+                                               "StdDev of Gamma Distribution",1e-04)),
+                                  actionButton("resetMutRate","RePopulate Mutation Rate Vector"),
                                   uiOutput("mutrate")
                                   )
                      ))

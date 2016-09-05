@@ -60,5 +60,6 @@ Collate:
     runSim.R
     skeleSim.checks.R
     tableinput.R
+    getGammaMutRates.R
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1

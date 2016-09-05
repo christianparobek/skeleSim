@@ -247,13 +247,16 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
                 mat <- matrix("",nrow=nl,ncol=5)
                 for (l in 1:nl)
                     {
-                        mat[l,1] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence","DNA","MICROSAT")
+                        mat[l,1] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type%in%c("sequence","SNP"),"DNA","MICROSAT")
                         mat[l,2] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="sequence",
                                            as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length),1)
+#                        mat[l,2] <- ifelse(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type=="SNP",1,mat[l,2])
                         mat[l,3] <- as.character(0)
                         mat[l,4] <- as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate[l])
                         mat[l,5] <- as.character(1/3)
                     }
                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params <- as.data.frame(mat)
+                attr(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params,"ploidy") <- 2
+                
             }
 })
