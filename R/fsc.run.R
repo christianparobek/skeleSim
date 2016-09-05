@@ -19,7 +19,14 @@ fsc.run <- function(params) {
 
   locus.type <- c("dna", "msat", "snp")[which(c("DNA", "MICROSAT") == sc@simulator.params@locus.params[1, 1])]
 
-
+lprm = fscLocusParams(
+      locus.type = locus.type,
+      num.loci = 1,
+      mut.rate = sc@simulator.params@locus.params[, 4],
+      chromosome = 1:dim(sc@simulator.params@locus.params)[1],
+      sequence.length = sc@simulator.params@locus.params[, 2]      
+    )
+attr(lprm,"ploidy") = ifelse(sc@locus.type=="sequence",1,2)
   
   params@rep.sample <- fastsimcoal(
     pop.info = fscPopInfo(
@@ -28,15 +35,7 @@ fsc.run <- function(params) {
       sample.times = sc@simulator.params@sample.times,
       growth.rate = sc@simulator.params@growth.rate
     ),
-    locus.params = fscLocusParams(
-      locus.type = locus.type,
-      num.loci = 1,
-      mut.rate = sc@simulator.params@locus.params[, 4],
-      chromosome = 1:dim(sc@simulator.params@locus.params)[1],
-      sequence.length = sc@simulator.params@locus.params[, 2],
-      ploidy = ifelse(sc@locus.type=="sequence",1,2)
-      
-    ),
+    locus.params = lprm,
     mig.rates = sc@migration,
     hist.ev = sc@simulator.params@hist.ev,
     label = label,
