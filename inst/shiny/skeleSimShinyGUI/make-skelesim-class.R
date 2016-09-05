@@ -135,13 +135,9 @@ observeEvent(input$loctype,
                  {
                      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- 1
                      updateTextInput(session,"numloci",value="1")
-                 } else if (input$loctype=="SNP")
-                     {
-                     updateTextInput(session,"numloci",label="Number of unlinked SNPs")                         
-                     } else #ssrs are all that's left
-                         {
-                             updateTextInput(session,"numloci",label="Number of unlinked microsatellites")                         
-                         }
+                 } else {
+
+                 }
                  
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@locus.type <- input$loctype
              })
@@ -151,17 +147,6 @@ observeEvent(input$seqlen,
                  rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length <- floor(input$seqlen)
                  #updateNumericInput(session,"seqlen",value=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@sequence.length)
              })
-
-observeEvent(input$resetMutRate,{
-    if (length(grep("Gamma",input$specifyMutRate))!=0)
-        {
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- getGammaMutRates(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate),input$gammaMean,input$gammaStd)
-        } else {
-            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- rep(input$ConstMutRate,length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))
-        }
-})
-
-
 
 observeEvent(input$migModel,
              {

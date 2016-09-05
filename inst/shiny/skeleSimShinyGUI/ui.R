@@ -108,7 +108,7 @@ shinyUI(
 
                      textInput("numloci", "Number of loci",
                                value = "1"),
-                     
+
                      width=3 #number between 1-12 for sidebar width on scenarios tab                     
                  )
                , #don't forget comma
