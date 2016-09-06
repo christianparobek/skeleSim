@@ -46,15 +46,13 @@ observeEvent(input$btnRun, {
             write("rm(list = ls())", file = scriptFname, append=TRUE)
             write("library(methods)", file = scriptFname, append = TRUE)
             
-####these next lines will need to be modified once this code is made into a package
-### right now we are depending on the fact that shiny apps run in the directory where
-### server.R is located
 
 ### Right now the way I'm going about things is to switch to the skeleSim root directory
 #### source all the relevant files, and then change to the directory where the simulation
 ####  should be run (supportValues$simroot)
 
             write(paste0("library(skeleSim)"), file = scriptFname)
+            write(paste0("library(adegenet)"),file = scriptFname, append=TRUE)
             write("getwd()",file = scriptFname, append=TRUE)
             
             cdcmd <- chartr("\\","/",paste0("setwd('",supportValues$simroot,"')")) #make this work on windows also

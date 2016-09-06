@@ -60,7 +60,7 @@ ssClassInit <- function(){ #Just creates a skelesim class instance with one scen
         list(migModel="island",migRate=1,rows=1,cols=1,distfun="dexp")
     ssClass@scenarios[[1]]@num.loci <- 1
     ssClass@scenarios[[1]]@sequence.length <- 100
-    ssClass@scenarios[[1]]@mut.rate <- 10e-5
+    ssClass@scenarios[[1]]@mut.rate <- 1e-5
     ssClass@current.scenario <- 1
     ssClass@current.replicate <- 1
     ssClass@scenarios[[1]]@simulator.params <-

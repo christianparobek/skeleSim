@@ -16,6 +16,7 @@
 #'   sharedAlleles tajimasD theta strataSplit ploidy locNames
 #'   strata<- gtypes2loci strataNames
 #' @importFrom reshape2 melt
+#' @importFrom pegas hw.test
 #' @export
 #'
 analysisFunc <- function(params) {
@@ -197,10 +198,15 @@ locusAnalysisGenotypes <- function(g) {
   smry <- smry[, geno.cols]
   rownames(smry) <- NULL
 
+  
+  save(file="g.rda",g)
+  
   theta.hwe <- function(g) {
     cbind(theta = theta(g), hwe.p = hweTest(g, use.genepop = FALSE))
   }
+    print("HWE tests started")
   th.locus <- data.frame(theta.hwe(g))
+      print("theta.hwe run ")
   th.locus <- cbind(
     Pop = NA, Locus = rownames(th.locus), th.locus, stringsAsFactors = FALSE
   )
@@ -211,6 +217,10 @@ locusAnalysisGenotypes <- function(g) {
   th.all <- rbind(th.locus, th.pop)
   rownames(th.all) <- NULL
 
+  print("HWE tests done")
+  
+  if (!is.factor(g@loci[1,1]))  #diploid type data but not SNPs
+  {
   # mratio on gtypes object, function needs genetic data as a gtype
   mratio.locus <- mRatio(g, by.strata = FALSE, rpt.size = 1)
   mratio.all <- melt(t(mRatio(g, rpt.size = 1)))
@@ -223,7 +233,8 @@ locusAnalysisGenotypes <- function(g) {
     mratio.all
   )
   rownames(mratio.all) <- NULL
-
+  } else {mratio.all <- NULL} #SNPs
+  
   # Number of private alleles by locus
   pa <- t(privateAlleles(g))
   # this has the number of alleles that are private per locus
@@ -270,7 +281,8 @@ locusAnalysisGenotypes <- function(g) {
 
   by.cols <- c("Pop", "Locus")
   smry <- merge(smry, th.all, by = by.cols, all = TRUE)
-  smry <- merge(smry, mratio.all, by = by.cols, all = TRUE)
+  if (!is.null(mratio.all))
+      smry <- merge(smry, mratio.all, by = by.cols, all = TRUE)
   smry <- merge(smry, num.priv.allele, by = by.cols, all = TRUE)
   smry <- merge(smry, FST.all, by = by.cols, all = TRUE)
   smry$Pop <- as.character(smry$Pop)

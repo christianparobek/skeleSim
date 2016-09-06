@@ -47,6 +47,8 @@ runSim <- function(params, num.secs = NULL) {
     num.iter <- nrow(params@scenario.reps)
     results$timing$start.time <- Sys.time()
     for(i in 1:num.iter) {
+        #if (debug)
+        print(i)
       if(quit) break # leave replicate for loop if user has decided to quit
       params@current.scenario <- params@scenario.reps[i, "scenario"]
       params@current.replicate <- params@scenario.reps[i, "replicate"]
@@ -54,6 +56,7 @@ runSim <- function(params, num.secs = NULL) {
       params <- params@sim.func(params)
       # analyzes params@rep.sample and loads results into params@rep.result
       params <- params@rep.analysis.func(params)
+        print("analysis done")
       # -->> REMOVE FOR RELEASE: SAVING params OBJECT FOR TESTING <<--
       # label <- currentLabel(params)
       # file <- paste(label, ".params.rdata", sep = "")

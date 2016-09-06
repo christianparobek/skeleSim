@@ -148,6 +148,7 @@ output$sampsize <- renderUI({
 
 mut.rates <- reactive(
     {
+       input$resetMutRate   #make sure reactive to the change the mutrate button 
       if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))|
           (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)!=

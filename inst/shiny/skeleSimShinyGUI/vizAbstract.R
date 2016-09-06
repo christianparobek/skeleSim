@@ -32,7 +32,7 @@ locusDF <- function(ssc)
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
         {
             print(i)
-            if (ssc@scenarios[[i]]@locus.type=="microsatellite")
+            if (ssc@scenarios[[i]]@locus.type %in% c("SNP","microsatellite"))
             {
                 ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
 
