@@ -146,14 +146,24 @@ output$sampsize <- renderUI({
                 isolate(ssz))
 })
 
+observeEvent(input$resetMutRate,{      
+    if (length(grep("Gamma",input$specifyMutRate))>0)
+    {
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-getGammaMutRates(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci,input$gammaMean,input$gammaStd)  
+    } else {
+     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- rep(input$ConstMutRate,
+                                                                         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+    }
+})
+
 mut.rates <- reactive(
     {
-       input$resetMutRate   #make sure reactive to the change the mutrate button 
+
       if (debug()) print("running sampsize")
       if ((is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate))|
           (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)!=
            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
-          ret <- rep(10e-5,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+          ret <- rep(1e-5,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
       else 
           {
               ret <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate
