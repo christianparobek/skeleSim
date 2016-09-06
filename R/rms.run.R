@@ -25,7 +25,6 @@ rms.run <- function(params){
       surv.matr = sc@simulator.params@surv.matr,
       repr.matr = sc@simulator.params@repr.matr,
       male.matr = sc@simulator.params@male.matr,
-                                        #     init.pop.sizes = sc@simulator.params@init.pop.sizes,
       init.pop.sizes = round(sum(sc@pop.size)*rep(1/(sc@num.pops*sc@simulator.params@num.stgs),
                                                   sc@num.pops*sc@simulator.params@num.stgs)),
       num.alleles = sc@simulator.params@num.alleles,
@@ -42,7 +41,7 @@ rms.run <- function(params){
   #run a number of generations
   skeleland<-landscape.simulate(skeleland, sc@simulator.params@num.gen)
 
-  print("was able to simulate")
+  print("was able to simulate a rmetasim landscape")
   
   #take samples
   skeleland_samp<-landscape.sample(skeleland, ns=24)  ###need to improve

@@ -65,16 +65,24 @@ rms.locus.type = NULL
 
     print(loc.type)
     
-if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
+if (loc.type == "SNP") {rms.locus.type = 2; seq.length = rep(1,num.loc)}
 if (loc.type %in% c("microsat","MICROSAT","microsatellite")) rms.locus.type = 1
 if (loc.type == "sequence") rms.locus.type = 2
     for (l in 1:num.loc)
         if (rms.locus.type==2)
         {
-            if (l==1) #only one sequence locus possible and it creates a maternally inherited haploid locus
-                skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=1, mutationrate=mut.rate[l],
-                                                  transmission=1, numalleles=num.alleles[l],
-                                                  frequencies=allele.freqs[[l]]) #temp remove allele size
+            if (loc.type=="sequence") #a sequence not snps
+                {
+                    if (l==1) #only one sequence locus possible and it creates a maternally inherited haploid locus
+                        skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=1, mutationrate=mut.rate[l],
+                                                          transmission=1, numalleles=num.alleles[l],
+                                                          frequencies=allele.freqs[[l]]) #temp remove allele size
+                } else { #we are dealing with snps (diploid, biparental short seuqnces)
+                    skeletonland<-landscape.new.locus(skeletonland, type=2, ploidy=2, mutationrate=mut.rate[l],
+                                                      transmission=0, numalleles=num.alleles[l],
+                                                      frequencies=allele.freqs[[l]],
+                                                      allelesize=1) 
+                }
             
         }
         else
