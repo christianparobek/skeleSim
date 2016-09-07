@@ -4,7 +4,7 @@
 #'   a single simulation replicate stored in params@rep.sample#'
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
-#' @param g a \linkS4class[strataG]{gtypes} object.
+#' @param g a \linkS4class{gtypes} object.
 #' @param num.perm.reps number of permutation replicates.
 #' @param mat results matrix to be loaded into params object.
 #' @param label analysis type label ("Global", "Locus", or "Pairwise").

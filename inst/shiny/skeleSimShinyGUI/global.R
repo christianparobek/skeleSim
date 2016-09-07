@@ -20,8 +20,8 @@ source("vizfuncs.R")
 #source("../rmetasim/rms.run.R")
 #source("../rmetasim/rms.classes.R")
 #source("../rmetasim/rms.scenarioCheck.R")
-
 source("modules/matrixInputs.R")
+source("modules/tableinput.R")
 
 
 ###these two globals record a record of the last

@@ -56,6 +56,7 @@
 #'
 #' @importFrom methods new
 #' @importFrom strataG fscPopInfo fscHistEv fscLocusParams
+#'
 #' @export
 #'
 fsc.loadScenario <- function(

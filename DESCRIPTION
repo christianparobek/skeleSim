@@ -57,7 +57,6 @@ Collate:
     rms.scenarioCheck.R
     runSim.R
     skeleSim.checks.R
-    tableinput.R
     getGammaMutRates.R
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1.9000

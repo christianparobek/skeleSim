@@ -11,7 +11,7 @@
 \alias{locusAnalysisGenotypes}
 \alias{locusAnalysisHaplotypes}
 \alias{pairwiseAnalysis}
-\title{Analysis functions}
+\title{Analysis functions for skeleSim paramter objects}
 \usage{
 analysisFunc(params)
 
@@ -38,7 +38,7 @@ pairwiseAnalysis(g, num.perm.reps)
 
 \item{label}{analysis type label ("Global", "Locus", or "Pairwise").}
 
-\item{g}{a gtypes object.}
+\item{g}{a \linkS4class{gtypes} object.}
 
 \item{num.perm.reps}{number of permutation replicates.}
 
