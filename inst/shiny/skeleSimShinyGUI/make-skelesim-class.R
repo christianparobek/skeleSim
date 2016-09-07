@@ -304,11 +304,11 @@ observeEvent(input$migmat,{
 })
 
 observeEvent(input$psvec,{
-    print("in observevent psvec")
-    print(rValues$scenarioNumber)
-    print(input$psvec)
-    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
-    print(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size))
+if (debug())    print("in observevent psvec")
+if (debug())      print(rValues$scenarioNumber)
+if (debug())      print(input$psvec)
+if (debug())      print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
+if (debug())      print(length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size))
     if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size) != rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.pops)
     {
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <-
@@ -317,8 +317,8 @@ observeEvent(input$psvec,{
         rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size <- c(input$psvec)
     }
     
-    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
-    print("in observevent psvec")
+if (debug())      print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size)
+if (debug())      print("in observevent psvec")
 })
 
 observeEvent(input$ssvec,{
@@ -329,12 +329,12 @@ observeEvent(input$mutvec,{
 
     req(input$mutvec)
 
-    print("in mutvec observeEvent")
-    print(rValues$scenarioNumber)
-    print(input$mutvec)
-    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+if (debug())      print("in mutvec observeEvent")
+if (debug())      print(rValues$scenarioNumber)
+if (debug())      print(input$mutvec)
+if (debug())      print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
    diff <- length(input$mutvec)-length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
-    print(diff)
+if (debug())      print(diff)
 
 #    if (diff==0) #lengths are good. replace
     
@@ -347,8 +347,8 @@ observeEvent(input$mutvec,{
 #            rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <-
 #                c(input$mutvec)[1:(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)]
 #        }
-    print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
-    print("leaving observerevent mutvec")
+if (debug())      print(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+if (debug())      print("leaving observerevent mutvec")
 
 })
 

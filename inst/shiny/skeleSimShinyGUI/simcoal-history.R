@@ -106,7 +106,7 @@ simcoal.history.change <- function(history,
                     if (history[1,3] %in% history[,2]) {history <- history[-1,]}
                 }
 
-            print(paste("test of is.history",is.history(history)))
+if (debug())              print(paste("test of is.history",is.history(history)))
             if (is.history(history)) history else oldhist
         } else {NULL}
 }
@@ -208,6 +208,6 @@ historiesEqual <- function(h1,h2)
         h2 <- h2[order(h2[,1]),]
         eq <- identical(h1,h2)
     }
-    print(paste("histories equal?",eq))
+if (debug())      print(paste("histories equal?",eq))
     eq
 }

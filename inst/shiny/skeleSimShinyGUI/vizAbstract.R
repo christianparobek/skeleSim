@@ -28,15 +28,15 @@ locusDF <- function(ssc)
     ret <- NULL
     if ("Locus" %in% names(ar[[1]]))
     {
-        print("locusDF")
+if (debug())          print("locusDF")
         ret <- do.call(rbind,lapply(1:length(ar),function(i)
         {
-            print(i)
+if (debug())              print(i)
             if (ssc@scenarios[[i]]@locus.type %in% c("SNP","microsatellite"))
             {
                 ldf <- as.data.frame(as.table(ar[[i]][['Locus']]))
 
-                print(dim(ldf))
+if (debug())                  print(dim(ldf))
                 
                 ploc <- strsplit(as.character(ldf$Var1),"_")
                 

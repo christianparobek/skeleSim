@@ -20,7 +20,7 @@ hst <- reactive({
                 history <- NULL
             }
  #           print("past plist")
-            print(history)
+if (debug())              print(history)
         }
         
         if (is.null(history))
@@ -34,11 +34,11 @@ hst <- reactive({
                 if (!is.null(pointValues$click))
                 {
 #                    print("altering history")
-                    print(pointValues$click$x)
-                    print(paste(pointValues$dblclick$x,pointValues$dblclick$y))
+if (debug())                      print(pointValues$click$x)
+if (debug())                      print(paste(pointValues$dblclick$x,pointValues$dblclick$y))
                     history <-simcoal.history.change(history,pointValues$click,
                                                      pointValues$dblclick)
-                    print(history)
+if (debug())                      print(history)
                 }
 #            print("just ran change")
             
@@ -81,12 +81,12 @@ observeEvent(input$histplotDblClick,
     if (!is.null(pointValues$click))
         if (!is.null(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
             {
-                print("inside observe event dblclick, inside all not nulls")
+                if (debug())  print("inside observe event dblclick, inside all not nulls")
                 h=hst()
                 if (!historiesEqual(h,
                                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev))
                 {
-                    print("histories are not equal")
+                    if (debug())  print("histories are not equal")
                     rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- h
                 }
             }
@@ -133,7 +133,7 @@ observeEvent(input$simhist,{
 #                            0,
                             growth.rate=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@growth.rate,
                             num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration))
-        if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
+if (debug())          if (length(hevck)==0) print ("hevck not set") else print(paste("hevck",hevck))
         if ((hevck))
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev  <- simhist
         else
@@ -152,7 +152,7 @@ observeEvent(input$addHistEvent,{
 })
 
 observeEvent(input$removeLastEvent,{
-    print("in observEvent removeLastEvent")
+    if (debug())  print("in observEvent removeLastEvent")
     hist <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev
     if (fsc.histEvCheck(hist[-1,],
                    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@pop.size,
@@ -160,8 +160,8 @@ observeEvent(input$removeLastEvent,{
                    num.mig.mats=length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@migration)))
         if ((dim(hist)[2]-1)>=max(c(hist[,2:3]))) #if the dimensions of the matrix are large enough for every pop to coalesce
         {
-            print("changing hsit.ev as a consequence of removing a row")
-            print(hist)
+            if (debug())  print("changing hsit.ev as a consequence of removing a row")
+            if (debug())  print(hist)
             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@hist.ev <- hist[-dim(hist)[1],]
         }
 })
