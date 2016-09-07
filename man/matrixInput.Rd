@@ -14,6 +14,6 @@ matrixInput(inputId, label, data)
 \item{data}{The initial values to use for the matrix.}
 }
 \description{
-Creates an adjustable-length matrix input.
+Creates an adjustable-length matrix input widget for shiny.
 }
 

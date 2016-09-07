@@ -1,7 +1,7 @@
 Package: skeleSim
 Type: Package
 Title: Genetic simulation engine
-Version: 0.9.01
+Version: 0.9.5
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
   MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
@@ -49,12 +49,10 @@ Collate:
     fsc.loadScenario.R
     fsc.run.R
     fsc.scenarioCheck.R
-    landscape.freq.locnames.R
-    landscape.make.genpop.R
-    landscape.sample.R
     rms.convert.R
     rms.init.land.function.R
     rms.init.landscape.R
+    rms.internals.R
     rms.run.R
     rms.scenarioCheck.R
     runSim.R

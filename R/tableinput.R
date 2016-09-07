@@ -1,6 +1,5 @@
-#' Matrix input
-#'
-#' Creates an adjustable-length matrix input.
+#' @title Matrix input
+#' @description Creates an adjustable-length matrix input widget for shiny.
 #'
 #' @param inputId Input variable to assign the control's value to.
 #' @param label Display label for the control.
@@ -8,6 +7,7 @@
 #'
 #' @import shiny
 #' @export
+#'
 matrixInput <- function(inputId, label, data) {
   addResourcePath(
     prefix='tableinput',

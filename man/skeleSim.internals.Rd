@@ -23,4 +23,5 @@ currentLabel(params)
 \description{
 SkeleSim internal functions
 }
+\keyword{internals}
 

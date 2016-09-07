@@ -17,6 +17,7 @@ getGammaMutRates(n, gmean = 1e-04, gstd = 1e-05)
 a vector of mutation rates (type numeric)
 }
 \description{
-Get a vector of mutation rates from a gamma distribution by specifying the mean and std. dev. of the distribution
+Get a vector of mutation rates from a gamma distribution by
+  specifying the mean and std. dev. of the distribution
 }
 

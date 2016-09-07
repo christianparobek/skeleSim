@@ -34,3 +34,7 @@ skeleSimGUI()
 
 * submit suggestions and bug-reports: <https://github.com/christianparobek/skeleSim/issues>
 * send a pull request: <https://github.com/christianparobek/skeleSim/>
+
+## version 0.9.5
+
+* First CRAN release.

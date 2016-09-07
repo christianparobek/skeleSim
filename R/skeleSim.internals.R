@@ -11,11 +11,14 @@
 #'       and replicate.\cr
 #'   }
 #'
+#' @keywords internals
+#'
 currentScenario <- function(params) {
   params@scenarios[[params@current.scenario]]
 }
 
 #' @rdname skeleSim.internals
+#' @keywords internals
 #'
 currentLabel <- function(params) {
   label <- paste(

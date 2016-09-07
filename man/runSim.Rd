@@ -9,9 +9,7 @@ runSim(params, num.secs = NULL)
 \arguments{
 \item{params}{a \linkS4class{skeleSim.params} object.}
 
-\item{num.secs}{number of seconds to run timing checks
-
-# markdown and shinyFiles import added for shiny app}
+\item{num.secs}{number of seconds to run timing checks}
 }
 \description{
 Run simulation

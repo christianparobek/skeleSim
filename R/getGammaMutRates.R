@@ -1,6 +1,7 @@
 #' @name getGammaMutRates
 #' @title Get a Vector of Randomly Chosen Mutation Rates
-#' @description Get a vector of mutation rates from a gamma distribution by specifying the mean and std. dev. of the distribution
+#' @description Get a vector of mutation rates from a gamma distribution by
+#'   specifying the mean and std. dev. of the distribution
 #'
 #' @param n Number of loci to select rates for
 #' @param gmean Mean of the gamma distribution
@@ -11,7 +12,7 @@
 #' @importFrom stats rgamma
 #' @export
 #'
-getGammaMutRates <- function(n,gmean=0.0001,gstd=0.00001) {
+getGammaMutRates <- function(n, gmean = 0.0001, gstd = 0.00001) {
     mu.mean <- gmean
     mu.sd <- gstd
     scale <- (mu.sd ^ 2) / mu.mean

@@ -1,3 +1,29 @@
+# Landscape (l) locus names
+#' @keywords internal
+#' @importFrom rmetasim landscape.ploidy landscape.locus landscape.democol
+#'
+landscape.freq.locnames <- function(l) {
+  num.loc <- length(landscape.ploidy(l))
+  namevec <- NULL
+  for (loc in 1:num.loc) {
+    genos <- landscape.locus(l, loc)[, -1:-landscape.democol()]
+    loc.names <- paste(loc, names(table(unlist(genos))), sep = ".")
+    # not a fast construct, I know.  But re member Knuth "early optimization is the root of all
+    namevec <- c(namevec,paste("L", loc.names, sep = ''))
+  }
+  namevec
+}
+
+# Create genpop object from landscape (l)
+#' @keywords internal
+#' @importFrom adegenet genind2genpop
+#'
+landscape.make.genpop <- function(l) {
+  genind2genpop(landscape.make.genind(l))
+}
+
+# Sample stages from a landscape - duplicates
+#' @keywords internal
 landscape.sample.stages <- function(Rland, ns = NULL, svec = NULL) {
   if(is.null(svec)) {
     Rland
@@ -27,7 +53,8 @@ landscape.sample.stages <- function(Rland, ns = NULL, svec = NULL) {
   }
 }
 
-
+# Sample populations from a landscape
+#' @keywords internal
 landscape.sample.pops <- function(Rland, ns = NULL, pvec = NULL) {
   if (is.null(pvec)) {
     Rland

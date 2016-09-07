@@ -1,10 +1,10 @@
 #' @name analysis.funcs
-#' @title Analysis functions
+#' @title Analysis functions for skeleSim paramter objects
 #' @description Run Global, Locus, and Pairwise analyses on results from
 #'   a single simulation replicate stored in params@rep.sample#'
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
-#' @param g a gtypes object.
+#' @param g a \linkS4class[strataG]{gtypes} object.
 #' @param num.perm.reps number of permutation replicates.
 #' @param mat results matrix to be loaded into params object.
 #' @param label analysis type label ("Global", "Locus", or "Pairwise").
@@ -17,6 +17,7 @@
 #'   strata<- gtypes2loci strataNames
 #' @importFrom reshape2 melt
 #' @importFrom pegas hw.test
+#'
 #' @export
 #'
 analysisFunc <- function(params) {
@@ -198,9 +199,9 @@ locusAnalysisGenotypes <- function(g) {
   smry <- smry[, geno.cols]
   rownames(smry) <- NULL
 
-  
+
   save(file="g.rda",g)
-  
+
   theta.hwe <- function(g) {
     cbind(theta = theta(g), hwe.p = hweTest(g, use.genepop = FALSE))
   }
@@ -218,7 +219,7 @@ locusAnalysisGenotypes <- function(g) {
   rownames(th.all) <- NULL
 
   print("HWE tests done")
-  
+
   if (!is.factor(g@loci[1,1]))  #diploid type data but not SNPs
   {
   # mratio on gtypes object, function needs genetic data as a gtype
@@ -234,7 +235,7 @@ locusAnalysisGenotypes <- function(g) {
   )
   rownames(mratio.all) <- NULL
   } else {mratio.all <- NULL} #SNPs
-  
+
   # Number of private alleles by locus
   pa <- t(privateAlleles(g))
   # this has the number of alleles that are private per locus
