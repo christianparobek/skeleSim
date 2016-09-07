@@ -10,12 +10,6 @@ vignette: >
 ---
 
 This vignette focuses on getting everything together to get this package to run.
-Once everything in this document is completed during an installation (which really means installing skeleSim from CRAN(eventually) or github and installing fastsimcoal2) the shiny interface should run.  Try:
-
-```{r,eval=FALSE}
-library(skeleSim)
-skeleSimGUI()
-```
 
 ##CRAN Dependencies
 
@@ -23,11 +17,13 @@ There are several packages located on CRAN that skeleSim depends upon.  They all
 
 ##Non-CRAN dependencies
 
-Currently, skeleSim implements coalescent simulations in fastsimcoal2 and forward-time in rmetasim. The rmetasim dependency is handled via normal package installation.
+Currently, skeleSim implements coalescent simulations in `fastsimcoal2` and forward-time in `rmetasim`. The `rmetasim` dependency is handled via normal package installation.
 
-You must install fastsimcoal2 on your computer yourself.  The executable for your operating system (Windows, MacOSX, linux) is available at http://cmpg.unibe.ch/software/fastsimcoal2/
+You must install fastsimcoal2 on your computer yourself.  The executable for your operating system (Windows, MacOSX, linux) is available [here](http://cmpg.unibe.ch/software/fastsimcoal2).
 
 **The trick is to make sure that the folder/directory in which the fastsimcoal executable resides is in the search path for your operating system**
+
+Helpful instructions for editing the PATH environmental variable for Windows can be found [here](https://www.java.com/en/download/help/path.xml). On Mac OS or LINUX/UNIX systems, the executable should be placed in the _/usr/local/bin_ folder which is usually a default in the PATH.
 
 If the executable is in your path, skeleSimGUI() looks for it (and other versions if present) and allows you to select among versions on the "FastSimCoal params" tab.
 
@@ -38,6 +34,12 @@ First install the great 'devtools' package. Then,
 
 ```{r,eval=FALSE}
 library(devtools)
-install_github("christianparobek/skeleSim",build_vignettes=TRUE,force=TRUE)
+install_github("christianparobek/skeleSim", build_vignettes = TRUE, force = TRUE)
 ```
 
+Once the above has been completed the shiny interface can be run:
+
+```{r,eval=FALSE}
+library(skeleSim)
+skeleSimGUI()
+```

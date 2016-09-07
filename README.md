@@ -1,4 +1,4 @@
-
+[![Travis-CI Build Status](https://travis-ci.org/christianparobek/skeleSim.svg?branch=master)](https://travis-ci.org/christianparobek/skeleSim)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/christianparobek/skeleSim?branch=master&svg=true)](https://ci.appveyor.com/project/christianparobek/skeleSim)
 
 # skeleSim

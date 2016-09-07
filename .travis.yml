@@ -8,3 +8,8 @@ r_packages:
   - knitr
   - rmarkdown
   - shiny
+r_github_packages:
+  - thibautjombart/apex
+  - stranda/rmetasim
+apt_packages:
+  - libgsl0-dev
