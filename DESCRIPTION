@@ -1,6 +1,6 @@
 Package: skeleSim
 Type: Package
-Title: Genetic simulation engine
+Title: Genetic Simulation Engine
 Version: 0.9.5
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
@@ -11,10 +11,10 @@ Authors@R: c(
   AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut", "cre")))
 URL: https:://github.com/christianparobek/skelesim
 BugReports: https://github.com/christianparobek/skelesim/issues
-Description: SkeleSim is a tool to guide users in choosing
+Description: skeleSim is a tool to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
     statistics, and organizing data output, all within the R environment.
-    Skelesim is designed to be an extensible environment that can 'wrap' around
+    skeleSim is designed to be an extensible environment that can 'wrap' around
     any simulation software to increase its accessibility and use.
 License: GNU General Public License
 LazyLoad: Yes

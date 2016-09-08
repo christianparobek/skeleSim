@@ -5,7 +5,7 @@
 
 ## Description
 
-*skeleSim* is a tool to guide users in choosing appropriate simulations, setting parameters, calculating summary genetic statistics, and organizing data output, all within the R environment. Skelesim is designed to be an extensible environment that can 'wrap' around any simulation software to increase its accessibility and use.
+*skeleSim* is a tool to guide users in choosing appropriate simulations, setting parameters, calculating summary genetic statistics, and organizing data output, all within the R environment. *skeleSim* is designed to be an extensible environment that can 'wrap' around any simulation software to increase its accessibility and use.
     
 ## Installation
 
