@@ -1,5 +1,5 @@
 #' @name analysis.funcs
-#' @title Analysis functions for skeleSim paramter objects
+#' @title Analysis functions for skeleSim parameter objects
 #' @description Run Global, Locus, and Pairwise analyses on results from
 #'   a single simulation replicate stored in params@rep.sample#'
 #'

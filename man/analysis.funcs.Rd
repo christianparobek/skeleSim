@@ -11,7 +11,7 @@
 \alias{locusAnalysisGenotypes}
 \alias{locusAnalysisHaplotypes}
 \alias{pairwiseAnalysis}
-\title{Analysis functions for skeleSim paramter objects}
+\title{Analysis functions for skeleSim parameter objects}
 \usage{
 analysisFunc(params)
 
