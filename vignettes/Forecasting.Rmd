@@ -35,7 +35,7 @@ The skeleSim interface has multiple tabs.  You will initially need to go through
 
 The first thing to do is to click on "Help Choosing Simulator". This tab is to help you decide whether to use a forward in time or coalescent approach.  
 
-[image showing how you'd answer these intro questions that would answer forward-in-time]
+<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/vignettes/Choosermetasim2.png", style="width: 750ps;"/>
 
 **General Conf Tab: General parameters of skelesim.**  You already know you want a forward in time simulation, so move on to "General Conf".   
        
