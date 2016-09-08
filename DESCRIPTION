@@ -37,7 +37,8 @@ Imports:
     swfscMisc (>= 1.1)
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    RJSONIO
 Collate:
     skeleSim-package.R
     skeleSim.classes.R
