@@ -2,6 +2,7 @@
 #' @description Check parameters for rmetasim
 #'
 #' @param params a \linkS4class{skeleSim.params} object.
+#'
 #' @export
 #'
 rms.scenarioCheck <- function(params) {

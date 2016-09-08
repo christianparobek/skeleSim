@@ -17,17 +17,18 @@ fsc.run <- function(params) {
   # Check that folder is empty
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
-  locus.type <- c("dna", "msat", "snp")[which(c("DNA", "MICROSAT") == sc@simulator.params@locus.params[1, 1])]
+  i <- which(c("DNA", "MICROSAT") == sc@simulator.params@locus.params[1, 1])
+  locus.type <- c("dna", "msat", "snp")[i]
 
-lprm = fscLocusParams(
-      locus.type = locus.type,
-      num.loci = 1,
-      mut.rate = sc@simulator.params@locus.params[, 4],
-      chromosome = 1:dim(sc@simulator.params@locus.params)[1],
-      sequence.length = sc@simulator.params@locus.params[, 2]      
-    )
-attr(lprm,"ploidy") = ifelse(sc@locus.type=="sequence",1,2)
-  
+  lprm <- fscLocusParams(
+    locus.type = locus.type,
+    num.loci = 1,
+    mut.rate = sc@simulator.params@locus.params[, 4],
+    chromosome = 1:dim(sc@simulator.params@locus.params)[1],
+    sequence.length = sc@simulator.params@locus.params[, 2]
+  )
+  attr(lprm, "ploidy") = ifelse(sc@locus.type == "sequence", 1, 2)
+
   params@rep.sample <- fastsimcoal(
     pop.info = fscPopInfo(
       pop.size = sc@pop.size,
@@ -60,35 +61,33 @@ attr(lprm,"ploidy") = ifelse(sc@locus.type=="sequence",1,2)
 #' @export
 #'
 fsc.write <- function(params) {
-    numsc <- length(params@scenarios)
-    for (s in 1:numsc)
-    {
-#        print(paste("s=",s))
-        params@current.scenario <- s
-        sc <- currentScenario(params)
-        label <- paste0(currentLabel(params),"-",s)
-                                        # Check that folder is empty
-        if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
+  numsc <- length(params@scenarios)
+  for (s in 1:numsc) {
+    params@current.scenario <- s
+    sc <- currentScenario(params)
+    label <- paste0(currentLabel(params), "-", s)
+    # Check that folder is empty
+    if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
-        locus.type <- c("dna","msat","snp")[which(c("DNA","MICROSAT")==sc@simulator.params@locus.params[1,1])]
+    i <- which(c("DNA", "MICROSAT") == sc@simulator.params@locus.params[1, 1])
+    locus.type <- c("dna", "msat", "snp")[i]
 
-#       print("about to run fscWrite")
-
-        tmp <- fscWrite(
-#        tmp <- fscWrite(
-            pop.info = fscPopInfo(pop.size=sc@pop.size,
-                sample.size=sc@sample.size,
-                sample.times=sc@simulator.params@sample.times,
-                growth.rate=sc@simulator.params@growth.rate),
-                                        #    locus.params = sc@simulator.params@locus.params,
-            locus.params = fscLocusParams(locus.type=locus.type,num.loci=1,
-                mut.rate=sc@simulator.params@locus.params[,4],
-                chromosome=1:dim(sc@simulator.params@locus.params)[1],
-                sequence.length=ifelse(locus.type=="dna",sc@sequence.length,NULL)),
-            mig.rates = sc@migration,
-            hist.ev = sc@simulator.params@hist.ev,
-            label = label
-        )
-#        print(tmp)
-    }
+    tmp <- fscWrite(
+      pop.info = fscPopInfo(
+        pop.size = sc@pop.size,
+        sample.size = sc@sample.size,
+        sample.times = sc@simulator.params@sample.times,
+        growth.rate = sc@simulator.params@growth.rate
+      ),
+      locus.params = fscLocusParams(
+        locus.type = locus.type,num.loci=1,
+        mut.rate = sc@simulator.params@locus.params[,4],
+        chromosome = 1:dim(sc@simulator.params@locus.params)[1],
+        sequence.length = ifelse(locus.type == "dna", sc@sequence.length, NULL)
+      ),
+      mig.rates = sc@migration,
+      hist.ev = sc@simulator.params@hist.ev,
+      label = label
+    )
+  }
 }

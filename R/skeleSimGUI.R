@@ -9,6 +9,7 @@
 #' # markdown and shinyFiles import added for shiny app
 #' @import markdown shiny shinyFiles
 #' @importFrom igraph graph.adjacency plot.igraph
+#'
 #' @export
 #'
 skeleSimGUI <- function(launch.browser = TRUE) {
