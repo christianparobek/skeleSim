@@ -37,11 +37,11 @@ The first thing to do is to click on "Help Choosing Simulator". This tab is to h
 
 <img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/vignettes/Choosermetasim2.png", style="width: 750ps;"/>
 
-**General Conf Tab: General parameters of skelesim.**  You already know you want a forward in time simulation, so move on to "General Conf".   
+**General Conf Tab: General parameters of skelesim.**  Since you already know you want a forward in time simulation, move on to "General Conf".   
        
 1. Name your project.  This should distinguish this project from any other simulation projects you are working on (such as species name, objective, etc).  We'll call this one "Connect_or_not".  
-2. Deselect "Coalescent simulator?"    
-3. Choose the number of simulation rep(licates).The more you run, the longer it takes. For a first pass, you might run 100. For more refined estimates you might run 1 000.     
+2. Deselect "Coalescent simulator?". Note that the "FastSimCoal" tab has changed to "RmetaSim".     
+3. Choose the number of simulation rep(licates).The more you run, the longer it takes. For a first pass, you might run 100. For more refined estimates you might run 1000.     
 4. Choose which analyses you will run (see text explaining the Analyses).  For now, you can check each box.   
 5. Set the number of permutations for significance tests. Start with 100.   
 6. Name the directory in which you want to run simulations.  This directory might include already genotyped files, previously saved results, or other related files.  Notice that when you change this, and some other parameters in skeleSim, you see immediate feedback on the right part of the screen.       
@@ -50,7 +50,7 @@ The first thing to do is to click on "Help Choosing Simulator". This tab is to h
 
 **Scenario Conf Tab: Population/ sample size, migration, loci** Next go to the tab "Scenario Conf".  This is where most of your simulation parameters will be defined.  Note that there is a tab structure *within* this tab: "Population characteristics," "Among population migration rate" and "Locus characteristics".  We'll fill out each of these in turn.  First though we must fill out the box on the left.  This defines the very basics: number of populations, etc.
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen3_Pop_Samp_Sizes.png" style="width: 750px;"/>   
+<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen3_Pop_Samp_Sizes.png" style="width: 750px;"/>   #ScenarioConf_PopChar
 
 Our simulation is going to be for two disconnected populations that may or may not get connected via management.   
     
@@ -61,11 +61,11 @@ Now click on "Among population migration rate".  This page allows you to set eac
 
 <img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen4_Migr_rate.png" style="width: 750px;"/>
 
-Now click on "Locus Characteristics".  This page allows you to set the number of loci (on the left), type of molecular marker (on the left), and mutation rate (on the right).  For this first try we can choose "microsatellite" and leave the mutation rates as their default (1e -4).  Type in 20 for number of loci.  (Another vignette will walk you through how to analyze the power of different numbers of loci)(ANOTHER VIGNETTE NEEDED).
+Now click on "Locus Characteristics".  This page allows you to set the number of loci (on the left), type of molecular marker (on the left), and mutation rate (on the right).  For this first try we can choose "microsatellite" and leave the mutation rates as a constant rate with the default (1e -4).  Type in 20 for number of loci.  
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen5_Loc_Mut_rate.png" style="width: 750px;"/>  
+<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen5_Loc_Mut_rate.png" style="width: 750px;"/>  #change to ScenarioConf_LocChar
 
-**Rmetasim Params Tab: life history matrices and allele frequencies**  Now the basic parameters are set.  The next step is some particular parameters to the underlying simulation engine, either rmetasim or simcoal.  The two things you can do that are specific to rmetasim are to specify the reproduction/ mating/ survival matrices, and to specify the initial allele frequencies for the population. In this case we are especially interested to start the population with a given set of allele frequencies. Skelesim will soon allow inputting actual allele frequencies but for now we'd just like to match the number of alleles in our real dataset to the number of alleles in our simulations. Here, we might know that some of our loci (7) have 5 alleles per locus, while the rest (13) have 8 alleles per locus. You must enter these numbers into each of the boxes shown on the screen- don't forget to scroll to the right- there are 20 loci!
+**Rmetasim Params Tab: life history matrices and allele frequencies** Now the basic parameters are set.  The next step is some particular parameters to the underlying simulation engine, either rmetasim or simcoal.  The two things you can do that are specific to rmetasim are to specify the reproduction/ mating/ survival matrices, and to specify the initial allele frequencies for the population. In this case we are especially interested to start the population with a given set of allele frequencies. Skelesim will soon allow inputting actual allele frequencies but for now we'd just like to match the number of alleles in our real dataset to the number of alleles in our simulations. Here, we might know that some of our loci (7) have 5 alleles per locus, while the rest (13) have 8 alleles per locus. You must enter these numbers into each of the boxes shown on the screen- don't forget to scroll to the right- there are 20 loci!
 
 
 <img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen6_Metasim_pop_matrices.png" style="width: 750px;"/>   
