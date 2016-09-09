@@ -3,3 +3,5 @@
 .RData
 skeleSim.Rproj
 skeleSim.Rcheck/
+/inst/shiny/skeleSimShinyGUI/helpfiles/file-ops.md~
+/inst/shiny/skeleSimShinyGUI/helpfiles/simulations.md~
