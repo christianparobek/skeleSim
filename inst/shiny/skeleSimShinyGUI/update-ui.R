@@ -140,6 +140,9 @@ updateUIs <- function()
         {
             updateNumericInput(session,"stages",
                                value= isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.stgs))
+            nl = rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci
+            updateNumericInput(session,"focalLoc",min=1,max=nl)
+
         }
 
 

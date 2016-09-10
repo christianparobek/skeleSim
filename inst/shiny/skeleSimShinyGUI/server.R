@@ -23,7 +23,7 @@ shinyServer(function(input, output, session) {
   #################### general parameters for the simulation
   ####################
 
-    source("genparam-server.R",local=T)
+#    source("genparam-server.R",local=T)
     
   ##################### scenario helpers
   #################### stored in scenarios.R

@@ -82,10 +82,12 @@ num.alleles <- function() #a function to return a sensible number of alleles vec
     }
 
 output$numall <- renderUI({
-      if (debug()) print("creating allele num vector ui")
-    matrixInput("numall","Number of alleles per locus",
-                as.data.frame(num.alleles()))
+    if (debug()) print("creating allele num vector ui")
+
+    matrixInput("numall","Number of alleles segregating at each locus at start of simulation",
+                as.data.frame(t(num.alleles())))
 })
+
 
 observeEvent(input$numall,{
      rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- c(input$numall)
@@ -118,3 +120,35 @@ output$afreqs <- renderText({
         paste(sapply(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs,function(x){paste(x,sep=", ")}),sep="\n")
 })
 
+
+output$afreqLoc <- renderUI({
+    if (debug())          print("creating allele freq  vector ui")
+    if (!is.null(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))&
+        (!is.null(input$focalLoc)))
+    {
+        af <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs[[input$focalLoc]]
+        matrixInput("afreqLoc",paste("Distribution of allele freqs at locus",input$focalLoc),
+                    as.data.frame(matrix(af,nrow=1)))
+    }
+})
+
+observeEvent(input$afreqLoc,{
+    af = c(input$afreqLoc)
+    af=abs(af)
+    l = length(af)
+    if (l>1)
+        af[l] = 1-sum(af[1:(l-1)])
+    else
+        af[l]=1
+    if (af[l]<=0)
+    {
+        af=rep(1,length(af))/length(af)
+    } 
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs[[input$focalLoc]] <- af
+})
+
+
+observeEvent(input$changeNumAll,{
+    rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <-
+        rep(input$constNumAll,rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+})

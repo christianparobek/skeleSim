@@ -110,6 +110,13 @@ observeEvent(input$numloci,
                      if (numloci>0)
                      {
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci <- floor(numloci)
+                         if (length(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate)
+                             !=
+                             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+                         {
+                             rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate <- rep(1e-5,
+                                                                                                 rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+                         }
                      }
                  }
                  #### rmetasim addition
@@ -127,6 +134,13 @@ observeEvent(input$numloci,
                          rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@num.alleles <- navec
                      }
              },priority=-1)
+
+observe({
+    if (rValues$ssClass@simulator.type=="f")
+        output$focalLoc <- renderUI({
+            numericInput("focalLoc","Adjust allele frequencies for locus",value=1,min=1,max=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+        })
+})
 
 observeEvent(input$loctype,
              {

@@ -63,10 +63,10 @@ vectorInRow <- function(input,output,session,vec,label="Vector")
               for (col in 1:length(vec))
               {
                   inputname <- paste0("r",1,"c",col)
-                  print(input[[ns(inputname)]])
+                  # print(input[[ns(inputname)]])
                   ret[col] <- ifelse (is.null(input[[paste0("r",1,"c",col)]]),NA,input[[paste0("r",1,"c",col)]])
               }
-              print(ret)
+              # print(ret)
               ret
           }
       })
@@ -84,7 +84,7 @@ vectorInCol <- function(input,output,session,vec,label="Vector")
     
     output$vec <- renderTable({
         mat <- matrix(vec,nrow=1)
-        print(mat)
+        # print(mat)
         ns <- session$ns
         rows <- dim(mat)[1]
         retmat <- matrix("",nrow=rows,ncol=1)
@@ -111,10 +111,10 @@ vectorInCol <- function(input,output,session,vec,label="Vector")
               for (row in 1:length(vec))
               {
                   inputname <- paste0("r",row,"c",1)
-                  print(input[[ns(inputname)]])
+                  # print(input[[ns(inputname)]])
                   ret[row] <- ifelse (is.null(input[[paste0("r",row,"c",1)]]),NA,input[[paste0("r",row,"c",1)]])
               }
-              print(ret)
+              # print(ret)
               ret
           }
       })
@@ -139,7 +139,7 @@ matrixIn <- function(input,output,session,mat,label="Matrix")
     #print("in matrixIn")
     output$mat <- renderUI({
         ns <- session$ns
-        print(mat)
+        # print(mat)
         matrixInput(ns("mat"),label,as.data.frame(mat))
         
     })
@@ -168,8 +168,8 @@ matrixIn <- function(input,output,session,mat,label="Matrix")
 
     demomat <- function(input,output,session,inmat,label="Survival")
     {
-        print("calling demomat")
-        print(paste("inmat",inmat))
+        # print("calling demomat")
+        # print(paste("inmat",inmat))
         return(reactive({callModule(matrixIn,"mat",mat=inmat,label)()}))
     }
 

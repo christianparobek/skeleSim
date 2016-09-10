@@ -106,7 +106,7 @@ shinyUI(
                      conditionalPanel(condition = "input.migModel == 'distance' || input.migModel == 'twoD' || input.migModel == 'twoDwDiagonal'", numericInput("cols", "Cols in a grid-shaped landscape",value=1)),
                      conditionalPanel(condition = "input.migModel == 'distance'",
                                       selectInput("distfun", "Distance function (must be an R function)",choices=c("dexp"))),
-                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite","SNP"),selected="sequence"),
+                     selectInput("loctype","Type of locus",choices=c("sequence","microsatellite","SNP"),selected="microsatellite"),
 
                      conditionalPanel(condition = "input.loctype == 'sequence'",
                                       numericInput("seqlen","Sequence length",value=100)),
@@ -195,7 +195,7 @@ shinyUI(
                     ),
                     conditionalPanel(
                         condition = "input.coalescent != true",
-                        numericInput("gens", "generations to simulate",
+                        numericInput("gens", "time-periods (years?) to simulate",
                                      value = 50,min=1)
                     ),
                     width=3 #width 1-12 of simulator specific tab                    
@@ -240,8 +240,16 @@ shinyUI(
                                      ),
                              tabPanel("rmetasim locus details",
                                      includeMarkdown("helpfiles/rmetasim-loci.md"),
-                                     radioButtons("numfreq",NULL,c("numbers of alleles")),
-                                     uiOutput("numall")
+#                                     radioButtons("numfreq",NULL,c("numbers of alleles")),
+                                     numericInput("constNumAll","How many alleles per locus?",1,min=1),
+                                     actionButton("changeNumAll","Replace number of alleles across all loci to number above"),
+                                     helpText('The following vector gives the number of alleles at each of the loci specified',
+                                              'in the "Scenario Conf" tab'),
+                                     uiOutput("numall"),
+                                     includeMarkdown("helpfiles/rmetasim-alleles.md"),
+                                     uiOutput("focalLoc"),
+                                     uiOutput("afreqLoc")
+
 #                                    ,
 #                                     textOutput("afreqs")
                                      )
