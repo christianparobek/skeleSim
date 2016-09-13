@@ -14,8 +14,7 @@ BugReports: https://github.com/christianparobek/skelesim/issues
 Description:  A shiny interface and supporting tools to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
     statistics, and organizing data output, all within the R environment.
-    skeleSim is designed to be an extensible environment that can 'wrap' around
-    any simulation software to increase its accessibility and use.
+    In addition to supporting existing forward and reverse-time simulators, new simulators can be integrated into the environment relatively easily.
 License: GNU General Public License
 LazyLoad: Yes
 LazyData: true
