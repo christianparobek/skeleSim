@@ -31,7 +31,7 @@ The skeleSim interface has multiple tabs.  You will initially need to go through
 
 **Actions tab- saving and loading.**  The first tab "Actions" is used when you are ready to run your simulations (not yet!) or if you have already run some scenarios and want to add a new, different scenario, so you want to upload an existing skeleSim object (nope, not yet). These actions will be covered later. You will want to set your 'Simulation Root Directory'. 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen1_Actions.png" style="width: 750px;"/>
+<img src="ForecastImages/screen1_Actions.png" style="width: 750px;"/>
 
 The first thing to do is to click on "Help Choosing Simulator". This tab is to help you decide whether to use a forward in time or coalescent approach.  
 
@@ -46,7 +46,7 @@ The first thing to do is to click on "Help Choosing Simulator". This tab is to h
 5. Set the number of permutations for significance tests. Start with 100.   
 6. Name the directory in which you want to run simulations.  This directory might include already genotyped files, previously saved results, or other related files.  Notice that when you change this, and some other parameters in skeleSim, you see immediate feedback on the right part of the screen.       
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen2_Gen_Conf.png" style="width: 750px;"/>   
+<img src="ForecastImages/screen2_Gen_Conf.png" style="width: 750px;"/>   
 
 **Scenario Conf Tab: Population/ sample size, migration, loci**  Next go to the tab "Scenario Conf".  This is where most of your simulation parameters will be defined.  Note that there is a tab structure *within* this tab: "Population characteristics," "Among population migration rate" and "Locus characteristics".  We'll fill out each of these in turn.  First though we must fill out the box on the left.  This defines the very basics: number of populations, etc.
 
@@ -59,25 +59,26 @@ Our simulation is going to be for two disconnected populations that may or may n
 
 Now click on "Among population migration rate".  This page allows you to set each pairwise, directional migration rate (from and to each population from each other population).  Our first scenario is going to assume no migration at all, so select "user" under the Migration Model and enter zeroes in each box.  Note that on the left there is a pull down menu which has different migration models: 2 dimensional stepping stone, etc.  (You can try each of these to see the available options and what each looks like.)  'User' means that you will manually define each cell of the matrix- the other options help fill out the cells with internal calculations.  Distance means that a user defined function of dispersal must be given.
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen4_Migr_rate.png" style="width: 750px;"/>
+<img src="ForecastImages/screen4_Migr_rate.png" style="width: 750px;"/>
 
 Now click on "Locus Characteristics".  This page allows you to set the number of loci (on the left), type of molecular marker (on the left), and mutation rate (on the right).  For this first try we can choose "microsatellite" and leave the mutation rates as a constant rate with the default (1e -4).  Type in 20 for number of loci.  
 
 <img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/vignettes/ScenarioConf_LocChar.png" style="width: 750px;"/>  
 
-**Rmetasim Params Tab: life history matrices and allele frequencies**  Now the basic parameters are set.  The next step is some particular parameters to the underlying simulation engine, either rmetasim or simcoal.  The two things you can do that are specific to rmetasim are to specify the reproduction/ mating/ survival matrices, and to specify the initial allele frequencies for the population. In this case we are especially interested to start the population with a given set of allele frequencies. Skelesim will soon allow inputting actual allele frequencies but for now we'd just like to match the number of alleles in our real dataset to the number of alleles in our simulations. Here, we might know that some of our loci (7) have 5 alleles per locus, while the rest (13) have 8 alleles per locus. You must enter these numbers into each of the boxes shown on the screen- don't forget to scroll to the right- there are 20 loci!
+**Rmetasim Params Tab: life history matrices and allele frequencies**  Now the basic parameters are set.  The next step is some particular parameters to the underlying simulation engine, either rmetasim or simcoal.  The two things you can do that are specific to rmetasim are to specify the reproduction/ mating/ survival matrices, and to specify the initial allele frequencies for the population. In this case we are especially interested to start the population with a given set of allele frequencies. 
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen6_Metasim_pop_matrices.png" style="width: 750px;"/>   
+
+<img src="ForecastImages/screen6_Metasim_pop_matrices.png" style="width: 750px;"/>   
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen7_Metasim_allele_freq.png" style="width: 750px;"/>
+<img src="ForecastImages/RmetasimLocus.png" style="width: 750px;"/>
 
 
 Now that you have defined your first scenario, you can click on the "Current ssClass" tab at the top.  This will show you 'under the hood' all the slots in this object.  You can see all the parameters that you just set by looking at "@ scenarios :List of 1".
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen8_ssClass.png" style="width: 750px;"/>
+<img src="ForecastImages/screen8_ssClass.png" style="width: 750px;"/>
 
 
 **First Save.**  It's now a good point to save the current object.  Just go to the "Actions" tab and click "save skelesim parameters to a file".  Just type in a filename.
@@ -85,7 +86,7 @@ Now that you have defined your first scenario, you can click on the "Current ssC
 Now, to define the other scenario, the one with migration.  What you want to do is keep all the parameters of the scenario the same except change the migration rate.  So go to the "Scenario Conf" tab and change the "which scenario" box to "2" or use the "Add a new scenario" botton to create a new scenario. Confirm that the pull down list for "Migration Model" has selected "user".  You can now specify a migration into the population of interest (within "Among population migration".  Enter a migration rate of 0.1 from population 1 to population 2.  The diagram below the migration table helps you to make sure you've made the migration going in the right direction!
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial1/screen9_Scen2_diff_migr.png" style="width: 750px;"/>
+<img src="ForecastImages/screen9_Scen2_diff_migr.png" style="width: 750px;"/>
 
 
 And that is all you have to do to create this second scenario.  The unique aspect of skeleSim is that to create a new scenario, just start with one of the existing scenarios, increase the number of scenarios by one, and adjust the parameter you want to change.

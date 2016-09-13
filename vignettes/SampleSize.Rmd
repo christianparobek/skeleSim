@@ -42,7 +42,7 @@ The first thing to do is to click on "Intro Questions".  This tab is to help you
 **General Conf Tab: General parameters of skelesim.** You already know you want a forward in time simulation, so move on to "General Conf". Under here, you name your project. This should distinguish this project from any other simulation projects you are working on (such as species name, objective, etc). We'll call this one "Power_analysis_1". Then you choose the number of simulation rep(licates). The more you run, the longer it takes. For a first pass, you might run 100. For more refined estimates you might run 1 000. Last you choose which analyses you will run (see text explaining the Analyses). For now, you can check each box. Lastly, name the directory that you want simulations to run in. This directory might include already genotyped files, previously saved results, or other related files. Notice that when you change this, and some other parameters in skeleSim, you see immediate feedback on the right part of the screen. 
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial2/screen2_GenConf.JPG" style="width: 750px;"/>   
+<img src="SampleSizeImages/screen2_GenConf.JPG" style="width: 750px;"/>   
 
 
 *Scenario Conf Tab: Population/ sample size, migration, loci * Next go to the tab "Scenario Conf". This is where most of your simulation parameters will be defined. Note that there is a tab structure within this tab: "Population characteristics," "Among population migration rate" and "Locus characteristics". We'll fill out each of these in turn. First though we must fill out the box on the left. This defines the very basics: number of populations, etc.  In this example we will have two populations.  One of these will have gone through a bottleneck and the other not.  For now, set the population size of one population to 1000, and the other population to 10.  We will leave sample sizes at 20.
@@ -50,19 +50,19 @@ The first thing to do is to click on "Intro Questions".  This tab is to help you
 Next click on the next tab within "Scenario Conf"- "Among population migration rate"  Here, first click the "user" migration Model on the left.  Then, fill in a migration rate of 0.01 from each population to the other.
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial2/screen5_migr_rates.JPG" style="width: 750px;"/>  
+<img src="SampleSizeImages/screen5_migr_rates.JPG" style="width: 750px;"/>  
 
 
 Next, click on "Locus Characteristics".  Here, define the number of loci to "20".  We will leave all mutation rates at the default for now.  Ok, now all scenario parameters are set.  We will move on to setting simulator specific parameters, in this case for Simcoal.
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial2/screen6_loci.JPG" style="width: 750px;"/>  
+<img src="SampleSizeImages/screen6_loci.JPG" style="width: 750px;"/>  
 
 
 **Simcoal Params Tab: historical events, growth rates, sample times  **Now the basic parameters are set.  The next step is some particular parameters to the underlying simulation engine, either rmetasim or simcoal.  The three things you can do that are specific to simcoal are historical events, growth rates, and sample times.  We will focus on historical events and growth rates for this tutorial.  First we will define the historical event.  In this simulation, the two populations will have a common ancestral population, so they need to merge at some time in the past.  We will simulate a divergence 50 generations ago.  To do this, click above the population "2" in the graphic.  Then click on the population 1, approximately where in time you want the event to occur.  Here we want it to occur at about 50.
 
 
-<img src="https://raw.githubusercontent.com/christianparobek/skeleSim/master/Archive/doc/new_screens/Tutorial2/screen7_simcoal_history.JPG" style="width: 750px;"/>  
+<img src="SampleSizeImages/screen7_simcoal_history.JPG" style="width: 750px;"/>  
 
 
 Next is to determine the growth rates.  This requires a calculation based on the simple logistic growth equation.  In simcoal, a population that has been undergoing demographic decline is simulated using an expansion going back in time (the reverse of a decline).  For a population of current size 100 to reach a population size of 1000, 50 generations ago, will require a growth rate of 0.046053.  So type this into the population growth rate box for population 2.  Leave population 1 growth rate as 0 (steady size).
