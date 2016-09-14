@@ -11,10 +11,11 @@ Authors@R: c(
   AS = person("Allan", "Strand", email = "stranda@gmail.com", role = c("aut", "cre")))
 URL: https:://github.com/christianparobek/skelesim
 BugReports: https://github.com/christianparobek/skelesim/issues
-Description:  A shiny interface and supporting tools to guide users in choosing
+Description: A shiny interface and supporting tools to guide users in choosing
     appropriate simulations, setting parameters, calculating summary genetic
-    statistics, and organizing data output, all within the R environment.
-    In addition to supporting existing forward and reverse-time simulators, new simulators can be integrated into the environment relatively easily.
+    statistics, and organizing data output, all within the R environment. In
+    addition to supporting existing forward and reverse-time simulators, new
+    simulators can be integrated into the environment relatively easily.
 License: GPL2
 LazyLoad: Yes
 LazyData: true
@@ -59,4 +60,4 @@ Collate:
     skeleSim.checks.R
     getGammaMutRates.R
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1

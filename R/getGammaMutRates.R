@@ -9,6 +9,11 @@
 #'
 #' @return a vector of mutation rates (type numeric)
 #'
+#' @examples
+#' rates = getGammaMutRates(1000,gmean=0.0001, gstd=0.0001)
+#' hist(rates)
+#' rates = getGammaMutRates(1000,gmean=0.0001, gstd=0.00001)
+#' hist(rates)
 #' @importFrom stats rgamma
 #' @export
 #'
