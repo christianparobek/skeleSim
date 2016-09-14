@@ -16,7 +16,7 @@ Description: A shiny interface and supporting tools to guide users in choosing
     statistics, and organizing data output, all within the R environment. In
     addition to supporting existing forward and reverse-time simulators, new
     simulators can be integrated into the environment relatively easily.
-License: GPL2
+License: GPL-2
 LazyLoad: Yes
 LazyData: true
 Depends:
