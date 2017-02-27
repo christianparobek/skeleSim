@@ -308,9 +308,9 @@ hapSmryFunc <- function(g) {
   g <- g[, , , drop = TRUE]
   unstrat <- g
   strata(unstrat) <- "Default"
-  t(sapply(locNames(g), function(l) {
+  t(sapply(locNames(unstrat), function(l) {
     loc.g <- unstrat[, l, , drop = TRUE]
-    smry <- summary(loc.g)$strata.smry[1, ]
+    smry <- strataG::summary(loc.g)$strata.smry[1, ]
     smry <- smry[!names(smry) %in% "num.missing"]
     dvsty <- mean(nucleotideDiversity(g), na.rm = TRUE)
     Fs <- fusFs(loc.g)

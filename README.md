@@ -42,6 +42,14 @@ skeleSimGUI()
 * submit suggestions and bug-reports: <https://github.com/christianparobek/skeleSim/issues>
 * send a pull request: <https://github.com/christianparobek/skeleSim/>
 
+## version 0.9.6
+
+* fixed bug in haplotype summary producing error:
+```
+Error in summary(loc.g)$strata.smry : 
+  $ operator is invalid for atomic vectors
+```
+
 ## version 0.9.5
 
 * First CRAN release.

@@ -1,0 +1,69 @@
+
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(skeleSim)
+Loading required package: igraph
+
+Attaching package: 'igraph'
+
+The following objects are masked from 'package:stats':
+
+    decompose, spectrum
+
+The following object is masked from 'package:base':
+
+    union
+
+Loading required package: shiny
+Loading required package: shinyFiles
+> library(adegenet)
+Loading required package: ade4
+
+   /// adegenet 2.0.1 is loaded ////////////
+
+   > overview: '?adegenet'
+   > tutorials/doc/questions: 'adegenetWeb()' 
+   > bug reports/feature requests: adegenetIssues()
+
+
+> getwd()
+[1] "C:/Users/Alex/Documents/R/win-library/3.3/skeleSim/shiny/skeleSimShinyGUI"
+> setwd('C:/Users/Alex/Documents/R')
+> getwd()
+[1] "C:/Users/Alex/Documents/R"
+> load('Connect_or_not.20170215.1437.2230.params.rdata')
+> ls()
+[1] "ssClass"
+> ssClass <- runSim(ssClass)
+[1] 1
+[1] "sequence"
+
+  0   1   2   3 
+525 525 525 525 
+[1] "simulate for  50 years"
+[1] "was able to simulate a rmetasim landscape"
+[multidna constructor] missing/incomplete labels provided - using generic labels.
+
+[1] "returned from convert; returning params obj"
+  Global analysis...
+  Locus analysis...
+Error in summary(loc.g)$strata.smry : 
+  $ operator is invalid for atomic vectors
+Calls: runSim ... locusAnalysisHaplotypes -> hapSmryFunc -> t -> sapply -> lapply -> FUN
+Execution halted
