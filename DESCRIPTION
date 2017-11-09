@@ -1,7 +1,7 @@
 Package: skeleSim
 Type: Package
 Title: Genetic Simulation Engine
-Version: 0.9.6
+Version: 0.9.7
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
   MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
@@ -20,7 +20,7 @@ License: GPL-2
 LazyLoad: Yes
 LazyData: true
 Depends:
-    R (>= 3.2.0),
+    R (>= 3.4.0),
     igraph,
     shiny (>= 0.13.0),
     shinyFiles
