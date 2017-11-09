@@ -11,7 +11,7 @@ vignette: >
 
 This vignette will help plan the best sampling effort in terms of number of markers or number of samples, for a planned population genetic study. **The best sampling effort is one that ensures you detect the effect or process you are interested in.**    
 
-(This is called power analysis- an introduction to this topic can be found at [this website](http://documents.software.dell.com/Statistics/Textbook/Power-Analysis)).
+
 
 ##Overall instructions: getting started    
 
