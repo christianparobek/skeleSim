@@ -13,7 +13,9 @@
 fsc.run <- function(params) {
   label <- currentLabel(params)
   sc <- currentScenario(params)
-
+  print("mutation rate in sc")
+  print(sc@mut.rate)
+  
   # Check that folder is empty
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 
@@ -23,7 +25,7 @@ fsc.run <- function(params) {
   lprm <- fscLocusParams(
     locus.type = locus.type,
     num.loci = 1,
-    mut.rate = sc@simulator.params@locus.params[, 4],
+    mut.rate = as.numeric(as.character(sc@simulator.params@locus.params[, 4])),
     chromosome = 1:dim(sc@simulator.params@locus.params)[1],
     sequence.length = sc@simulator.params@locus.params[, 2]
   )

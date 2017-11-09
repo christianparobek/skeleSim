@@ -254,6 +254,12 @@ observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]],{
                         mat[l,4] <- as.character(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@mut.rate[l])
                         mat[l,5] <- as.character(1/3)
                     }
-                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params <- as.data.frame(mat)
+                tdf <- as.data.frame(mat)
+                tdf[,1] <- as.character(tdf[,1])
+                tdf[,2] <- as.numeric(as.character(tdf[,2]))
+                tdf[,3] <- as.numeric(as.character(tdf[,3]))
+                tdf[,4] <- as.numeric(as.character(tdf[,4]))
+                tdf[,5] <- as.numeric(as.character(tdf[,5]))
+                rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@locus.params <- tdf
             }
 })

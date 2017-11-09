@@ -52,7 +52,9 @@ runSim <- function(params, num.secs = NULL) {
       params@current.scenario <- params@scenario.reps[i, "scenario"]
       params@current.replicate <- params@scenario.reps[i, "replicate"]
       # run one replicate of simulator
-      params <- params@sim.func(params)
+print("starting sim function")
+        params <- params@sim.func(params)
+print("done with sim function")
       # analyzes params@rep.sample and loads results into params@rep.result
       params <- params@rep.analysis.func(params)
         print("analysis done")
