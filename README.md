@@ -1,5 +1,12 @@
+[![CRAN version](http://www.r-pkg.org/badges/version/skeleSim?color=red)](https://cran.r-project.org/package=skeleSim)
+[![CRAN last day downloads](http://cranlogs.r-pkg.org/badges/last-day/skeleSim?color=red)](https://cran.r-project.org/package=skeleSim)
+[![CRAN last week downloads](http://cranlogs.r-pkg.org/badges/last-week/skeleSim?color=red)](https://cran.r-project.org/package=skeleSim)
+[![CRAN last month downloads](http://cranlogs.r-pkg.org/badges/skeleSim?color=red)](https://cran.r-project.org/package=skeleSim)
+[![CRAN total downloads](http://cranlogs.r-pkg.org/badges/grand-total/skeleSim?color=red)](https://cran.r-project.org/package=skeleSim)  
 [![Travis-CI Build Status](https://travis-ci.org/christianparobek/skeleSim.svg?branch=master)](https://travis-ci.org/christianparobek/skeleSim)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/christianparobek/skeleSim?branch=master&svg=true)](https://ci.appveyor.com/project/christianparobek/skeleSim)
+[![DOI](https://zenodo.org/badge/32469895.svg)](https://zenodo.org/badge/latestdoi/32469895)
+
 
 # skeleSim
 
@@ -34,6 +41,14 @@ skeleSimGUI()
 
 * submit suggestions and bug-reports: <https://github.com/christianparobek/skeleSim/issues>
 * send a pull request: <https://github.com/christianparobek/skeleSim/>
+
+## version 0.9.6
+
+* fixed bug in haplotype summary producing error:
+```
+Error in summary(loc.g)$strata.smry : 
+  $ operator is invalid for atomic vectors
+```
 
 ## version 0.9.5
 

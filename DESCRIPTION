@@ -1,7 +1,7 @@
 Package: skeleSim
 Type: Package
 Title: Genetic Simulation Engine
-Version: 0.9.5
+Version: 0.9.6
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
   MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
@@ -60,4 +60,4 @@ Collate:
     skeleSim.checks.R
     getGammaMutRates.R
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000
