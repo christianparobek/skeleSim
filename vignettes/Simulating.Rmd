@@ -11,18 +11,18 @@ vignette: >
 
 This vignette focuses on what happens when you push the "Run Simulation" button on the Actions tab.
 
-##Setting up and running simulations are asynchronous activities
+## Setting up and running simulations are asynchronous activities
 
 Simulations, particularly forward-time simulations, are time consuming.  skeleSimGUI() was designed so that while a simulation is running, a user can edit the same simulation parameters to set up a new run, open or create a completely different simulation parameter set, or visualize the results of a previously run simulation.
 
-###Each simulation runs in its own independent R session
+### Each simulation runs in its own independent R session
 
 This asynchrony is achieved by spawning a new R process for each simulation.  In addition, skeleSimGUI() *does not wait for the newly spawned process to finish.*  While this prevents the interface from halting during simulations, it does require the user to look for output files in the "root simulation directory".
 
-###File inputs and outputs
+### File inputs and outputs
 The newly spawned R process executes in the "root simulation directory" specified on the Actions tab.  During a simulation, working files are written to a subdirectory specified on the general parameters tab.  Changing this subdirectory tab allows a user to launch as many simulations as their computer can accommodate and the different simulations will not write over each other's files.  The input, output, and R code that uses and produces them is saved to the "root simulation directory".
 
-####File names
+#### File names
 
 the filename prefix format for all skeleSim files produced during simulation has the following format:
 'title.date.hhmm.ms'  where 'title' is specified on the general configuration tab and the rest are calculated from the system clock.
@@ -52,10 +52,10 @@ The input file is an R binary format file that contains a skeleSim class object.
 #### output file
 The output file has the exact same structure as the input file.  Some slots that are NULL in a newly created input file have results in them, most importantly the slot "analysis.results" which contains 3 dimensional arrays that hold results of summary statistics calculations per simulation rep.
 
-##Using the output
+## Using the output
 The output file can be read into the skeleSimGUI() and the results can be visualized. Furthermore, this also reads simulation parameters into a skeleSimGUI() session where they can be altered and a new simulation run.
 
-##Running a simulation 'by hand'
+## Running a simulation 'by hand'
 Once skeleSimGUI() runs a simulation the relevant R script like the one above is available on disk.  All the user has to do is source it into an R session and the simulation will run again.
 
 ```{r,eval=FALSE}
@@ -71,7 +71,7 @@ ssClass <- runSim(ssClass) #run simulation.  now results are stored in ssClass@a
 ```
 
 
-##Troubleshooting
+## Troubleshooting
 Common problems include:
   
  1. **Not specifying the root simulation directory** Depending on the
