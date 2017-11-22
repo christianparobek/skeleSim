@@ -12,7 +12,7 @@ vignette: >
 This vignette will create a forecast of possible outcomes for a population of interest, such as a rare species.   
 These are examples of null model construction using simulators, to help showcase possible uses of SkeleSim.
 
-##Overall instructions: getting started    
+## Overall instructions: getting started    
 
 launch the skeleSim GUI
 ```{r,echo=T,eval=FALSE}
