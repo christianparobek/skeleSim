@@ -11,11 +11,11 @@ vignette: >
 
 This vignette focuses on getting everything together to get this package to run.
 
-##CRAN Dependencies
+## CRAN Dependencies
 
 There are several packages located on CRAN that skeleSim depends upon.  They all currently install automatically during the installation process.  
 
-##Non-CRAN dependencies
+## Non-CRAN dependencies
 
 Currently, skeleSim implements coalescent simulations in `fastsimcoal2` and forward-time in `rmetasim`. The `rmetasim` dependency is handled via normal package installation.
 
@@ -27,7 +27,7 @@ Helpful instructions for editing the PATH environmental variable for Windows can
 
 If the executable is in your path, skeleSimGUI() looks for it (and other versions if present) and allows you to select among versions on the "FastSimCoal params" tab.
 
-##Installing from github
+## Installing from github
 The most up to date version (new bugs and all) of skeleSim is always going to be on github.  This is also a place to ask specific questions about skeleSim.
 
 First install the great 'devtools' package. Then,
