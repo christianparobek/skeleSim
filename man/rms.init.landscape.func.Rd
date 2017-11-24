@@ -49,4 +49,3 @@ rms.init.landscape.func(num.pops = NULL, carrying = NULL,
 \description{
 Initialize a landscape object
 }
-

@@ -18,4 +18,3 @@ A gtypes object containing genotypes (or sequences)
 \description{
 Extract genetic data from landscape object
 }
-

@@ -16,4 +16,3 @@ a modified \linkS4class{skeleSim.params} object with the results of
 \description{
 Run rmetasim
 }
-

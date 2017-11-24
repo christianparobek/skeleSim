@@ -18,4 +18,3 @@ NULL
 \description{
 This function starts the shiny simulation control panel
 }
-

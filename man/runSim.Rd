@@ -14,4 +14,3 @@ runSim(params, num.secs = NULL)
 \description{
 Run simulation
 }
-

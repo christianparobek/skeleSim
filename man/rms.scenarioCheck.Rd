@@ -12,4 +12,3 @@ rms.scenarioCheck(params)
 \description{
 Check parameters for rmetasim
 }
-

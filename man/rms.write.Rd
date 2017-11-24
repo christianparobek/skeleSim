@@ -15,4 +15,3 @@ Nothing
 \description{
 Write metasim landscape script to disk (one per scenario)
 }
-

@@ -2,11 +2,11 @@
 % Please edit documentation in R/skeleSim.classes.R
 \docType{class}
 \name{skeleSim.classes}
-\alias{scenario.params}
-\alias{scenario.params-class}
 \alias{skeleSim.classes}
 \alias{skeleSim.params}
 \alias{skeleSim.params-class}
+\alias{scenario.params-class}
+\alias{scenario.params}
 \title{skeleSim Parameters Class}
 \description{
 An S4 class storing generic parameters used throughout

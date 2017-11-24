@@ -2,11 +2,10 @@
 % Please edit documentation in R/skeleSim-package.R
 \docType{package}
 \name{skeleSim-package}
-\alias{skeleSim}
 \alias{skeleSim-package}
+\alias{skeleSim}
 \title{Genetic simulation engine}
 \description{
 skeleSim
 }
 \keyword{package}
-

@@ -1,0 +1,25 @@
+# After loading result file tryfor.20170518.1113.5335.skeleSim.out.rdata on the server that is what happens #
+
+skeleSimGUI()
+
+Listening on http://127.0.0.1:6105
+Warning: Error in as.table.default: cannot coerce to a table
+Stack trace (innermost first):
+    86: as.table.default
+    85: as.table
+    84: as.data.frame
+    83: FUN [vizAbstract.R#37]
+    82: lapply
+    81: do.call
+    80: locusDF [vizAbstract.R#32]
+    79: sort
+    78: unique
+    77: locus.stats [vizfuncs.R#59]
+    70: isolate
+    69: unname
+    68: updateSelectizeInput
+    67: updateUIs [update-ui.R#155]
+    66: observeEventHandler [loadParams.R#50]
+     2: runApp
+     1: skeleSimGUI
+ERROR: [on_request_read] connection reset by peer

@@ -93,4 +93,3 @@ Depending on the choice of \code{locus.type}, values for some arguments may
   be ignored. See argument list above for which arguments are applicable
   to which \code{locus.type}.
 }
-

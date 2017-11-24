@@ -1,0 +1,11 @@
+R version 3.3.2 (2016-10-31)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 7 x64 (build 7601) Service Pack 1
+
+locale:
+[1] LC_COLLATE=Italian_Italy.1252  LC_CTYPE=Italian_Italy.1252   
+[3] LC_MONETARY=Italian_Italy.1252 LC_NUMERIC=C                  
+[5] LC_TIME=Italian_Italy.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     

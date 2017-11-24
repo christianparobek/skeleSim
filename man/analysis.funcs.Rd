@@ -3,13 +3,13 @@
 \name{analysis.funcs}
 \alias{analysis.funcs}
 \alias{analysisFunc}
-\alias{calcChordDist}
+\alias{loadResultsMatrix}
 \alias{formatOverallStats}
 \alias{globalAnalysis}
-\alias{hapSmryFunc}
-\alias{loadResultsMatrix}
 \alias{locusAnalysisGenotypes}
+\alias{hapSmryFunc}
 \alias{locusAnalysisHaplotypes}
+\alias{calcChordDist}
 \alias{pairwiseAnalysis}
 \title{Analysis functions for skeleSim parameter objects}
 \usage{
@@ -48,4 +48,3 @@ pairwiseAnalysis(g, num.perm.reps)
 Run Global, Locus, and Pairwise analyses on results from
   a single simulation replicate stored in params@rep.sample#'
 }
-

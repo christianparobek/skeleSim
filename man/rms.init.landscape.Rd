@@ -48,4 +48,3 @@ rms.init.landscape(num.pops = NULL, carrying = NULL, sample.size = NULL,
 \description{
 Initialize a landscape object
 }
-
