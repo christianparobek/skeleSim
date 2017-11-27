@@ -1,7 +1,7 @@
 Package: skeleSim
 Type: Package
 Title: Genetic Simulation Engine
-Version: 0.9.7
+Version: 0.9.8
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.archer@noaa.gov", role = c("aut")),
   MDL = person("Michelle", "DePrenger-Levin", email = "michelledpl@gmail.com", role = c("aut")),
