@@ -13,9 +13,9 @@
 fsc.run <- function(params) {
   label <- currentLabel(params)
   sc <- currentScenario(params)
-  print("mutation rate in sc")
-  print(sc@mut.rate)
-  
+  # print("mutation rate in sc")
+  # print(sc@mut.rate)
+
   # Check that folder is empty
   if(file.exists(params@wd)) for(f in dir(label, full.names = T)) file.remove(f)
 

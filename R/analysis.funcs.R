@@ -14,7 +14,7 @@
 #'   overallTest pairwiseTest summarizeLoci hweTest mRatio
 #'   fusFs nucleotideDivergence nucleotideDiversity privateAlleles
 #'   sharedAlleles tajimasD theta strataSplit ploidy locNames
-#'   strata<- gtypes2loci strataNames
+#'   strata<- gtypes2loci strataNames numAlleles
 #' @importFrom reshape2 melt
 #' @importFrom pegas hw.test
 #'
@@ -56,7 +56,6 @@ analysisFunc <- function(params) {
   if(params@analyses.requested["Pairwise"] & currentScenario(params)@num.pops > 1) {
     cat("  Pairwise analysis...\n")
     mat <- pairwiseAnalysis(results.gtype, num.perm.reps)
-    cat("Finished Pairwise\n")
     params <- loadResultsMatrix(params, mat, "Pairwise")
 
   }
@@ -114,6 +113,8 @@ loadResultsMatrix <- function(params, mat, label) {
   }
 
   curr_rep <- params@current.replicate
+  # print(colnames(params@analysis.results[[curr_scn]][[label]][, , curr_rep]))
+  # print(colnames(mat))
   params@analysis.results[[curr_scn]][[label]][, , curr_rep] <- mat
 
   return(params)
@@ -205,9 +206,9 @@ locusAnalysisGenotypes <- function(g) {
   theta.hwe <- function(g) {
     cbind(theta = theta(g), hwe.p = hweTest(g, use.genepop = FALSE))
   }
-    print("HWE tests started")
+  #cat("HWE tests started\n")
   th.locus <- data.frame(theta.hwe(g))
-      print("theta.hwe run ")
+  #cat("theta.hwe run\n")
   th.locus <- cbind(
     Pop = NA, Locus = rownames(th.locus), th.locus, stringsAsFactors = FALSE
   )
@@ -218,23 +219,30 @@ locusAnalysisGenotypes <- function(g) {
   th.all <- rbind(th.locus, th.pop)
   rownames(th.all) <- NULL
 
-  print("HWE tests done")
+  #cat("HWE tests done\n")
 
-  if (!is.factor(g@loci[1,1]))  #diploid type data but not SNPs
-  {
-  # mratio on gtypes object, function needs genetic data as a gtype
-  mratio.locus <- mRatio(g, by.strata = FALSE, rpt.size = 1)
-  mratio.all <- melt(t(mRatio(g, rpt.size = 1)))
-  colnames(mratio.all) <- c("Pop", "Locus", "mRatio")
-  mratio.all <- rbind(
-    data.frame(
-      Pop = NA, Locus = names(mratio.locus),
-      mRatio = mratio.locus, stringsAsFactors = FALSE
-    ),
-    mratio.all
-  )
-  rownames(mratio.all) <- NULL
-  } else {mratio.all <- NULL} #SNPs
+  mratio.all <- NULL
+  if(ploidy(g) == 2) {
+    if(all(numAlleles(g) > 2)) { # diploid and not SNPs
+      # mratio on gtypes object, function needs genetic data as a gtype
+      mratio.locus <- mRatio(g, by.strata = FALSE, rpt.size = 1)
+      mratio.all <- melt(t(mRatio(g, rpt.size = 1)))
+      colnames(mratio.all) <- c("Pop", "Locus", "mRatio")
+      mratio.all <- rbind(
+        data.frame(
+          Pop = NA, Locus = names(mratio.locus),
+          mRatio = mratio.locus, stringsAsFactors = FALSE
+        ),
+        mratio.all
+      )
+      rownames(mratio.all) <- NULL
+    } else {
+      mratio.all <- rbind(
+        data.frame(Pop = NA, Locus = locNames(g), mRatio = NA),
+        expand.grid(Pop = strataNames(g), Locus = locNames(g), mRatio = NA)
+      )
+    }
+  }
 
   # Number of private alleles by locus
   pa <- t(privateAlleles(g))

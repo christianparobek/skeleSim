@@ -35,13 +35,12 @@ rms.run <- function(params) {
   #check is landscape ok
   if (!is.landscape(skeleland)) stop("landscape not cool")
 
-  print(table(skeleland$individuals[,1]))
-  print(paste("simulate for ",sc@simulator.params@num.gen,"years"))
+  #print(table(skeleland$individuals[,1]))
+  cat("   ...simulate for",sc@simulator.params@num.gen, "years\n")
 
   #run a number of generations
   skeleland<-landscape.simulate(skeleland, sc@simulator.params@num.gen)
-
-  print("was able to simulate a rmetasim landscape")
+  cat("   ...was able to simulate a rmetasim landscape\n")
 
   #take samples
   skeleland_samp<-landscape.sample(skeleland, ns=24)  ###need to improve
@@ -59,7 +58,7 @@ rms.run <- function(params) {
   #now store the results
   save(file="tmpskeleland.rda",skeleland_samp)
   params@rep.sample<- rms.convert(skeleland_samp, sc@locus.type)
-  print("returned from convert; returning params obj")
+  #print("returned from convert; returning params obj")
   return(params)
 }
 

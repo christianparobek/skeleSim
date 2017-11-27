@@ -113,7 +113,7 @@ rms.init.landscape.func <- function(
   #assumes biparental transmission (transmission = 0)
   rms.locus.type = NULL
 
-  print(loc.type)
+  #print(loc.type)
 
   if (loc.type == "SNP") {rms.locus.type = 2; num.alleles = 4; seq.length = rep(1,num.loc)}
   if (loc.type %in% c("microsat","MICROSAT","microsatellite")) rms.locus.type = 1
