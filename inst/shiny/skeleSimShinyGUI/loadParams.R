@@ -4,9 +4,13 @@ shinyDirChoose(input,"workFolder",session=session,roots=VolumeRoots,hidden=F)
 ###
 ####choose file to load using the shinyFiles package
 #roots <- getVolumes()
-#observe
-shinyFileChoose(input,"fileParams",filetypes=c("rdata","RData","RDATA","rData","rda"),session=session,roots=VolumeRoots)
-#done with the shinyFiles file selection code
+                                        #observe
+
+shinyFileChoose(input,"fileParams",
+                filetypes=c("rdata","RData","RDATA","rData","rda"),
+                session=session,
+                root=VolumeRoots)
+###done with the shinyFiles file selection code
 
 ###make sure that changing the working directory updates the supportValues$simroot slot, but not any other time
 observeEvent(input$workFolder,{
@@ -17,7 +21,11 @@ observeEvent(input$workFolder,{
 output$uiSelectParamObj <- renderUI({
   if(!is.null(input$fileParams)) {
       fileParams <- parseFilePaths(VolumeRoots,input$fileParams) #convert shinyFiles object into more familiar inputFiles format
-#      print(fileParams$datapath)
+      print(VolumeRoots)
+###      print("fileparams$datapath")
+###      print(fileParams$datapath)
+      if (length(as.character(fileParams$datapath))>0)
+          {
       rm(list=ls(envir=supportValues$ssLoadEnv),envir=supportValues$ssLoadEnv)
       load(file=as.character(fileParams$datapath), envir = supportValues$ssLoadEnv)
 #      print(ls(supportValues$ssLoadEnv))
@@ -36,6 +44,7 @@ output$uiSelectParamObj <- renderUI({
               choices = isolate(obj.list)
               )
       } else h5("<No skeleSim parameter objects found>")
+          }
   } else NULL
 })
 
