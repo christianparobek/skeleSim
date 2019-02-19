@@ -81,6 +81,9 @@ num.alleles <- function() #a function to return a sensible number of alleles vec
         } else {c(1)}
     }
 
+
+
+
 output$numall <- renderUI({
     if (debug()) print("creating allele num vector ui")
 
@@ -123,10 +126,9 @@ output$afreqs <- renderText({
 
 output$afreqLoc <- renderUI({
     if (debug())          print("creating allele freq  vector ui")
-    if (!is.null(req(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs))&
-        (!is.null(input$focalLoc)))
+    if ((length(req(isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs)))>0) &(!is.null(req(input$focalLoc))))
     {
-        af <- rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs[[input$focalLoc]]
+        af  <- isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@simulator.params@allele.freqs[[input$focalLoc]])
         matrixInput("afreqLoc",paste("Distribution of allele freqs at locus",input$focalLoc),
                     as.data.frame(matrix(af,nrow=1)))
     }
