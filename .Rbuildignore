@@ -10,3 +10,4 @@ tar.gz$
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^wdTest/*
+.DS_Store
