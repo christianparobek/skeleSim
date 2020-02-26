@@ -1,19 +1,21 @@
 ###shinyFiles approach to saving the current skelesim object
-shinyFileSave(input, 'ssClassSave', filetypes=c("rdata","RData","RDATA","rData","rda"), session=session, roots=VolumeRoots)
+shinyFileSave(input, 'ssClassSave', filetypes=c("rdata","RData","RDATA","rData","rda"), session=session, roots=VolumeRoots, restrictions = system.file(package = "base"))
 ###
 
 observeEvent(input$ssClassSave,
-             {
-                 if (debug()) print("parsing")
-                 path <- as.character(parseSavePath(VolumeRoots,input$ssClassSave)$datapath)
-                 fn <- basename(path)
-                 dir <- normalizePath(dirname(path))
-                 if (debug()) print(path)
-                 if (debug()) print(normalizePath(path))
-                 if (debug()) print("done parsing")
-                 assign("ssClass",rValues$ssClass)
-                 save(file=paste0(dir,"/",fn),list="ssClass")
-             })
+{
+    
+    path <- as.character(parseSavePath(VolumeRoots,input$ssClassSave)$datapath)
+    if (length(path)>0)
+        {
+            fn <- basename(path)
+            dir <- normalizePath(dirname(path))
+            print(path)
+            assign("ssClass",rValues$ssClass)
+            save(file=paste0(dir,"/",fn),list="ssClass")
+        }
+})
+
 
 output$txtObjLabel <- renderText({
   supportValues$objLabel <- if(is.null(req(rValues$ssClass@title)) | rValues$ssClass@title == "") {

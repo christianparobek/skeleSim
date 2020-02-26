@@ -3,7 +3,7 @@
 ### split them out to streamline files 
 ###
     
-VolumeRoots = c(home="~",getVolumes()(),temp=tempdir(),wd="./")   #function from shinyFiles
+VolumeRoots = c(home="~",getVolumes()(),temp=tempdir(),wd=".")   #function from shinyFiles
 
 ###
 ### reactive values for skelesim class management 

@@ -135,10 +135,17 @@ observeEvent(input$numloci,
                      }
              },priority=-1)
 
-observe({
+###observe({
+###    if (rValues$ssClass@simulator.type=="f")
+###        output$focalLoc <- renderUI({
+###            numericInput("focalLoc","Adjust allele frequencies for locus",value=1,min=1,max=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+###        })
+###})
+
+observeEvent(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci,{
     if (rValues$ssClass@simulator.type=="f")
         output$focalLoc <- renderUI({
-            numericInput("focalLoc","Adjust allele frequencies for locus",value=1,min=1,max=rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci)
+            numericInput("focalLoc","Adjust allele frequencies for locus",value=1,min=1,max=isolate(rValues$ssClass@scenarios[[rValues$scenarioNumber]]@num.loci))
         })
 })
 

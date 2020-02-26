@@ -8,11 +8,14 @@ shinyUI(
         h4("File operations" ),
         conditionalPanel(condition="input.ActionHelp",
                          includeMarkdown("helpfiles/file-ops.md")),
-        shinyFilesButton("fileParams","Read skelesim object from file","Select saved skelesim file", FALSE),
+        shinyFilesButton("fileParams",label="Read skelesim object from file",
+                         title="Select saved skelesim file", multiple=FALSE),
+        
         uiOutput("uiSelectParamObj"),
         h5(textOutput("txtObjLabel")),
         shinySaveButton("ssClassSave","Save skelesim object to file","Save parameter file",
                         filetype=list(ssClass=c("rdata","Rdata","rda"))),
+        
         textOutput("txtSaveStatus"),
         h4("Run simulation"),
         conditionalPanel(condition="input.ActionHelp",
